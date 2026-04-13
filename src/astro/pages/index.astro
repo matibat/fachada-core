@@ -1,0 +1,32 @@
+---
+/**
+ * Landing page dispatcher — app-agnostic.
+ *
+ * Reads appConfig.siteTree.landing and delegates to the appropriate
+ * core template. Apps configure all content and layout through their
+ * app.config.ts — no app-specific markup lives here.
+ *
+ * Supported landing templates:
+ *   "landing"  — auto-builds from siteConfig.roles (default)
+ *   "sections" — renders widget sections from appConfig.page.sections
+ */
+import { getActiveAppConfig } from "@fachada/core";
+import type { LandingPageData } from "@fachada/core";
+import LandingPage from "../templates/LandingPage.astro";
+
+const appConfig = getActiveAppConfig();
+const landing = appConfig.siteTree?.landing;
+
+const meta = landing?.meta ?? {
+  path: "/",
+  title: appConfig.seo.title,
+  description: appConfig.seo.description,
+};
+
+const template = landing?.template ?? "landing";
+const templateData = landing?.templateData as LandingPageData | undefined;
+---
+
+{template === "landing" && (
+  <LandingPage meta={meta} data={templateData} />
+)}

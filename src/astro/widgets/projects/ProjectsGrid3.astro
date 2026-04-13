@@ -1,0 +1,53 @@
+---
+import { siteConfig } from '../../config';
+import { getCollection } from 'astro:content';
+import ProjectCard from '../../components/sections/ProjectCard.astro';
+
+export interface Props {
+  filterRoles?: string[];
+  heading?: string;
+}
+
+const { filterRoles, heading: headingProp } = Astro.props;
+
+const allProjects = await getCollection('projects');
+const projects = allProjects
+  .filter((project) => {
+    if (!project.data.featured) return false;
+    if (!filterRoles || filterRoles.length === 0) return true;
+    const projectRoles = project.data.roles ?? [];
+    if (projectRoles.length === 0) return true;
+    return projectRoles.some(r => filterRoles.includes(r));
+  })
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 6);
+
+const isFramework = siteConfig.roles.some(r => r.id === 'framework');
+const heading = headingProp ?? (isFramework ? 'Featured Work' : 'Featured Projects');
+---
+
+<section id="projects" class="px-4 py-20">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-4xl font-bold mb-12 text-center" data-index="03">{heading}</h2>
+    {projects.length === 0 ? (
+      <p class="text-center" style="color: var(--text-secondary);">
+        No projects yet. Check back soon!
+      </p>
+    ) : (
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((project) => (
+          <ProjectCard
+            title={project.data.title}
+            description={project.data.description}
+            stack={project.data.stack}
+            coverImage={project.data.coverImage}
+            liveUrl={project.data.liveUrl}
+            githubUrl={project.data.githubUrl}
+            slug={project.id}
+            roles={project.data.roles}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+</section>

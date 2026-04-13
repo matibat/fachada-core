@@ -1,0 +1,66 @@
+---
+import { siteConfig } from '../../config';
+import Button from '../../components/ui/Button.astro';
+
+const primaryRole = siteConfig.roles.find(r => r.id === siteConfig.primaryRole) ?? siteConfig.roles[0];
+const isMultiRole = siteConfig.roles.length > 1;
+const roleLabel = isMultiRole
+  ? siteConfig.roles.filter(r => r.featured).map(r => r.title).join(' & ')
+  : primaryRole.title;
+---
+
+<section class="min-h-screen flex items-center px-4 py-20" data-testid="hero-section">
+  <div class="hero-split-grid max-w-6xl mx-auto w-full">
+    <!-- Identity column -->
+    <div class="hero-identity flex flex-col justify-center">
+      <p
+        class="hero-overline text-sm uppercase tracking-widest mb-4"
+        style="color: var(--text-secondary); font-family: var(--font-mono);"
+      >
+        {roleLabel}
+      </p>
+      <h1 class="font-bold" data-testid="hero-title">
+        {siteConfig.name}
+      </h1>
+    </div>
+
+    <!-- Content column -->
+    <div class="hero-content flex flex-col justify-center gap-6">
+      <p class="text-xl md:text-2xl" data-testid="hero-description" style="color: var(--text-secondary);">
+        {siteConfig.description}
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <Button href="#projects" variant="primary" size="lg" class="hero-primary-cta">
+          View Work
+        </Button>
+        <Button href="#contact" variant="outline" size="lg">
+          Get in Touch
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-split-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  @media (min-width: 768px) {
+    .hero-split-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+
+    .hero-identity {
+      border-right: 1px solid var(--border);
+      padding-right: 4rem;
+    }
+  }
+
+  :global(.hero-primary-cta) {
+    box-shadow: 0 8px 18px var(--shadow);
+  }
+</style>

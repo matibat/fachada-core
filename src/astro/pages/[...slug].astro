@@ -1,0 +1,106 @@
+---
+/**
+ * Dynamic page dispatcher — app-agnostic route handler.
+ *
+ * Reads appConfig.siteTree.landing.subsections to generate all static
+ * paths at build time. For each path, delegates to the appropriate core
+ * template based on the subsection's `template` field:
+ *
+ *   "role"     → RolePage
+ *   "document" → DocumentPage
+ *   "hub"      → HubPage
+ *   "markdown" → MarkdownPage (content-collection entry, resolved at render time)
+ *   "sections" → SectionsPage (widget-based, future extension)
+ *
+ * Apps declare pages through configuration in their app.config.ts.
+ * Markdown pages in src/content/pages/ are auto-discovered via getCollection.
+ * No app-specific .astro files are required or permitted.
+ */
+import { getCollection, getEntry, render } from "astro:content";
+import { getActiveAppConfig, getActiveAppName } from "@fachada/core";
+import { buildMergedStaticPaths } from "@fachada/core";
+import type {
+  SubsectionDefinition,
+  RolePageData,
+  DocumentPageData,
+  HubPageData,
+  MarkdownPageData,
+} from "@fachada/core";
+import RolePage from "../templates/RolePage.astro";
+import DocumentPage from "../templates/DocumentPage.astro";
+import HubPage from "../templates/HubPage.astro";
+import MarkdownPage from "../templates/MarkdownPage.astro";
+
+export async function getStaticPaths() {
+  const appConfig = getActiveAppConfig();
+  const appName = getActiveAppName();
+  const configSubsections: SubsectionDefinition[] =
+    appConfig.siteTree?.landing.subsections ?? [];
+
+  // Fetch content-collection entries (pages collection only; no I/O at render time)
+  const rawEntries = await getCollection("pages");
+
+  return buildMergedStaticPaths(configSubsections, rawEntries as any, appName);
+}
+
+interface Props {
+  subsection: SubsectionDefinition;
+}
+
+const { subsection } = Astro.props;
+const template = subsection.template ?? "sections";
+
+// Resolve Markdown content entry at render time (only for "markdown" template)
+let markdownContent: unknown = null;
+let markdownContentMissing = false;
+if (template === "markdown") {
+  const templateData = subsection.templateData as MarkdownPageData;
+  const entry = await getEntry("pages", templateData.contentId);
+  if (entry) {
+    const { Content } = await render(entry);
+    markdownContent = Content;
+  } else {
+    markdownContentMissing = true;
+  }
+}
+---
+
+{template === "role" && (
+  <RolePage
+    meta={subsection.meta}
+    data={subsection.templateData as RolePageData}
+  />
+)}
+
+{template === "document" && (
+  <DocumentPage
+    meta={subsection.meta}
+    data={subsection.templateData as DocumentPageData}
+  />
+)}
+
+{template === "hub" && (
+  <HubPage
+    meta={subsection.meta}
+    data={subsection.templateData as HubPageData}
+  />
+)}
+
+{template === "markdown" && !markdownContentMissing && (
+  <MarkdownPage
+    meta={subsection.meta}
+    data={{ ...(subsection.templateData as MarkdownPageData), Content: markdownContent }}
+  />
+)}
+
+{template === "markdown" && markdownContentMissing && (
+  <div data-page={subsection.id} data-error="content-not-found">
+    <p>Page content not found: {(subsection.templateData as MarkdownPageData).contentId}</p>
+  </div>
+)}
+
+{template === "sections" && (
+  <div data-page={subsection.id}>
+    <p>Sections page: {subsection.meta.title}</p>
+  </div>
+)}

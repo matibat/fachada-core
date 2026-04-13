@@ -1,0 +1,40 @@
+---
+export interface PersonSchema {
+  name: string;
+  url: string;
+  image?: string;
+  sameAs?: string[];
+  jobTitle?: string;
+  worksFor?: {
+    '@type': string;
+    name: string;
+  };
+}
+
+export interface ArticleSchema {
+  headline: string;
+  description: string;
+  datePublished: string;
+  dateModified?: string;
+  author: {
+    '@type': string;
+    name: string;
+  };
+  image?: string;
+}
+
+export interface Props {
+  type: 'Person' | 'Article' | 'BreadcrumbList';
+  data: PersonSchema | ArticleSchema | any;
+}
+
+const { type, data } = Astro.props;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': type,
+  ...data,
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

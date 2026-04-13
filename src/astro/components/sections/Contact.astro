@@ -1,0 +1,84 @@
+---
+import { siteConfig } from '../../config';
+import { profileConfig } from '../../profile.config';
+import Card from '../ui/Card.astro';
+import Button from '../ui/Button.astro';
+
+const contactMessage =
+  profileConfig.contactMessage ??
+  "I'm always interested in hearing about new projects and opportunities.";
+---
+
+<section
+  id="contact"
+  class="px-4 py-20"
+  data-testid="contact-section"
+  style="background-color: var(--bg-secondary);"
+>
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-4xl font-bold mb-8 text-center" data-index="04">Get in Touch</h2>
+    <Card>
+      <div class="text-center space-y-6">
+        <p class="text-lg" style="color: var(--text-secondary);">
+          {contactMessage}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button
+            href={`mailto:${siteConfig.social.email}`}
+            variant="primary"
+            size="lg"
+            class="contact-email-button"
+          >
+            Send Email
+          </Button>
+        </div>
+        <div class="flex gap-6 justify-center pt-4">
+          {siteConfig.social.github && (
+            <a
+              href={siteConfig.social.github}
+              class="transition-colors"
+              style="color: var(--text-secondary);"
+              aria-label="GitHub"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          )}
+          {siteConfig.social.linkedin && (
+            <a
+              href={siteConfig.social.linkedin}
+              class="transition-colors"
+              style="color: var(--text-secondary);"
+              aria-label="LinkedIn"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LinkedIn
+            </a>
+          )}
+          {siteConfig.social.twitter && (
+            <a
+              href={siteConfig.social.twitter}
+              class="transition-colors"
+              style="color: var(--text-secondary);"
+              aria-label="Twitter"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Twitter
+            </a>
+          )}
+        </div>
+      </div>
+    </Card>
+  </div>
+</section>
+
+<style>
+  a[aria-label='GitHub']:hover,
+  a[aria-label='LinkedIn']:hover,
+  a[aria-label='Twitter']:hover {
+    color: var(--accent) !important;
+  }
+</style>

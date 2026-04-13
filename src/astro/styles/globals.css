@@ -1,0 +1,84 @@
+/* Import theme system first */
+@import './themes.css';
+@import './theme-overrides.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth scrolling for navigation */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+    line-height: var(--body-line-height, 1.7);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition:
+      background-color var(--transition),
+      color var(--transition);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading, inherit);
+    font-weight: var(--heading-weight, 600);
+    letter-spacing: var(--heading-letter-spacing, -0.01em);
+  }
+
+  code, pre, kbd, samp {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  }
+}
+
+/* === Layout variant visibility (data-attribute injection) === */
+
+/* Hide all pre-rendered layout variant containers by default.
+   The FOUC script in BaseLayout writes data-layout-<section> attributes to <html>
+   so the correct variant is activated before first paint. */
+[data-layout-section][data-layout-variant] {
+  display: none;
+}
+
+/* Hero variants */
+html[data-layout-hero="centered"] [data-layout-section="hero"][data-layout-variant="centered"] {
+  display: block; /* display: block — avoids breaking flex/grid layout context */
+}
+html[data-layout-hero="split"] [data-layout-section="hero"][data-layout-variant="split"] {
+  display: block; /* display: block — avoids breaking flex/grid layout context */
+}
+
+/* About variants */
+html[data-layout-about="card"] [data-layout-section="about"][data-layout-variant="card"] {
+  display: block; /* display: block — avoids breaking flex/grid layout context */
+}
+html[data-layout-about="plain"] [data-layout-section="about"][data-layout-variant="plain"] {
+  display: block; /* display: block — avoids breaking flex/grid layout context */
+}
+
+/* Skills variants */
+html[data-layout-skills="grid-3"] [data-layout-section="skills"][data-layout-variant="grid-3"] {
+  display: block; /* display: block — avoids breaking flex/grid layout context */
+}
+html[data-layout-skills="grid-2"] [data-layout-section="skills"][data-layout-variant="grid-2"] {
+  display: block; /* display: block — avoids breaking flex/grid layout context */
+}
+html[data-layout-skills="list"] [data-layout-section="skills"][data-layout-variant="list"] {
+  display: block; /* display: block — avoids breaking flex/grid layout context */
+}
+
+/* Projects variants */
+html[data-layout-projects="grid-3"] [data-layout-section="projects"][data-layout-variant="grid-3"] {
+  display: block; /* display: block — avoids breaking flex/grid layout context */
+}
+html[data-layout-projects="grid-2"] [data-layout-section="projects"][data-layout-variant="grid-2"] {
+  display: block; /* display: block — avoids breaking flex/grid layout context */
+}
+html[data-layout-projects="list"] [data-layout-section="projects"][data-layout-variant="list"] {
+  display: block; /* display: block — avoids breaking flex/grid layout context */
+}
+

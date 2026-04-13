@@ -1,0 +1,14 @@
+---
+import type { AboutLayout } from '@fachada/core';
+import AboutCard from './about/AboutCard.astro';
+import AboutPlain from './about/AboutPlain.astro';
+
+export interface Props {
+  layout?: AboutLayout;
+}
+
+const { layout = 'card' } = Astro.props;
+---
+
+{layout === 'card' && <AboutCard />}
+{layout === 'plain' && <AboutPlain />}

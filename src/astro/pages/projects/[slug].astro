@@ -1,0 +1,75 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Button from '../../components/ui/Button.astro';
+import Footer from '../../components/Footer.astro';
+
+export const getStaticPaths = (async () => {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}) satisfies GetStaticPaths;
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { title, description, stack, date, liveUrl, githubUrl, coverImage } = project.data;
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+}).format(date);
+---
+
+<BaseLayout title={`${title} — Fachada`} description={description}>
+  <main class="px-4 py-20">
+    <article class="max-w-4xl mx-auto">
+      <div class="mb-8">
+        <a href="/projects" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 mb-4 inline-block">
+          ← Back to Projects
+        </a>
+        <h1 class="text-5xl font-bold mb-4">{title}</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300 mb-4">{description}</p>
+        <time class="text-gray-500 dark:text-gray-400">{formattedDate}</time>
+      </div>
+
+      <img
+        src={coverImage}
+        alt={title}
+        class="w-full h-96 object-cover rounded-lg mb-8"
+      />
+
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Tech Stack</h2>
+        <div class="flex flex-wrap gap-2">
+          {stack.map((tech) => (
+            <Badge variant="primary">{tech}</Badge>
+          ))}
+        </div>
+      </div>
+
+      {(liveUrl || githubUrl) && (
+        <div class="flex gap-4 mb-8">
+          {liveUrl && (
+            <Button href={liveUrl} variant="primary">
+              Live Demo
+            </Button>
+          )}
+          {githubUrl && (
+            <Button href={githubUrl} variant="outline">
+              View Source
+            </Button>
+          )}
+        </div>
+      )}
+
+      <div class="prose dark:prose-invert max-w-none">
+        <Content />
+      </div>
+    </article>
+  </main>
+  <Footer />
+</BaseLayout>

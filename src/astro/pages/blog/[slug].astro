@@ -1,0 +1,67 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Footer from '../../components/Footer.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { siteConfig } from '../../config';
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('blog');
+  return posts
+    .filter((post) => !post.data.draft)
+    .map((post) => ({
+      params: { slug: post.id },
+      props: { post },
+    }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, description, tags, date } = post.data;
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(date);
+
+const articleSchema = {
+  headline: title,
+  description,
+  datePublished: date.toISOString(),
+  dateModified: date.toISOString(),
+  author: {
+    '@type': 'Person',
+    name: siteConfig.author,
+  },
+};
+---
+
+<BaseLayout title={`${title} — Fachada Blog`} description={description}>
+  <StructuredData type="Article" data={articleSchema} />
+  <main class="px-4 py-20">
+    <article class="max-w-3xl mx-auto">
+      <div class="mb-8">
+        <a href="/blog" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 mb-4 inline-block">
+          ← Back to Blog
+        </a>
+        <h1 class="text-5xl font-bold mb-4">{title}</h1>
+        <div class="flex items-center gap-4 text-gray-500 dark:text-gray-400 mb-4">
+          <time>{formattedDate}</time>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-6">
+          {tags.map((tag) => (
+            <Badge variant="primary">{tag}</Badge>
+          ))}
+        </div>
+      </div>
+
+      <div class="prose dark:prose-invert max-w-none">
+        <Content />
+      </div>
+    </article>
+  </main>
+  <Footer />
+</BaseLayout>

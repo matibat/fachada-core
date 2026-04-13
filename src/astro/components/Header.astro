@@ -1,0 +1,91 @@
+---
+/**
+ * Page header with config-driven navigation.
+ * - Logo/name on left (from appConfig.seo.name)
+ * - Nav items derived from top-level siteTree landing subsections
+ * - Contact CTA on right
+ */
+import { getActiveAppConfig } from '@fachada/core';
+import { getBaseUrl } from '@fachada/core';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
+const appConfig = getActiveAppConfig();
+const siteConfig = appConfig.seo;
+
+const subsections = appConfig.siteTree?.landing.subsections ?? [];
+const navItems = subsections
+  .filter(s => !s.meta.path.substring(1).includes('/'))
+  .map(s => ({
+    href: getBaseUrl(s.meta.path),
+    label: s.id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+    active: currentPath === s.meta.path || currentPath.startsWith(s.meta.path + '/'),
+  }));
+
+const isLanding = currentPath === '/';
+---
+
+<header class="border-b sticky top-0 z-50 backdrop-blur" style="border-color: var(--border); background-color: var(--bg-primary);">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+    <!-- Left: Logo / Name -->
+    <a href={getBaseUrl('/')} class="font-semibold text-lg transition-colors hover:text-accent" style="color: var(--text-primary);">
+      {siteConfig.name}
+    </a>
+
+    <!-- Center: Navigation (hidden on mobile) -->
+    <nav class="hidden md:flex gap-8">
+      {!isLanding && (
+        <a
+          href={getBaseUrl('/')}
+          class="transition-colors"
+          style="color: var(--text-secondary);"
+        >
+          ← Inicio
+        </a>
+      )}
+      {navItems.map(item => (
+        <a
+          href={item.href}
+          class="transition-colors"
+          style={{ color: item.active ? 'var(--accent)' : 'var(--text-secondary)' }}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Right: Contact CTA -->
+    {(siteConfig.social.whatsapp || siteConfig.social.email) && (
+      <a
+        href={siteConfig.social.whatsapp
+          ? siteConfig.social.whatsappMessage
+            ? `${siteConfig.social.whatsapp}?text=${encodeURIComponent(siteConfig.social.whatsappMessage)}`
+            : siteConfig.social.whatsapp
+          : `mailto:${siteConfig.social.email}`
+        }
+        class="px-4 py-2 rounded-lg transition-colors text-sm font-semibold"
+        style={{ backgroundColor: 'var(--accent)', color: 'var(--button-text-color, var(--bg-primary))' }}
+        target={siteConfig.social.whatsapp ? '_blank' : undefined}
+        rel={siteConfig.social.whatsapp ? 'noopener noreferrer' : undefined}
+      >
+        {siteConfig.social.whatsapp ? 'WhatsApp' : 'Contacto'}
+      </a>
+    )}
+  </div>
+</header>
+
+<style>
+  header {
+    background-color: var(--bg-primary);
+  }
+
+  @media (max-width: 768px) {
+    header {
+      position: relative;
+      backdrop-filter: blur(4px);
+    }
+  }
+</style>

@@ -1,0 +1,84 @@
+---
+import { siteConfig } from '../../config';
+import { profileConfig } from '../../profile.config';
+import Card from '../../components/ui/Card.astro';
+import Button from '../../components/ui/Button.astro';
+import { resolveContactMessage } from '@fachada/core';
+
+export interface Props {
+  message?: string;
+}
+
+const { message: messageProp } = Astro.props;
+const contactMessage = resolveContactMessage(messageProp, profileConfig.contactMessage);
+
+const { social } = siteConfig;
+
+// Primary CTA: prefer WhatsApp, then email
+const primaryHref = social.whatsapp ?? (social.email ? `mailto:${social.email}` : undefined);
+const primaryLabel = social.whatsapp ? 'WhatsApp' : 'Send Email';
+
+// Secondary social links (all optional)
+const socialLinks = [
+  social.instagram && { href: social.instagram, label: 'Instagram' },
+  social.github    && { href: social.github,    label: 'GitHub' },
+  social.linkedin  && { href: social.linkedin,  label: 'LinkedIn' },
+  social.twitter   && { href: social.twitter,   label: 'Twitter' },
+  // Show email as a social link if WhatsApp is the primary CTA
+  social.whatsapp && social.email && { href: `mailto:${social.email}`, label: 'Email' },
+].filter(Boolean) as { href: string; label: string }[];
+---
+
+<section
+  id="contact"
+  class="px-4 py-20"
+  data-testid="contact-section"
+  style="background-color: var(--bg-secondary);"
+>
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-4xl font-bold mb-8 text-center" data-index="04">Contacto</h2>
+    <Card>
+      <div class="text-center space-y-6">
+        <p class="text-lg" style="color: var(--text-secondary);">
+          {contactMessage}
+        </p>
+        {primaryHref && (
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              href={primaryHref}
+              variant="primary"
+              size="lg"
+              class="contact-primary-button"
+              target={social.whatsapp ? '_blank' : undefined}
+              rel={social.whatsapp ? 'noopener noreferrer' : undefined}
+            >
+              {primaryLabel}
+            </Button>
+          </div>
+        )}
+        {socialLinks.length > 0 && (
+          <div class="flex gap-6 justify-center pt-4">
+            {socialLinks.map((link) => (
+              <a
+                href={link.href}
+                class="contact-social-link transition-colors"
+                style="color: var(--text-secondary);"
+                aria-label={link.label}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </Card>
+  </div>
+</section>
+
+<style>
+  .contact-social-link:hover {
+    color: var(--accent) !important;
+  }
+</style>

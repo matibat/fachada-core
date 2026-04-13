@@ -1,0 +1,14 @@
+---
+import type { HeroLayout } from '@fachada/core';
+import HeroCentered from './hero/HeroCentered.astro';
+import HeroSplit from './hero/HeroSplit.astro';
+
+export interface Props {
+  layout?: HeroLayout;
+}
+
+const { layout = 'centered' } = Astro.props;
+---
+
+{layout === 'centered' && <HeroCentered />}
+{layout === 'split' && <HeroSplit />}

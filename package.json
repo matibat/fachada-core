@@ -4,6 +4,7 @@
     "type": "module",
     "exports": {
         ".": "./src/index.ts",
+        "./astro": "./src/astro/integration.ts",
         "./vite": "./src/vite/fachada-plugin.ts"
     },
     "peerDependencies": {

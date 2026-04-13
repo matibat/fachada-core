@@ -1,0 +1,125 @@
+---
+/**
+ * WidgetRenderer — application service.
+ *
+ * Drives page composition from a SectionConfig[] (subset of AppConfig.page.sections).
+ * Calls filterSections to determine which sections are enabled, then renders each
+ * section widget in order.
+ *
+ * Layout variant strategy (F3 Phase A — pre-render all variants):
+ *   All unique layout variants for each section (collected from themeLayouts across all
+ *   configured themes) are pre-rendered in static HTML, each wrapped in a
+ *   data-layout-section / data-layout-variant container. CSS hides non-active containers;
+ *   the FOUC script in BaseLayout writes data-layout-* attributes to <html> so the
+ *   correct variant is shown before first paint.
+ *
+ *   For sections with no themeLayouts entries (e.g. contact), the widget is rendered
+ *   directly without a wrapper — it is always visible (no CSS hide rule applies).
+ *
+ * An unknown section id renders nothing — no runtime crash.
+ */
+
+import type { PageSectionConfig } from '@fachada/core';
+import type { HeroLayout, AboutLayout, SkillsLayout, ProjectsLayout, ContactLayout } from '@fachada/core';
+import { filterSections } from '@fachada/core';
+import { appConfig } from 'virtual:fachada/active-app';
+import { resolveWidgetLayout } from '@fachada/core';
+
+// ── Widget imports (static — Astro build requirement) ──────────────────────────
+import Hero    from './Hero.astro';
+import About   from './About.astro';
+import Skills  from './Skills.astro';
+import Projects from './Projects.astro';
+import Contact from './Contact.astro';
+import { RoleExplorer } from '@fachada/core';
+
+export interface Props {
+  sections: PageSectionConfig[];
+  projectsCount: number;
+  blogCount: number;
+}
+
+const { sections, projectsCount, blogCount } = Astro.props;
+
+const enabledIds = filterSections(sections, {
+  projectsCount,
+  blogCount,
+  availableRoles: appConfig.seo.roles.map(r => r.id),
+});
+
+// themeLayouts: used to collect all unique variants per section at build time.
+const activeStyleTheme = appConfig.themes?.default;
+const themeLayouts = appConfig.themeLayouts;
+
+// Index sections by id for O(1) layout lookup per widget.
+const sectionMap = new Map(sections.map(s => [s.id, s]));
+
+const filterRoles = appConfig.seo.roles.map(r => r.id);
+
+// Returns all unique layout variants for a section across every configured theme.
+// Returns an empty array when no theme configures that section.
+function getUniqueVariants<T extends string>(sectionId: string): T[] {
+  const variants = new Set<T>();
+  if (themeLayouts) {
+    for (const themeLayout of Object.values(themeLayouts)) {
+      const variant = (themeLayout as Record<string, T>)[sectionId];
+      if (variant) variants.add(variant);
+    }
+  }
+  return [...variants];
+}
+
+const heroVariants     = getUniqueVariants<HeroLayout>('hero');
+const aboutVariants    = getUniqueVariants<AboutLayout>('about');
+const skillsVariants   = getUniqueVariants<SkillsLayout>('skills');
+const projectsVariants = getUniqueVariants<ProjectsLayout>('projects');
+const contactVariants  = getUniqueVariants<ContactLayout>('contact');
+---
+
+{enabledIds.includes('hero') && heroVariants.length > 0 && heroVariants.map(variant => (
+  <div data-layout-section="hero" data-layout-variant={variant} aria-hidden="true">
+    <Hero layout={variant} />
+  </div>
+))}
+{enabledIds.includes('hero') && heroVariants.length === 0 && (
+  <Hero layout={resolveWidgetLayout('hero', sectionMap.get('hero')?.layout, themeLayouts, activeStyleTheme) as HeroLayout | undefined} />
+)}
+{enabledIds.includes('about') && aboutVariants.length > 0 && aboutVariants.map(variant => (
+  <div data-layout-section="about" data-layout-variant={variant} aria-hidden="true">
+    <About layout={variant} />
+  </div>
+))}
+{enabledIds.includes('about') && aboutVariants.length === 0 && (
+  <About layout={resolveWidgetLayout('about', sectionMap.get('about')?.layout, themeLayouts, activeStyleTheme) as AboutLayout | undefined} />
+)}
+{enabledIds.includes('skills') && skillsVariants.length > 0 && skillsVariants.map(variant => (
+  <div data-layout-section="skills" data-layout-variant={variant} aria-hidden="true">
+    <Skills layout={variant} />
+  </div>
+))}
+{enabledIds.includes('skills') && skillsVariants.length === 0 && (
+  <Skills layout={resolveWidgetLayout('skills', sectionMap.get('skills')?.layout, themeLayouts, activeStyleTheme) as SkillsLayout | undefined} />
+)}
+{enabledIds.includes('role-explorer') && (
+  <RoleExplorer
+    client:load
+    roles={siteConfig.roles}
+    primaryRole={siteConfig.primaryRole}
+  />
+)}
+{enabledIds.includes('projects') && projectsVariants.length > 0 && projectsVariants.map(variant => (
+  <div data-layout-section="projects" data-layout-variant={variant} aria-hidden="true">
+    <Projects layout={variant} filterRoles={filterRoles} />
+  </div>
+))}
+{enabledIds.includes('projects') && projectsVariants.length === 0 && (
+  <Projects layout={resolveWidgetLayout('projects', sectionMap.get('projects')?.layout, themeLayouts, activeStyleTheme) as ProjectsLayout | undefined} filterRoles={filterRoles} />
+)}
+{enabledIds.includes('contact') && contactVariants.length > 0 && contactVariants.map(variant => (
+  <div data-layout-section="contact" data-layout-variant={variant} aria-hidden="true">
+    <Contact layout={variant} />
+  </div>
+))}
+{enabledIds.includes('contact') && contactVariants.length === 0 && (
+  <Contact layout={resolveWidgetLayout('contact', sectionMap.get('contact')?.layout, themeLayouts, activeStyleTheme) as ContactLayout | undefined} />
+)}

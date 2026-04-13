@@ -1,0 +1,19 @@
+/**
+ * Global theme-agnostic CSS variables.
+ * Theme colors are handled by styled-components and live in TypeScript — not here.
+ */
+
+/* ============================================================
+   Global CSS variables (non-theme-specific)
+   ============================================================ */
+:root {
+  /* Z-index scale */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal: 1040;
+  --z-popover: 1050;
+  --z-tooltip: 1060;
+}
+

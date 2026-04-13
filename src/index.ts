@@ -48,14 +48,6 @@ export { useThemeStore, getThemeStore } from "./stores/themeStore";
 // Theme resolver
 export { resolveTheme } from "./theme/ThemeResolver";
 
-// Vite plugin
-export type { FachadaRc } from "./vite/fachada-plugin";
-export {
-  fachadaPlugin,
-  readFachadarc,
-  resolveAppName,
-} from "./vite/fachada-plugin";
-
 // Widgets
 export type { FilterSectionsContext } from "./widgets/filterSections";
 export { filterSections } from "./widgets/filterSections";
@@ -67,6 +59,7 @@ export { createWidgetRegistry } from "./widgets/WidgetRegistry";
 export { default as ThemeSwitcher } from "./components/islands/ThemeSwitcher";
 export { default as ThemeToggle } from "./components/islands/ThemeToggle";
 export { default as LayoutWrapper } from "./components/islands/LayoutWrapper";
+export { default as RoleExplorer } from "./components/islands/RoleExplorer";
 
 // Utils
 export { resolveContactMessage } from "./utils/contact";

@@ -1,0 +1,205 @@
+---
+/**
+ * MarkdownPage — core template for content-collection Markdown pages.
+ *
+ * Renders an Astro content entry passed in as data.Content. The Content
+ * component is resolved by the caller (router) and passed in because
+ * Astro templates cannot await collection queries internally.
+ *
+ * Optionally renders a download button and prev/next navigation.
+ */
+import type { MarkdownPageData } from "@fachada/core";
+import type { PageMeta } from "@fachada/core";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import DownloadButton from "../components/DownloadButton.astro";
+import { getBaseUrl } from "@fachada/core";
+
+interface Props {
+  meta: PageMeta;
+  data: MarkdownPageData & { Content: unknown };
+}
+
+const { meta, data } = Astro.props;
+const { Content, downloadFilename, backLink, nextLink } = data;
+const ContentComponent = Content as any;
+---
+
+<BaseLayout title={meta.title} description={meta.description} ogImage={meta.ogImage}>
+  <Header currentPath={meta.path} />
+
+  <main class="dp-page">
+    <div class="dp-container">
+
+      <div class="dp-header">
+        <div>
+          {backLink && (
+            <a href={getBaseUrl(backLink.href)} class="dp-back-link">← {backLink.label}</a>
+          )}
+          <h1>{meta.title.split("—")[0].trim()}</h1>
+          <p class="dp-subtitle">{meta.description}</p>
+        </div>
+        {downloadFilename && (
+          <DownloadButton filename={downloadFilename} content="" />
+        )}
+      </div>
+
+      <article class="dp-content">
+        <ContentComponent />
+      </article>
+
+      {(backLink || nextLink) && (
+        <nav class="dp-nav" aria-label="Page navigation">
+          {backLink
+            ? <a href={getBaseUrl(backLink.href)} class="dp-nav-link">← {backLink.label}</a>
+            : <span />
+          }
+          {nextLink && (
+            <a href={getBaseUrl(nextLink.href)} class="dp-nav-link dp-nav-link--next">
+              {nextLink.label} →
+            </a>
+          )}
+        </nav>
+      )}
+
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .dp-page {
+    min-height: 100vh;
+    padding: var(--spacing-section) 0;
+  }
+
+  .dp-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-card);
+  }
+
+  .dp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: var(--spacing-section);
+  }
+
+  .dp-header > div { flex: 1; }
+
+  .dp-back-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    display: inline-block;
+    transition: var(--transition);
+  }
+  .dp-back-link:hover { transform: translateX(-4px); }
+
+  .dp-header h1 {
+    font-size: 2rem;
+    margin: 0.5rem 0;
+    color: var(--text-primary);
+  }
+
+  .dp-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ── Markdown content ───────────────────────────────────────── */
+  .dp-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-card);
+    line-height: 1.8;
+  }
+
+  .dp-content :global(h1),
+  .dp-content :global(h2) {
+    font-size: 1.5rem;
+    margin: 1.5rem 0 1rem;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+  }
+
+  .dp-content :global(h3) {
+    font-size: 1.125rem;
+    margin: 1.25rem 0 0.75rem;
+    color: var(--text-primary);
+  }
+
+  .dp-content :global(p) {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .dp-content :global(ul),
+  .dp-content :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .dp-content :global(li) {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+  }
+
+  .dp-content :global(code) {
+    background: var(--bg-primary);
+    color: var(--accent);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    font-size: 0.9em;
+  }
+
+  .dp-content :global(pre) {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    padding: 1.25rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+
+  .dp-content :global(pre code) {
+    background: none;
+    padding: 0;
+    color: var(--text-primary);
+  }
+
+  .dp-content :global(strong) {
+    color: var(--text-primary);
+  }
+
+  .dp-content :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  /* ── Navigation ─────────────────────────────────────────────── */
+  .dp-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: var(--spacing-section);
+  }
+
+  .dp-nav-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+  }
+  .dp-nav-link:hover { color: var(--accent-hover); }
+  .dp-nav-link--next { margin-left: auto; }
+</style>

@@ -1,0 +1,406 @@
+---
+/**
+ * LandingPage — core template for the root "/" page.
+ *
+ * Auto-builds from siteConfig.roles — no hardcoding required.
+ * When the app has one role: single-role hero + sections.
+ * When the app has two+ roles: dual-identity fork layout.
+ *
+ * Marketing copy (hook, subheading) is configurable via LandingPageData
+ * in appConfig.siteTree.landing.templateData.
+ */
+import type { LandingPageData } from "@fachada/core";
+import type { PageMeta } from "@fachada/core";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import StructuredData from "../components/StructuredData.astro";
+import Contact from "../widgets/Contact.astro";
+import { siteConfig } from "../config";
+import { getCollection } from "astro:content";
+
+interface Props {
+  meta: PageMeta;
+  data?: LandingPageData;
+}
+
+const { meta, data } = Astro.props;
+
+const isMultiRole = siteConfig.roles.length > 1;
+const primaryRole = siteConfig.roles.find((r) => r.id === siteConfig.primaryRole)
+  ?? siteConfig.roles[0];
+
+const hook = data?.hook ?? siteConfig.title;
+const subheading = data?.subheading ?? siteConfig.description;
+const ctaHeading = data?.ctaHeading ?? "Let's work on something.";
+const ctaMessageDefault = isMultiRole
+  ? "Open to interesting work — get in touch."
+  : "Open to interesting projects and conversations.";
+const ctaMessage = data?.ctaMessage ?? ctaMessageDefault;
+const ctaLabel = data?.ctaLabel ?? "Get in touch";
+
+// Primary contact href: prefer WhatsApp, then email
+const primaryContactHref = siteConfig.social.whatsapp
+  ?? (siteConfig.social.email ? `mailto:${siteConfig.social.email}` : undefined);
+
+let featuredByRole: Record<string, typeof projects> = {};
+let projects: any[] = [];
+try {
+  projects = await getCollection("projects");
+  for (const role of siteConfig.roles) {
+    featuredByRole[role.id] = projects
+      .filter((p: any) => p.data.featured && p.data.roles?.includes(role.id))
+      .slice(0, 2);
+  }
+} catch {
+  // Content collection not present — skip featured work sections
+}
+
+const personSchema = {
+  name: siteConfig.name,
+  url: siteConfig.url,
+  description: `${siteConfig.title} — ${siteConfig.description}`,
+  jobTitle: siteConfig.roles.map((r) => r.title).join(" & "),
+  sameAs: [
+    siteConfig.social.github,
+    siteConfig.social.linkedin,
+    siteConfig.social.twitter,
+    siteConfig.social.instagram,
+  ].filter(Boolean),
+};
+---
+
+<BaseLayout title={meta.title} description={meta.description}>
+  <StructuredData type="Person" data={personSchema} />
+  <Header currentPath="/" />
+  <main>
+
+    <!-- ── HOOK: Hero ──────────────────────────────────────────── -->
+    <section class="lp-hero">
+      <div class="lp-hero-inner">
+        <h1 class="lp-hook" set:html={hook.replace(/\./g, '.<br />')} />
+        <p class="lp-subheading">{subheading}</p>
+
+        <!-- CTAs: fork buttons for multi-role, single CTA for single-role -->
+        <div class="lp-ctas">
+          {isMultiRole
+            ? siteConfig.roles.map((role) => (
+                <a href={role.id === siteConfig.primaryRole
+                    ? `/${siteConfig.primaryRole}`
+                    : `/${role.id}`}
+                  class:list={["lp-cta", { "lp-cta--primary": role.id === siteConfig.primaryRole }]}
+                >
+                  → {role.title}
+                </a>
+              ))
+            : primaryContactHref && (
+                <a href={primaryContactHref} class="lp-cta lp-cta--primary">
+                  {ctaLabel}
+                </a>
+              )
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MEAT: Featured work (multi-role only) ───────────────── -->
+    {isMultiRole && projects.length > 0 && (
+      <section class="lp-featured">
+        <div class="lp-section-inner">
+          <h2 class="lp-section-heading">Featured Work</h2>
+          <div class="lp-featured-grid">
+            {siteConfig.roles.flatMap((role) =>
+              (featuredByRole[role.id] ?? []).map((project: any) => (
+                <a
+                  href={`/projects/${project.slug}`}
+                  class="lp-project-card"
+                >
+                  <div class="lp-project-thumb">
+                    {project.data.image && (
+                      <img src={project.data.image} alt={project.data.title} />
+                    )}
+                  </div>
+                  <h3>{project.data.title}</h3>
+                  {project.data.stack && (
+                    <div class="lp-project-tags">
+                      {project.data.stack.slice(0, 3).map((t: string) => (
+                        <span>{t}</span>
+                      ))}
+                    </div>
+                  )}
+                  {project.data.medium && (
+                    <p class="lp-project-medium">{project.data.medium}</p>
+                  )}
+                </a>
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- ── Role navigation (multi-role): two equal cards ─────── -->
+    {isMultiRole && (
+      <section class="lp-roles">
+        <div class="lp-section-inner">
+          <div class="lp-roles-grid">
+            {siteConfig.roles.map((role) => (
+              <a
+                href={`/${role.id}`}
+                class="lp-role-card"
+              >
+                <h3>{role.title}</h3>
+                {role.specialties && (
+                  <p class="lp-role-specialties">{role.specialties.join(" · ")}</p>
+                )}
+                {role.description && (
+                  <p class="lp-role-desc">{role.description}</p>
+                )}
+                <span class="lp-role-explore">Explore →</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- ── Single-role hero sections ───────────────────────────── -->
+    {!isMultiRole && primaryRole.about && (
+      <section class="lp-about">
+        <div class="lp-section-inner lp-section-inner--narrow">
+          <div class="lp-about-body">
+            {primaryRole.about.paragraphs.map((p) => (
+              <p>{p}</p>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- ── CTA ──────────────────────────────────────────────────── -->
+    <section class="lp-cta-section">
+      <div class="lp-section-inner lp-section-inner--narrow lp-section-inner--center">
+        <h2>{ctaHeading}</h2>
+        <p>{ctaMessage}</p>
+        {primaryContactHref && (
+          <a href={primaryContactHref} class="lp-cta lp-cta--primary">
+            {ctaLabel}
+          </a>
+        )}
+      </div>
+    </section>
+
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* ── Hero ──────────────────────────────────────────────────── */
+  .lp-hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1rem;
+  }
+  .lp-hero-inner {
+    max-width: 64rem;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+  .lp-hook {
+    font-family: var(--font-heading, sans-serif);
+    font-weight: var(--heading-weight, 700);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 1.1;
+    letter-spacing: var(--heading-letter-spacing, -0.02em);
+    color: var(--text-primary);
+  }
+  .lp-subheading {
+    font-size: clamp(1rem, 2.5vw, 1.375rem);
+    color: var(--text-secondary);
+    max-width: 40rem;
+    line-height: 1.65;
+    margin: 0;
+  }
+  .lp-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    justify-content: center;
+    padding-top: 1rem;
+  }
+  .lp-cta {
+    padding: 0.875rem 2rem;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+    border-radius: var(--border-radius, 8px);
+    text-decoration: none;
+    transition: var(--transition);
+  }
+  .lp-cta--primary {
+    background-color: var(--accent);
+    color: var(--button-text-color, #fff);
+  }
+  .lp-cta:hover { opacity: 0.85; }
+
+  /* ── Shared sections ───────────────────────────────────────── */
+  .lp-featured,
+  .lp-roles,
+  .lp-about { padding: var(--spacing-section, 5rem) 0; }
+
+  .lp-featured { background-color: var(--bg-secondary); }
+  .lp-roles { background-color: var(--bg-secondary); }
+
+  .lp-section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-card);
+  }
+  .lp-section-inner--narrow { max-width: 720px; }
+  .lp-section-inner--center { text-align: center; }
+
+  .lp-section-heading {
+    font-family: var(--font-heading, sans-serif);
+    font-weight: var(--heading-weight, 700);
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  /* ── Featured grid ─────────────────────────────────────────── */
+  .lp-featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .lp-project-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    padding: 1.25rem;
+    text-decoration: none;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .lp-project-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+  .lp-project-thumb {
+    aspect-ratio: 16 / 9;
+    background: var(--bg-secondary);
+    border-radius: calc(var(--border-radius) - 2px);
+    overflow: hidden;
+  }
+  .lp-project-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .lp-project-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+  }
+  .lp-project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .lp-project-tags span {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--bg-secondary);
+    border-radius: 99px;
+    color: var(--text-secondary);
+  }
+  .lp-project-medium {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* ── Role cards ────────────────────────────────────────────── */
+  .lp-roles-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 640px) {
+    .lp-roles-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .lp-role-card {
+    padding: 2.5rem;
+    background: var(--bg-primary);
+    border: 2px solid var(--border);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: var(--transition);
+  }
+  .lp-role-card:hover { border-color: var(--accent); }
+  .lp-role-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+  .lp-role-specialties {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  .lp-role-desc {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    flex: 1;
+  }
+  .lp-role-explore {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  /* ── About ─────────────────────────────────────────────────── */
+  .lp-about-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .lp-about-body p {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* ── CTA section ───────────────────────────────────────────── */
+  .lp-cta-section {
+    padding: var(--spacing-section, 5rem) 0;
+  }
+  .lp-cta-section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+  }
+  .lp-cta-section p {
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+    margin: 0 0 2rem;
+    line-height: 1.6;
+  }
+</style>

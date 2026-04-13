@@ -1,0 +1,49 @@
+---
+export interface Props {
+  variant?: 'default' | 'primary' | 'secondary';
+  class?: string;
+}
+
+const {
+  variant = 'default',
+  class: className = '',
+} = Astro.props;
+
+const baseClasses = 'theme-badge inline-flex items-center px-3 py-1 text-sm font-medium';
+
+const variantClasses = {
+  default: 'theme-badge-default',
+  primary: 'theme-badge-primary',
+  secondary: 'theme-badge-secondary',
+};
+
+const classes = `${baseClasses} ${variantClasses[variant]} ${className}`;
+---
+
+<span class={classes}>
+  <slot />
+</span>
+
+<style>
+  .theme-badge {
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    transition: var(--transition);
+  }
+
+  .theme-badge-default {
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    border-color: var(--border);
+  }
+
+  .theme-badge-primary {
+    background-color: var(--accent);
+    color: var(--bg-primary);
+  }
+
+  .theme-badge-secondary {
+    background-color: var(--accent-secondary, var(--accent));
+    color: var(--bg-primary);
+  }
+</style>

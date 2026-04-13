@@ -1,0 +1,16 @@
+---
+import type { SkillsLayout } from '@fachada/core';
+import SkillsGrid3 from './skills/SkillsGrid3.astro';
+import SkillsGrid2 from './skills/SkillsGrid2.astro';
+import SkillsList from './skills/SkillsList.astro';
+
+export interface Props {
+  layout?: SkillsLayout;
+}
+
+const { layout = 'grid-3' } = Astro.props;
+---
+
+{layout === 'grid-3' && <SkillsGrid3 />}
+{layout === 'grid-2' && <SkillsGrid2 />}
+{layout === 'list' && <SkillsList />}

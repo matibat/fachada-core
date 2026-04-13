@@ -1,0 +1,34 @@
+---
+import { siteConfig } from '../../config';
+import { profileConfig } from '../../profile.config';
+
+const { paragraphs } = profileConfig.about;
+const isFramework = siteConfig.roles.some(r => r.id === 'framework');
+const heading = isFramework ? 'How It Works' : 'About Me';
+---
+
+<section id="about" class="px-4 py-20">
+  <div class="max-w-3xl mx-auto">
+    <h2 class="text-4xl font-bold mb-10" data-index="01">{heading}</h2>
+    <div class="about-plain-body">
+      {paragraphs.map((paragraph) => (
+        <p class="about-plain-paragraph" style="color: var(--text-secondary);">
+          {paragraph}
+        </p>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-plain-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-element);
+  }
+
+  .about-plain-paragraph {
+    font-size: 1.2rem;
+    line-height: var(--body-line-height);
+  }
+</style>

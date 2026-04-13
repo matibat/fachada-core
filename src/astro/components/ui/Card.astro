@@ -1,0 +1,22 @@
+---
+export interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div class={`theme-card p-6 ${className}`}>
+  <slot />
+</div>
+
+<style>
+  .theme-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    box-shadow: 0 6px 16px var(--shadow);
+    transition: var(--transition);
+  }
+</style>

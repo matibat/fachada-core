@@ -1,0 +1,355 @@
+/**
+ * Theme-specific structural overrides.
+ * Uses data-theme selectors applied to <html> by the ThemeProvider.
+ * Colors live entirely in CSS custom properties (--accent, --bg-*, etc.).
+ * This file controls typography scale, decoration, and layout differences.
+ */
+
+/* ============================================================
+   Minimalist — editorial, narrow, serif, restrained
+   ============================================================ */
+
+[data-theme="minimalist"] main {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+}
+
+[data-theme="minimalist"] section {
+  padding-top: var(--spacing-section);
+  padding-bottom: var(--spacing-section);
+}
+
+[data-theme="minimalist"] [data-testid="hero-title"] {
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 1.05;
+  color: var(--text-primary);
+}
+
+[data-theme="minimalist"] h2 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: var(--heading-weight);
+  margin-bottom: 2.5rem;
+}
+
+/* Clean horizontal rule above section titles */
+[data-theme="minimalist"] h2::before {
+  content: "";
+  display: block;
+  width: 2.5rem;
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 1rem;
+}
+
+/* Inline text links — underline only, no background */
+[data-theme="minimalist"] a:not(.theme-btn):not([class*="nav"]) {
+  text-underline-offset: 3px;
+}
+
+/* Cards: flat, border only — no shadows */
+[data-theme="minimalist"] .theme-card {
+  box-shadow: none;
+  border-radius: 0;
+  border-color: var(--border);
+}
+
+/* Buttons: text with border-bottom instead of filled */
+[data-theme="minimalist"] .theme-btn-primary {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  border-radius: 0;
+  box-shadow: none;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+[data-theme="minimalist"] .theme-btn-primary:hover {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+[data-theme="minimalist"] .theme-btn-outline {
+  border-radius: 0;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+/* Skills badges: plain text, no background */
+[data-theme="minimalist"] .theme-badge {
+  background: transparent;
+  border: none;
+  padding-left: 0;
+  padding-right: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+[data-theme="minimalist"] .theme-badge::after {
+  content: " ·";
+  color: var(--border);
+}
+
+[data-theme="minimalist"] .theme-badge:last-child::after {
+  content: "";
+}
+
+/* ============================================================
+   Modern Tech — bold, wide, glowing accents, dark-first
+   ============================================================ */
+
+[data-theme="modern-tech"] section {
+  padding-top: var(--spacing-section);
+  padding-bottom: var(--spacing-section);
+}
+
+[data-theme="modern-tech"] [data-testid="hero-title"] {
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  line-height: 1.05;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+[data-theme="modern-tech"] h2 {
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  position: relative;
+  display: inline-block;
+}
+
+/* Accent underline on section headings */
+[data-theme="modern-tech"] h2::after {
+  content: "";
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--gradient);
+  margin-top: 0.4rem;
+  border-radius: 1px;
+}
+
+/* Cards: elevated with glow on hover */
+[data-theme="modern-tech"] .theme-card {
+  border-color: var(--border);
+  transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+}
+
+[data-theme="modern-tech"] .theme-card:hover {
+  box-shadow: var(--glow);
+  border-color: var(--accent);
+  transform: translateY(-4px);
+}
+
+/* Glowing primary button */
+[data-theme="modern-tech"] .theme-btn-primary {
+  background: var(--gradient);
+  border-color: transparent;
+  color: var(--button-text-color);
+}
+
+[data-theme="modern-tech"] .theme-btn-primary:hover {
+  box-shadow: var(--glow);
+  filter: brightness(1.1);
+}
+
+/* Outline button with glow on hover */
+[data-theme="modern-tech"] .theme-btn-outline:hover {
+  box-shadow: var(--glow);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Skills: monospace badges with accent border */
+[data-theme="modern-tech"] .theme-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  border-color: var(--accent);
+  color: var(--accent);
+  background: transparent;
+}
+
+/* Subtle grid background for the hero section */
+[data-theme="modern-tech"] [data-testid="hero-section"] {
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ============================================================
+   Professional — structured, clean, corporate-meets-modern
+   ============================================================ */
+
+[data-theme="professional"] section {
+  padding-top: var(--spacing-section);
+  padding-bottom: var(--spacing-section);
+}
+
+[data-theme="professional"] [data-testid="hero-title"] {
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+[data-theme="professional"] h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Numbered accent before section headings */
+[data-theme="professional"] h2::before {
+  content: attr(data-index);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  opacity: 0.7;
+  min-width: 2em;
+}
+
+/* Cards: clean shadow, solid hover border */
+[data-theme="professional"] .theme-card {
+  border-radius: var(--border-radius);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+[data-theme="professional"] .theme-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+/* Accent-colored primary button */
+[data-theme="professional"] .theme-btn-primary {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="professional"] .theme-btn-primary:hover {
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+/* Skills: pills with accent background tint */
+[data-theme="professional"] .theme-badge {
+  font-weight: 500;
+}
+
+/* Divider line above sections (except hero) */
+[data-theme="professional"] section:not(:first-of-type)::before {
+  content: "";
+  display: block;
+  width: 3rem;
+  height: 3px;
+  background: var(--accent);
+  margin: 0 auto 3rem;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   Vaporwave — retro-futurist, neon glows, type-heavy
+   ============================================================ */
+
+[data-theme="vaporwave"] section {
+  padding-top: var(--spacing-section);
+  padding-bottom: var(--spacing-section);
+}
+
+[data-theme="vaporwave"] [data-testid="hero-title"] {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 1.1;
+  text-shadow: 0 0 30px var(--accent), 0 0 60px var(--accent-secondary, #00ffff);
+  letter-spacing: var(--heading-letter-spacing);
+  color: var(--accent);
+}
+
+[data-theme="vaporwave"] h2 {
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  text-shadow: 0 0 20px var(--accent);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Cards: rounded with gradient border */
+[data-theme="vaporwave"] .theme-card {
+  border-radius: var(--border-radius);
+  border-width: 2px;
+  transition: box-shadow var(--transition), transform var(--transition);
+  background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
+              var(--gradient) border-box;
+  border: 2px solid transparent;
+}
+
+[data-theme="vaporwave"] .theme-card:hover {
+  box-shadow: var(--glow);
+  transform: translateY(-4px) scale(1.01);
+}
+
+/* Gradient primary button */
+[data-theme="vaporwave"] .theme-btn-primary {
+  background: var(--gradient);
+  border-color: transparent;
+  color: var(--button-text-color);
+  font-weight: 700;
+  text-shadow: var(--button-text-shadow);
+  border-radius: var(--border-radius);
+}
+
+[data-theme="vaporwave"] .theme-btn-primary:hover {
+  box-shadow: var(--glow);
+  filter: brightness(1.1);
+}
+
+/* Outline button: neon border */
+[data-theme="vaporwave"] .theme-btn-outline {
+  border-width: 2px;
+  border-color: var(--accent);
+  color: var(--accent);
+  border-radius: var(--border-radius);
+}
+
+[data-theme="vaporwave"] .theme-btn-outline:hover {
+  box-shadow: var(--glow);
+  background: transparent;
+}
+
+/* Skills badges: gradient background */
+[data-theme="vaporwave"] .theme-badge {
+  background: var(--gradient);
+  color: var(--button-text-color);
+  border: none;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-shadow: none;
+}
+
+/* Hero: gradient background layer */
+[data-theme="vaporwave"] [data-testid="hero-section"] {
+  background: radial-gradient(ellipse at 60% 40%, var(--bg-secondary) 0%, var(--bg-primary) 60%);
+}
+
+/* Scanline texture on hero for retro feel */
+[data-theme="vaporwave"] [data-testid="hero-section"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, var(--scanline-opacity)) 2px,
+    rgba(0, 0, 0, var(--scanline-opacity)) 4px
+  );
+  pointer-events: none;
+}
+
+[data-theme="vaporwave"] [data-testid="hero-section"] {
+  position: relative;
+  overflow: hidden;
+}

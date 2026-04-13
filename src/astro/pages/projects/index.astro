@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/sections/ProjectCard.astro';
+import Footer from '../../components/Footer.astro';
+
+const projects = (await getCollection('projects'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title="Projects — Fachada" description="Browse my portfolio of web development projects">
+  <main class="px-4 py-20">
+    <div class="max-w-6xl mx-auto">
+      <h1 class="text-5xl font-bold mb-4 text-center">Projects</h1>
+      <p class="text-xl text-gray-600 dark:text-gray-300 mb-12 text-center max-w-2xl mx-auto">
+        A collection of projects I've worked on, showcasing modern web technologies and clean code practices.
+      </p>
+      {projects.length === 0 ? (
+        <p class="text-center text-gray-600 dark:text-gray-400">
+          No projects yet. Check back soon!
+        </p>
+      ) : (
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((project) => (
+            <ProjectCard
+              title={project.data.title}
+              description={project.data.description}
+              stack={project.data.stack}
+              coverImage={project.data.coverImage}
+              liveUrl={project.data.liveUrl}
+              githubUrl={project.data.githubUrl}
+              slug={project.id}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

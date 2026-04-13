@@ -1,0 +1,22 @@
+---
+import { siteConfig } from '../../config';
+import { profileConfig } from '../../profile.config';
+import Card from '../ui/Card.astro';
+
+const { paragraphs } = profileConfig.about;
+---
+
+<section id="about" class="px-4 py-20">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-4xl font-bold mb-8 text-center" data-index="01">About Me</h2>
+    <Card>
+      <div class="max-w-none">
+        {paragraphs.map((paragraph) => (
+          <p class="text-lg mb-4 last:mb-0" style="color: var(--text-secondary);">
+            {paragraph}
+          </p>
+        ))}
+      </div>
+    </Card>
+  </div>
+</section>

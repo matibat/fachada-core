@@ -1,0 +1,187 @@
+---
+/**
+ * HubPage — core template for guide/resource hub pages.
+ *
+ * Renders a card grid linking to sibling pages. Apps declare the cards
+ * via HubPageData in their siteTree subsection definition.
+ */
+import type { HubPageData } from "@fachada/core";
+import type { PageMeta } from "@fachada/core";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { siteConfig } from "../config";
+import { getBaseUrl } from "@fachada/core";
+
+interface Props {
+  meta: PageMeta;
+  data: HubPageData;
+}
+
+const { meta, data } = Astro.props;
+---
+
+<BaseLayout title={meta.title} description={meta.description}>
+  <Header currentPath={meta.path} />
+
+  <main class="hub-page">
+    <div class="hub-container">
+
+      <section class="hub-hero">
+        <h1>{meta.title.split("—")[0].trim()}</h1>
+        <p class="hub-lead">{meta.description}</p>
+      </section>
+
+      <section class="hub-grid">
+        {data.cards.map((card) => (
+          <article class="hub-card">
+            <h2>{card.title}</h2>
+            <p>{card.description}</p>
+            <ul class="hub-checklist">
+              {card.bullets.map((b) => <li>{b}</li>)}
+            </ul>
+            <a href={getBaseUrl(card.link)} class="hub-card-link">View Guide →</a>
+          </article>
+        ))}
+      </section>
+
+      <section class="hub-contact">
+        <h2>Need Help?</h2>
+        <p>
+          {siteConfig.social.whatsapp
+            ? <a href={siteConfig.social.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            : siteConfig.social.email
+              ? <a href={`mailto:${siteConfig.social.email}`}>{siteConfig.social.email}</a>
+              : null
+          }
+        </p>
+      </section>
+
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .hub-page {
+    min-height: 100vh;
+    padding: var(--spacing-section) 0;
+  }
+
+  .hub-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-card);
+  }
+
+  .hub-hero {
+    text-align: center;
+    margin-bottom: var(--spacing-section);
+  }
+
+  .hub-hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .hub-lead {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: var(--spacing-section) 0;
+  }
+
+  .hub-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-card);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: var(--transition);
+  }
+
+  .hub-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .hub-card h2 {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .hub-card p {
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .hub-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+  }
+
+  .hub-checklist li {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  .hub-checklist li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 0.75rem;
+  }
+
+  .hub-card-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: var(--transition);
+  }
+
+  .hub-card-link:hover { color: var(--accent-hover); }
+
+  .hub-contact {
+    text-align: center;
+    padding: var(--spacing-section) 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .hub-contact h2 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+  }
+
+  .hub-contact p {
+    color: var(--text-secondary);
+  }
+
+  .hub-contact a {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+</style>

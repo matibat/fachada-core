@@ -1,0 +1,98 @@
+---
+import { siteConfig } from '../../config';
+import { getCollection } from 'astro:content';
+import Badge from '../../components/ui/Badge.astro';
+import Button from '../../components/ui/Button.astro';
+
+export interface Props {
+  filterRoles?: string[];
+}
+
+const { filterRoles } = Astro.props;
+
+const allProjects = await getCollection('projects');
+const projects = allProjects
+  .filter((project) => {
+    if (!project.data.featured) return false;
+    if (!filterRoles || filterRoles.length === 0) return true;
+    const projectRoles = project.data.roles ?? [];
+    if (projectRoles.length === 0) return true;
+    return projectRoles.some(r => filterRoles.includes(r));
+  })
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 6);
+
+const isFramework = siteConfig.roles.some(r => r.id === 'framework');
+const heading = isFramework ? 'Featured Work' : 'Featured Projects';
+---
+
+<section id="projects" class="px-4 py-20">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-4xl font-bold mb-12 text-center" data-index="03">{heading}</h2>
+    {projects.length === 0 ? (
+      <p class="text-center" style="color: var(--text-secondary);">
+        No projects yet. Check back soon!
+      </p>
+    ) : (
+      <div class="projects-list">
+        {projects.map((project) => (
+          <div class="projects-list-item">
+            <div class="projects-list-body">
+              <h3 class="text-xl font-bold mb-1">{project.data.title}</h3>
+              <p class="text-base mb-3" style="color: var(--text-secondary);">
+                {project.data.description}
+              </p>
+              <div class="flex flex-wrap gap-2">
+                {project.data.stack.slice(0, 4).map((tech) => (
+                  <Badge>{tech}</Badge>
+                ))}
+              </div>
+            </div>
+            <div class="projects-list-actions flex flex-col gap-2 shrink-0">
+              {project.data.liveUrl && (
+                <Button href={project.data.liveUrl} variant="primary" size="sm">
+                  Live
+                </Button>
+              )}
+              {project.data.githubUrl && (
+                <Button href={project.data.githubUrl} variant="outline" size="sm">
+                  Code
+                </Button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .projects-list-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: var(--spacing-card) 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .projects-list-item:last-child {
+    border-bottom: none;
+  }
+
+  .projects-list-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .projects-list-actions {
+    align-items: flex-end;
+  }
+</style>

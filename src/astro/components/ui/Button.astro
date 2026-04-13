@@ -1,0 +1,86 @@
+---
+export interface Props {
+  variant?: 'primary' | 'secondary' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit';
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  class: className = '',
+} = Astro.props;
+
+const baseClasses = 'theme-btn inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2';
+
+const variantClasses = {
+  primary: 'theme-btn-primary',
+  secondary: 'theme-btn-secondary',
+  outline: 'theme-btn-outline',
+};
+
+const sizeClasses = {
+  sm: 'px-3 py-1.5 text-sm',
+  md: 'px-4 py-2 text-base',
+  lg: 'px-6 py-3 text-lg',
+};
+
+const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+
+const Element = href ? 'a' : 'button';
+---
+
+<Element
+  href={href}
+  type={!href ? type : undefined}
+  class={classes}
+  data-theme-variant={variant}
+>
+  <slot />
+</Element>
+
+<style>
+  .theme-btn {
+    border-radius: var(--border-radius);
+    border: 1px solid transparent;
+    transition: var(--transition);
+  }
+
+  .theme-btn-primary {
+    background-color: var(--accent);
+    color: var(--bg-primary);
+    border-color: var(--accent);
+    box-shadow: 0 4px 10px var(--shadow);
+  }
+
+  .theme-btn-primary:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+
+  .theme-btn-secondary {
+    background-color: var(--accent-secondary, var(--accent));
+    color: var(--bg-primary);
+    border-color: var(--accent-secondary, var(--accent));
+  }
+
+  .theme-btn-secondary:hover {
+    filter: brightness(0.95);
+  }
+
+  .theme-btn-outline {
+    background-color: transparent;
+    color: var(--text-primary);
+    border-color: var(--border);
+  }
+
+  .theme-btn-outline:hover {
+    background-color: var(--bg-secondary);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>

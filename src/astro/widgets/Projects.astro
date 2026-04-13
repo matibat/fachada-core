@@ -1,0 +1,18 @@
+---
+import type { ProjectsLayout } from '@fachada/core';
+import ProjectsGrid3 from './projects/ProjectsGrid3.astro';
+import ProjectsGrid2 from './projects/ProjectsGrid2.astro';
+import ProjectsList from './projects/ProjectsList.astro';
+
+export interface Props {
+  layout?: ProjectsLayout;
+  filterRoles?: string[];
+  heading?: string;
+}
+
+const { layout = 'grid-3', filterRoles, heading } = Astro.props;
+---
+
+{layout === 'grid-3' && <ProjectsGrid3 filterRoles={filterRoles} heading={heading} />}
+{layout === 'grid-2' && <ProjectsGrid2 filterRoles={filterRoles} heading={heading} />}
+{layout === 'list' && <ProjectsList filterRoles={filterRoles} />}
