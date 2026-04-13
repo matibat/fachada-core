@@ -1,0 +1,40 @@
+{
+  "name": "@fachada/core",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./vite": "./src/vite/fachada-plugin.ts",
+    "./vite/*": "./src/vite/*.ts",
+    "./types": "./src/types/index.ts",
+    "./types/*": "./src/types/*.ts",
+    "./content/*": "./src/content/*.ts",
+    "./app/*": "./src/app/*.ts",
+    "./utils/*": "./src/utils/*.ts",
+    "./widgets/*": "./src/widgets/*.ts",
+    "./site-tree/*": "./src/site-tree/*.ts",
+    "./theme/*": "./src/theme/*.ts",
+    "./stores/*": "./src/stores/*.ts",
+    "./context/*": "./src/context/*.tsx",
+    "./components/*": "./src/components/*.tsx",
+    "./assets/*": "./src/assets/*.ts"
+  },
+  "peerDependencies": {
+    "astro": ">=4.0.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "dependencies": {
+    "zustand": "^5",
+    "styled-components": "6"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.2",
+    "astro": "^6.1.5",
+    "@astrojs/react": "^5.0.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3"
+  }
+}
