@@ -67,7 +67,7 @@ export function ThemeProvider({ children, defaultTheme = 'minimalist' }: ThemePr
                 globals: Object.keys(THEME_DEFINITIONS),
             });
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Apply CSS custom properties to document root so non-SC components
@@ -128,8 +128,8 @@ export function useThemeActions(): ThemeActions {
     return {
         setStyleTheme,
         setColorMode,
-        applyTheme: async () => {},
-        resetError: () => {},
+        applyTheme: async () => { },
+        resetError: () => { },
     };
 }
 

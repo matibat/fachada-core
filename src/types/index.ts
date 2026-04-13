@@ -1,5 +1,5 @@
 // app.types.ts
-export { APP_CONFIG_VERSION } from './app.types';
+export { APP_CONFIG_VERSION } from "./app.types";
 export type {
   WidgetConfig,
   SectionConfig,
@@ -9,11 +9,11 @@ export type {
   AppThemes,
   AssetConfig,
   AppConfig,
-} from './app.types';
-export type { SiteTreeConfig } from './app.types';
+} from "./app.types";
+export type { SiteTreeConfig } from "./app.types";
 
 // profile.types.ts
-export type { ThemeStyle, ColorMode } from './profile.types';
+export type { ThemeStyle, ColorMode } from "./profile.types";
 export type {
   Role,
   AboutContent,
@@ -24,7 +24,7 @@ export type {
   ThemeConfig,
   ProfileConfig,
   SiteConfig,
-} from './profile.types';
+} from "./profile.types";
 
 // layout.types.ts
 export type {
@@ -34,10 +34,10 @@ export type {
   ProjectsLayout,
   ContactLayout,
   WidgetLayoutConfig,
-} from './layout.types';
+} from "./layout.types";
 
 // site-tree.types.ts
-export { SITE_TREE_VERSION } from './site-tree.types';
+export { SITE_TREE_VERSION } from "./site-tree.types";
 export type {
   LandingPageData,
   RolePageData,
@@ -49,4 +49,4 @@ export type {
   SectionRef,
   SubsectionDefinition,
   LandingDefinition,
-} from './site-tree.types';
+} from "./site-tree.types";
