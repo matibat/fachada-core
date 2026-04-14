@@ -28,7 +28,7 @@ const DEFAULTS: Required<NavbarConfig> = {
  * Tailwind breakpoint to pixel value mapping
  */
 const BREAKPOINT_MAP: Record<
-  Exclude<NavbarConfig["mobileBreakpoint"], number>,
+  Exclude<NavbarConfig["mobileBreakpoint"], number | undefined>,
   number
 > = {
   sm: 640,
@@ -70,6 +70,9 @@ export function resolveMobileBreakpoint(
 ): number {
   if (typeof breakpoint === "number") {
     return breakpoint;
+  }
+  if (!breakpoint) {
+    return 768; // default to md if breakpoint is undefined
   }
   return BREAKPOINT_MAP[breakpoint] ?? 768; // default to md if unknown
 }
