@@ -64,7 +64,10 @@ describe("Scenario 2: sections requiring content are excluded when the collectio
     ];
 
     // When
-    const result = filterSections(sections, { ...baseContext, projectsCount: 0 });
+    const result = filterSections(sections, {
+      ...baseContext,
+      projectsCount: 0,
+    });
 
     // Then
     expect(result).not.toContain("projects");
@@ -78,7 +81,10 @@ describe("Scenario 2: sections requiring content are excluded when the collectio
     ];
 
     // When
-    const result = filterSections(sections, { ...baseContext, projectsCount: 5 });
+    const result = filterSections(sections, {
+      ...baseContext,
+      projectsCount: 5,
+    });
 
     // Then
     expect(result).toContain("projects");
@@ -121,7 +127,10 @@ describe("Scenario 3: sections requiring a role are excluded when no matching ro
     ];
 
     // When
-    const result = filterSections(sections, { ...baseContext, availableRoles: ["engineer"] });
+    const result = filterSections(sections, {
+      ...baseContext,
+      availableRoles: ["engineer"],
+    });
 
     // Then
     expect(result).not.toContain("art-showcase");
@@ -134,7 +143,10 @@ describe("Scenario 3: sections requiring a role are excluded when no matching ro
     ];
 
     // When
-    const result = filterSections(sections, { ...baseContext, availableRoles: ["engineer"] });
+    const result = filterSections(sections, {
+      ...baseContext,
+      availableRoles: ["engineer"],
+    });
 
     // Then
     expect(result).toContain("tech-stack");

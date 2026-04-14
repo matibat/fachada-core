@@ -45,8 +45,8 @@ describe(
     () => {
         it(
             'Given: two roles, ' +
-                'When: component mounts, ' +
-                'Then: a button for each role is visible',
+            'When: component mounts, ' +
+            'Then: a button for each role is visible',
             () => {
                 render(
                     <RoleExplorer
@@ -62,8 +62,8 @@ describe(
 
         it(
             'Given: primaryRole is "engineer", ' +
-                'When: component mounts, ' +
-                'Then: the engineer button has aria-pressed=true',
+            'When: component mounts, ' +
+            'Then: the engineer button has aria-pressed=true',
             () => {
                 render(
                     <RoleExplorer
@@ -89,8 +89,8 @@ describe(
     () => {
         it(
             'Given: engineer is active, ' +
-                'When: artist card is clicked, ' +
-                'Then: artist button becomes aria-pressed=true',
+            'When: artist card is clicked, ' +
+            'Then: artist button becomes aria-pressed=true',
             () => {
                 render(
                     <RoleExplorer
@@ -109,8 +109,8 @@ describe(
 
         it(
             'Given: a role with about content, ' +
-                'When: it is the active role, ' +
-                'Then: the About section is rendered',
+            'When: it is the active role, ' +
+            'Then: the About section is rendered',
             () => {
                 render(
                     <RoleExplorer

@@ -32,7 +32,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@fachada/core": path.resolve("./src"),
-      "styled-components": path.resolve("./src/__mocks__/styled-components.tsx"),
+      "styled-components": path.resolve(
+        "./src/__mocks__/styled-components.tsx",
+      ),
     },
   },
   test: {
@@ -49,6 +51,16 @@ export default defineConfig({
         "dist/",
         "**/*.config.*",
         "**/*.d.ts",
+        // Astro components/layouts/pages — not unit-testable; covered by E2E
+        "src/astro/**",
+        // Pure TypeScript type declarations — no executable statements
+        "src/types/**",
+        // Vite plugin — build infrastructure, not unit-testable
+        "src/vite/**",
+        // CLI entry point — requires file system / interactive context
+        "src/cli/**",
+        // Test mock helpers
+        "src/__mocks__/**",
       ],
       thresholds: {
         statements: 80,

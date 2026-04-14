@@ -17,14 +17,25 @@ import type { ThemeDependencies } from "./theme.types";
 
 // ─── Storage factory ──────────────────────────────────────────────────────────
 
-function makeMockStorage(): { storage: Storage; store: Record<string, string> } {
+function makeMockStorage(): {
+  storage: Storage;
+  store: Record<string, string>;
+} {
   const store: Record<string, string> = {};
   const storage: Storage = {
     getItem: (key: string) => store[key] ?? null,
-    setItem: (key: string, value: string) => { store[key] = value; },
-    removeItem: (key: string) => { delete store[key]; },
-    clear: () => { Object.keys(store).forEach((k) => delete store[k]); },
-    get length() { return Object.keys(store).length; },
+    setItem: (key: string, value: string) => {
+      store[key] = value;
+    },
+    removeItem: (key: string) => {
+      delete store[key];
+    },
+    clear: () => {
+      Object.keys(store).forEach((k) => delete store[k]);
+    },
+    get length() {
+      return Object.keys(store).length;
+    },
     key: (index: number) => Object.keys(store)[index] ?? null,
   };
   return { storage, store };
@@ -222,7 +233,9 @@ describe("Given the readFromStorage utility", () => {
 
   it("When storage.getItem throws QuotaExceededError, Then returns failure with STORAGE_QUOTA_EXCEEDED", () => {
     const quotaStorage: Storage = {
-      getItem: vi.fn(() => { throw new Error("QuotaExceededError: exceeded"); }),
+      getItem: vi.fn(() => {
+        throw new Error("QuotaExceededError: exceeded");
+      }),
       setItem: vi.fn(),
       removeItem: vi.fn(),
       clear: vi.fn(),
@@ -253,10 +266,16 @@ describe("Given the writeToStorage utility", () => {
   it("When writing an object value, Then stores it as JSON and returns success", () => {
     const { storage, store } = makeMockStorage();
 
-    const result = writeToStorage({ storage }, "prefs", { mode: "auto", style: "minimalist" });
+    const result = writeToStorage({ storage }, "prefs", {
+      mode: "auto",
+      style: "minimalist",
+    });
 
     expect(result.success).toBe(true);
-    expect(JSON.parse(store["prefs"])).toEqual({ mode: "auto", style: "minimalist" });
+    expect(JSON.parse(store["prefs"])).toEqual({
+      mode: "auto",
+      style: "minimalist",
+    });
   });
 
   it("When storage is unavailable (no storage dep), Then returns failure with STORAGE_UNAVAILABLE", () => {
@@ -269,7 +288,9 @@ describe("Given the writeToStorage utility", () => {
   it("When storage.setItem throws QuotaExceededError, Then returns failure with STORAGE_QUOTA_EXCEEDED", () => {
     const quotaStorage: Storage = {
       getItem: vi.fn(() => null),
-      setItem: vi.fn(() => { throw new Error("QuotaExceededError: storage full"); }),
+      setItem: vi.fn(() => {
+        throw new Error("QuotaExceededError: storage full");
+      }),
       removeItem: vi.fn(),
       clear: vi.fn(),
       length: 0,

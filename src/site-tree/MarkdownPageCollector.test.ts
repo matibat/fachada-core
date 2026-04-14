@@ -90,11 +90,7 @@ describe("Scenario 3: Wrong app — entry whose apps does not include activeApp 
       "Then result.pages is empty and result.skipped contains the entry id",
     () => {
       const entry = makeEntry("foreign", { apps: ["other-app"] });
-      const result = collectMarkdownPages(
-        [entry],
-        "test-app",
-        noExistingPaths,
-      );
+      const result = collectMarkdownPages([entry], "test-app", noExistingPaths);
 
       expect(result.pages).toHaveLength(0);
       expect(result.skipped.some((s) => s.id === "foreign")).toBe(true);
@@ -136,11 +132,7 @@ describe('Scenario 5: Path "/" skipped — entry with data.path "/" is added to 
         apps: ["test-app"],
         path: "/",
       });
-      const result = collectMarkdownPages(
-        [entry],
-        "test-app",
-        noExistingPaths,
-      );
+      const result = collectMarkdownPages([entry], "test-app", noExistingPaths);
 
       expect(result.pages).toHaveLength(0);
       expect(result.skipped.some((s) => s.id === "root-collision")).toBe(true);
@@ -158,11 +150,7 @@ describe("Scenario 6: Default path from id — entry with no data.path resolves 
     () => {
       const entry = makeEntry("my-page", { apps: ["test-app"] });
       delete (entry.data as { path?: string }).path;
-      const result = collectMarkdownPages(
-        [entry],
-        "test-app",
-        noExistingPaths,
-      );
+      const result = collectMarkdownPages([entry], "test-app", noExistingPaths);
 
       expect(result.pages).toHaveLength(1);
       expect(result.pages[0].meta.path).toBe("/my-page");
@@ -185,11 +173,7 @@ describe("Scenario 7: Optional meta fields — keywords, llmSummary, ogImage map
         llmSummary: "A summary for LLMs.",
         ogImage: "/images/og.png",
       });
-      const result = collectMarkdownPages(
-        [entry],
-        "test-app",
-        noExistingPaths,
-      );
+      const result = collectMarkdownPages([entry], "test-app", noExistingPaths);
 
       expect(result.pages).toHaveLength(1);
       const meta = result.pages[0].meta;
@@ -215,11 +199,7 @@ describe("Scenario 8: Optional MarkdownPageData fields — downloadFilename, bac
         backLink: { href: "/prev", label: "Previous" },
         nextLink: { href: "/next", label: "Next" },
       });
-      const result = collectMarkdownPages(
-        [entry],
-        "test-app",
-        noExistingPaths,
-      );
+      const result = collectMarkdownPages([entry], "test-app", noExistingPaths);
 
       expect(result.pages).toHaveLength(1);
       const td = result.pages[0].templateData as {

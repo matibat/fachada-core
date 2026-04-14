@@ -1,0 +1,6 @@
+src/
+*.tsbuildinfo
+node_modules/
+.yarn/
+vitest.config.ts
+tsconfig*.json

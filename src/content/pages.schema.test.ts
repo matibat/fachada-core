@@ -107,7 +107,10 @@ describe("pages collection schema", () => {
 
       expect(result.data.title).toBe("Full Test Page");
       expect(result.data.apps).toBe("*");
-      expect(result.data.backLink).toEqual({ href: "/prev", label: "Previous" });
+      expect(result.data.backLink).toEqual({
+        href: "/prev",
+        label: "Previous",
+      });
       expect(result.data.nextLink).toEqual({ href: "/next", label: "Next" });
       expect(result.data.keywords).toEqual(["test", "vitest"]);
       expect(result.data.downloadFilename).toBe("guide.pdf");

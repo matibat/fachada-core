@@ -2,14 +2,31 @@
     "name": "@fachada/core",
     "version": "0.1.0",
     "type": "module",
+    "description": "The core of the Fachada framework",
+    "keywords": [
+        "portfolio",
+        "framework",
+        "web page",
+        "spa",
+        "static site",
+        "fachada"
+    ],
+    "author": "Matías Batista <matibat@gmail.com>",
+    "license": "GPL-3.0-or-later",
     "bin": {
-        "create-fachada-app": "./src/cli/create-app.ts"
+        "create-fachada-app": "./dist/cli/create-app.js"
     },
     "exports": {
-        ".": "./src/index.ts",
-        "./astro": "./src/astro/integration.ts",
-        "./vite": "./src/vite/fachada-plugin.ts"
+        ".": "./dist/index.js",
+        "./astro": "./dist/astro/integration.js",
+        "./vite": "./dist/vite/fachada-plugin.js"
     },
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
     "peerDependencies": {
         "astro": ">=4.0.0",
         "react": ">=18.0.0",
@@ -18,6 +35,8 @@
         "zustand": ">=4.0.0"
     },
     "scripts": {
+        "build": "tsc -p tsconfig.build.json && find src/astro -name '*.astro' -o -name '*.css' | while read f; do dest=\"dist/astro/${f#src/astro/}\"; mkdir -p \"$(dirname \"$dest\")\"; cp \"$f\" \"$dest\"; done",
+        "prepare": "npm run build",
         "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage"
@@ -40,5 +59,8 @@
     },
     "dependencies": {
         "zod": "^4.3.6"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

@@ -729,7 +729,7 @@ __metadata:
     styled-components: ">=5.0.0"
     zustand: ">=4.0.0"
   bin:
-    create-fachada-app: ./src/cli/create-app.ts
+    create-fachada-app: ./dist/cli/create-app.js
   languageName: unknown
   linkType: soft
 

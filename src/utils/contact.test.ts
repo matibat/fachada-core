@@ -14,7 +14,11 @@ import { resolveContactMessage } from "./contact";
 describe("resolveContactMessage — page-level override takes top priority", () => {
   it("Given all three sources are defined, When resolving, Then returns messageProp", () => {
     expect(
-      resolveContactMessage("page message", "profile message", "fallback message"),
+      resolveContactMessage(
+        "page message",
+        "profile message",
+        "fallback message",
+      ),
     ).toBe("page message");
   });
 
@@ -35,15 +39,15 @@ describe("resolveContactMessage — page-level override takes top priority", () 
 
 describe("resolveContactMessage — profileDefault wins when no page override", () => {
   it("Given messageProp is undefined and profileDefault is set, When resolving, Then returns profileDefault", () => {
-    expect(resolveContactMessage(undefined, "profile message", "fallback")).toBe(
-      "profile message",
-    );
+    expect(
+      resolveContactMessage(undefined, "profile message", "fallback"),
+    ).toBe("profile message");
   });
 
   it("Given messageProp is undefined and profileDefault is set without a custom fallback, When resolving, Then returns profileDefault", () => {
-    expect(resolveContactMessage(undefined, "Available for new projects.")).toBe(
-      "Available for new projects.",
-    );
+    expect(
+      resolveContactMessage(undefined, "Available for new projects."),
+    ).toBe("Available for new projects.");
   });
 });
 

@@ -80,9 +80,8 @@ describe("themeStore", () => {
       );
 
       // And: the CSS var is written to the document root
-      const bgPrimary = document.documentElement.style.getPropertyValue(
-        "--bg-primary",
-      );
+      const bgPrimary =
+        document.documentElement.style.getPropertyValue("--bg-primary");
       expect(bgPrimary).toBe(THEME_DEFINITIONS["minimalist"].light.bgPrimary);
     });
 
@@ -117,9 +116,8 @@ describe("themeStore", () => {
       expect(state.tokens.bgPrimary).toBe(expectedBg);
 
       // And: CSS var is updated on the document root
-      const cssVar = document.documentElement.style.getPropertyValue(
-        "--bg-primary",
-      );
+      const cssVar =
+        document.documentElement.style.getPropertyValue("--bg-primary");
       expect(cssVar).toBe(expectedBg);
     });
 
@@ -160,9 +158,8 @@ describe("themeStore", () => {
       expect(state.tokens.bgPrimary).toBe(expectedBg);
 
       // And: CSS var reflects dark token
-      const cssVar = document.documentElement.style.getPropertyValue(
-        "--bg-primary",
-      );
+      const cssVar =
+        document.documentElement.style.getPropertyValue("--bg-primary");
       expect(cssVar).toBe(expectedBg);
     });
 

@@ -1,6 +1,6 @@
 import type { AstroIntegration } from "astro";
 import { fileURLToPath } from "url";
-import { fachadaPlugin } from "../vite/fachada-plugin";
+import { fachadaPlugin } from "../vite/fachada-plugin.js";
 
 function localPath(relativePath: string): string {
   return fileURLToPath(new URL(relativePath, import.meta.url));
@@ -43,12 +43,12 @@ export function fachadaIntegration(): AstroIntegration {
         });
         injectRoute({
           pattern: "/robots.txt",
-          entrypoint: localPath("./pages/robots.txt.ts"),
+          entrypoint: localPath("./pages/robots.txt.js"),
           prerender: true,
         });
         injectRoute({
           pattern: "/llm.txt",
-          entrypoint: localPath("./pages/llm.txt.ts"),
+          entrypoint: localPath("./pages/llm.txt.js"),
           prerender: true,
         });
 

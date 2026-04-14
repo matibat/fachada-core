@@ -2,9 +2,14 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "declaration": true,
-    "declarationDir": "./dist/types",
+    "declarationDir": "./dist",
     "outDir": "./dist",
-    "emitDeclarationOnly": true
+    "noEmit": false,
+    "emitDeclarationOnly": false,
+    "rewriteRelativeImportExtensions": true,
+    "rootDir": "./src",
+    "ignoreDeprecations": "6.0",
+    "noEmitOnError": false
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx"]

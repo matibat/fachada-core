@@ -17,7 +17,12 @@ describe("B1: themeLayouts entry takes precedence over section.layout", () => {
     const themeLayouts = { minimal: { hero: "split" as const } };
 
     // When
-    const result = resolveWidgetLayout("hero", "centered", themeLayouts, "minimal");
+    const result = resolveWidgetLayout(
+      "hero",
+      "centered",
+      themeLayouts,
+      "minimal",
+    );
 
     // Then
     expect(result).toBe("split");
@@ -28,7 +33,12 @@ describe("B1: themeLayouts entry takes precedence over section.layout", () => {
     const themeLayouts = { warm: { skills: "list" as const } };
 
     // When
-    const result = resolveWidgetLayout("skills", "grid-3", themeLayouts, "warm");
+    const result = resolveWidgetLayout(
+      "skills",
+      "grid-3",
+      themeLayouts,
+      "warm",
+    );
 
     // Then
     expect(result).toBe("list");
@@ -54,7 +64,12 @@ describe("B2: falls back to section.layout when no entry exists for the active t
     const themeLayouts = { minimal: { hero: "split" as const } };
 
     // When
-    const result = resolveWidgetLayout("hero", "centered", themeLayouts, "vaporwave");
+    const result = resolveWidgetLayout(
+      "hero",
+      "centered",
+      themeLayouts,
+      "vaporwave",
+    );
 
     // Then
     expect(result).toBe("centered");
@@ -65,7 +80,12 @@ describe("B2: falls back to section.layout when no entry exists for the active t
     const themeLayouts = { minimal: { about: "plain" as const } };
 
     // When
-    const result = resolveWidgetLayout("about", "card", themeLayouts, undefined);
+    const result = resolveWidgetLayout(
+      "about",
+      "card",
+      themeLayouts,
+      undefined,
+    );
 
     // Then
     expect(result).toBe("card");
@@ -77,7 +97,12 @@ describe("B2: falls back to section.layout when no entry exists for the active t
 describe("B3: falls back when themeLayouts is undefined", () => {
   it("Given themeLayouts is undefined, When any activeTheme, Then section.layout is returned", () => {
     // Given / When
-    const result = resolveWidgetLayout("hero", "centered", undefined, "minimal");
+    const result = resolveWidgetLayout(
+      "hero",
+      "centered",
+      undefined,
+      "minimal",
+    );
 
     // Then
     expect(result).toBe("centered");

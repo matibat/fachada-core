@@ -89,7 +89,8 @@ export function readAppRegistry(
  * Returns defaultApp if the name is not found.
  */
 export function resolveAppName(rawName: string, registry: AppRegistry): string {
-  return rawName in registry.apps ? rawName : registry.defaultApp;
+  const apps = registry.apps ?? {};
+  return rawName in apps ? rawName : registry.defaultApp;
 }
 
 // Backwards compatibility: export old name
