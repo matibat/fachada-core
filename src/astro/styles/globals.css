@@ -1,12 +1,24 @@
-/* Import theme system first */
+/* Import shared CSS variable definitions (z-index scale, etc.) */
 @import './themes.css';
-@import './theme-overrides.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Smooth scrolling for navigation */
+/**
+ * Skin-aware global styles.
+ *
+ * All visual properties are driven entirely by CSS custom properties injected
+ * by BaseLayout.astro's inline script (before first paint). This means ANY
+ * skin — built-in or custom app-level — automatically inherits correct styling
+ * with no per-skin CSS rules required.
+ *
+ * Do NOT add [data-theme="xxx"] selectors here. If a skin needs unique
+ * decorative effects, it should define additional CSS custom properties in its
+ * YAML token file and consume them from this file.
+ */
+
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -20,8 +32,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition:
-      background-color var(--transition),
-      color var(--transition);
+      background-color var(--transition, 0.3s ease),
+      color var(--transition, 0.3s ease);
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -32,6 +44,103 @@
 
   code, pre, kbd, samp {
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  }
+}
+
+/* ── Shared structural layout — works for ALL skins ──────────────────────── */
+@layer base {
+  /* Content column width driven by --content-max-width skin token */
+  main {
+    max-width: var(--content-max-width, 960px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Section vertical rhythm driven by --spacing-section skin token */
+  section {
+    padding-top: var(--spacing-section, 5rem);
+    padding-bottom: var(--spacing-section, 5rem);
+  }
+
+  /* Smooth color transitions on interactive elements */
+  a, button {
+    transition:
+      color var(--transition, 0.3s ease),
+      background-color var(--transition, 0.3s ease),
+      border-color var(--transition, 0.3s ease),
+      box-shadow var(--transition, 0.3s ease);
+  }
+}
+
+/* ── Reusable skin-aware component classes ───────────────────────────────── */
+@layer components {
+  /* Card: background + border from skin tokens */
+  .theme-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius, 0.375rem);
+    padding: var(--spacing-card, 1.5rem);
+    transition: box-shadow var(--transition, 0.3s ease), transform var(--transition, 0.3s ease), border-color var(--transition, 0.3s ease);
+  }
+
+  .theme-card:hover {
+    box-shadow: var(--shadow, 0 4px 12px rgba(0,0,0,0.08));
+  }
+
+  /* Primary action button */
+  .theme-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--accent);
+    color: var(--button-text-color, var(--bg-primary));
+    border: 2px solid var(--accent);
+    border-radius: var(--border-radius, 0.375rem);
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .theme-btn-primary:hover {
+    background-color: var(--accent-hover, var(--accent));
+    border-color: var(--accent-hover, var(--accent));
+  }
+
+  /* Outline / secondary button */
+  .theme-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 2px solid var(--border);
+    border-radius: var(--border-radius, 0.375rem);
+    font-family: var(--font-body);
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .theme-btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Skill / tag badge */
+  .theme-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--border-radius, 0.375rem) * 2);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
   }
 }
 

@@ -1,0 +1,61 @@
+# Minimalist skin — maximum simplicity, generous whitespace, content-first
+name: Minimalist
+description: Maximum simplicity, generous whitespace, content-first
+
+light:
+  bgPrimary: "#F9F8F5"
+  bgSecondary: "#FFFFFF"
+  textPrimary: "#141414"
+  textSecondary: "#555550"
+  accent: "#141414"
+  accentHover: "#000000"
+  accentSecondary: null
+  accentTertiary: null
+  border: "#E5E4DF"
+  shadow: "rgba(0, 0, 0, 0.05)"
+  borderRadius: "0"
+  transition: "0.3s ease"
+  glow: "none"
+  gradient: "none"
+  spacingSection: "8rem"
+  spacingCard: "2rem"
+  spacingElement: "1.5rem"
+  fontBody: "'DM Sans', 'Helvetica Neue', Arial, sans-serif"
+  fontHeading: "'Playfair Display', 'Georgia', serif"
+  fontMono: "'JetBrains Mono', 'Courier New', monospace"
+  headingWeight: "400"
+  bodyLineHeight: "1.8"
+  contentMaxWidth: "720px"
+  headingLetterSpacing: "-0.02em"
+  buttonTextColor: "#141414"
+  buttonTextShadow: "none"
+  scanlineOpacity: "0"
+
+dark:
+  bgPrimary: "#0E0E0C"
+  bgSecondary: "#161614"
+  textPrimary: "#F0EFE8"
+  textSecondary: "#A8A89E"
+  accent: "#F0EFE8"
+  accentHover: "#FFFFFF"
+  accentSecondary: null
+  accentTertiary: null
+  border: "#2A2A26"
+  shadow: "rgba(255, 255, 255, 0.04)"
+  borderRadius: "0"
+  transition: "0.3s ease"
+  glow: "none"
+  gradient: "none"
+  spacingSection: "8rem"
+  spacingCard: "2rem"
+  spacingElement: "1.5rem"
+  fontBody: "'DM Sans', 'Helvetica Neue', Arial, sans-serif"
+  fontHeading: "'Playfair Display', 'Georgia', serif"
+  fontMono: "'JetBrains Mono', 'Courier New', monospace"
+  headingWeight: "400"
+  bodyLineHeight: "1.8"
+  contentMaxWidth: "720px"
+  headingLetterSpacing: "-0.02em"
+  buttonTextColor: "inherit"
+  buttonTextShadow: "none"
+  scanlineOpacity: "0"

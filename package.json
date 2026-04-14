@@ -36,7 +36,8 @@
         "zustand": ">=4.0.0"
     },
     "scripts": {
-        "build": "tsc -p tsconfig.build.json && mkdir -p dist/astro && cp -r src/astro/{components,layouts,pages,styles,templates,widgets} dist/astro/ 2>/dev/null; cp -r src/navbar dist/ 2>/dev/null; true",
+        "prebuild": "node scripts/generate-themes.mjs",
+        "build": "tsc -p tsconfig.build.json && mkdir -p dist/astro && cp -r src/astro/{components,layouts,pages,styles,templates,widgets} dist/astro/ 2>/dev/null; cp -r src/navbar dist/ 2>/dev/null; mkdir -p dist/skin && cp -r src/skin/{defaults,themes} dist/skin/ 2>/dev/null; true",
         "prepare": "yarn run build",
         "test": "vitest run",
         "test:watch": "vitest",
