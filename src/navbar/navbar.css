@@ -19,7 +19,7 @@
   gap: 1rem;
   padding: 1rem;
   background-color: var(--bg-primary, #ffffff);
-  border-color: var(--border, #e5e7eb);
+  border-bottom: 1px solid var(--border, #e5e7eb);
 }
 
 /* ─────────────────────────────────────────────────────────────────── */
