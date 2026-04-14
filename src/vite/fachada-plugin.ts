@@ -1,20 +1,21 @@
 /**
- * vite-plugin-fachada — build-time app selection via .fachadarc.json.
+ * vite-plugin-fachada — build-time app selection and virtual-module generator.
  *
  * Provides the virtual module `virtual:fachada/active-app` which exports:
  *   - `appConfig`     — the build-time-selected AppConfig
- *   - `AVAILABLE_APPS` — frozen array of all app names from .fachadarc.json
+ *   - `AVAILABLE_APPS` — frozen array of discovered app names
  *
  * The active app is resolved in priority order:
  *   1. `activeApp` argument passed to `fachadaPlugin()`
  *   2. `APP` environment variable
- *   3. `defaultApp` field from .fachadarc.json
+ *   3. First discovered app from `apps/` or the single-app fallback at `app/app.config.ts`
  *
  * Usage: APP=app-name yarn dev
  *        APP=app-name yarn build
  *
- * Adding a new app: create `apps/<name>/app.config.ts`, add one entry to
- * `.fachadarc.json`. No changes to core code required.
+ * Adding a new app: create `apps/<name>/app.config.ts` or use a single app at
+ * `app/app.config.ts`. The plugin auto-discovers `apps/` and will prefer the
+ * `APP` env var or the discovered default when provided.
  */
 
 import { readFileSync, readdirSync } from "fs";
@@ -22,8 +23,8 @@ import { resolve } from "path";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export interface FachadaRc {
-  /** App name used when APP / PROFILE env vars are absent. */
+export interface AppRegistry {
+  /** App name used when APP env var is absent. */
   defaultApp: string;
   /** Registry: app name → path relative to project root. Optional—auto-discovered if omitted. */
   apps?: Record<string, string>;
@@ -58,27 +59,45 @@ function discoverApps(cwd: string): Record<string, string> {
   return apps;
 }
 
-export function readFachadarc(
+export function readAppRegistry(
   cwd: string = process.cwd(),
-): FachadaRc & { apps: Record<string, string> } {
-  const path = resolve(cwd, ".fachadarc.json");
-  const config = JSON.parse(readFileSync(path, "utf-8")) as FachadaRc;
+): AppRegistry & { apps: Record<string, string> } {
+  // No legacy RC file is read. Apps are discovered from `apps/` and the
+  // single-app convention at `app/app.config.ts` is supported as a fallback.
+  const apps = discoverApps(cwd);
 
-  // Auto-discover apps if not explicitly provided
-  if (!config.apps || Object.keys(config.apps).length === 0) {
-    config.apps = discoverApps(cwd);
+  // Ensure single-app convention is included when present
+  const appPath = resolve(cwd, "app", "app.config.ts");
+  try {
+    readFileSync(appPath, "utf-8");
+    apps.app = "app/app.config.ts";
+  } catch {
+    // no single-app layout
   }
 
-  return config as FachadaRc & { apps: Record<string, string> };
+  // Prefer explicit `default-fachada` when present for deterministic behaviour;
+  // otherwise fall back to the first discovered app.
+  const defaultApp = apps["default-fachada"]
+    ? "default-fachada"
+    : (Object.keys(apps)[0] ?? "default-fachada");
+
+  return { defaultApp, apps } as AppRegistry & { apps: Record<string, string> };
 }
 
 /**
  * Resolves an app name to a registered app from the registry.
  * Returns defaultApp if the name is not found.
  */
-export function resolveAppName(rawName: string, fachadarc: FachadaRc): string {
-  return rawName in fachadarc.apps ? rawName : fachadarc.defaultApp;
+export function resolveAppName(rawName: string, registry: AppRegistry): string {
+  return rawName in registry.apps ? rawName : registry.defaultApp;
 }
+
+// Backwards compatibility: export old name
+// Backwards compatibility: keep the previous alias name but do not imply a
+// filesystem-backed RC exists — the function now returns the discovered
+// registry (no RC file is read).
+export const readFachadarc = readAppRegistry;
+export type FachadaRc = AppRegistry;
 
 // ─── Plugin ───────────────────────────────────────────────────────────────────
 
@@ -101,12 +120,12 @@ export function fachadaPlugin(activeApp?: string, cwd: string = process.cwd()) {
     load(id: string) {
       if (id !== RESOLVED_ID) return;
 
-      const fachadarc = readFachadarc(cwd);
-      const rawName = activeApp ?? process.env.APP ?? fachadarc.defaultApp;
-      const appName = resolveAppName(rawName, fachadarc);
-      const appRelPath = fachadarc.apps[appName];
+      const registry = readAppRegistry(cwd);
+      const rawName = activeApp ?? process.env.APP ?? registry.defaultApp;
+      const appName = resolveAppName(rawName, registry);
+      const appRelPath = registry.apps[appName];
       const absPath = resolve(cwd, appRelPath);
-      const availableApps = JSON.stringify(Object.keys(fachadarc.apps));
+      const availableApps = JSON.stringify(Object.keys(registry.apps));
 
       return [
         `export { appConfig } from ${JSON.stringify(absPath)};`,

@@ -13,13 +13,22 @@ export function fachadaIntegration(): AstroIntegration {
     name: "@fachada/core",
     hooks: {
       "astro:config:setup": ({ injectRoute, updateConfig, addWatchFile }) => {
-        injectRoute({ pattern: "/", entrypoint: localPath("./pages/index.astro") });
+        injectRoute({
+          pattern: "/",
+          entrypoint: localPath("./pages/index.astro"),
+        });
         injectRoute({
           pattern: "/[...slug]",
           entrypoint: localPath("./pages/[...slug].astro"),
         });
-        injectRoute({ pattern: "/404", entrypoint: localPath("./pages/404.astro") });
-        injectRoute({ pattern: "/blog", entrypoint: localPath("./pages/blog/index.astro") });
+        injectRoute({
+          pattern: "/404",
+          entrypoint: localPath("./pages/404.astro"),
+        });
+        injectRoute({
+          pattern: "/blog",
+          entrypoint: localPath("./pages/blog/index.astro"),
+        });
         injectRoute({
           pattern: "/blog/[slug]",
           entrypoint: localPath("./pages/blog/[slug].astro"),
@@ -49,10 +58,28 @@ export function fachadaIntegration(): AstroIntegration {
             define: {
               "import.meta.env.APP": JSON.stringify(activeApp),
             },
+            resolve: {
+              // Deduplicate shared peer deps so fachada-core and the host app
+              // always use the same single instance, regardless of Node module
+              // resolution walking up past fachada-core's own directory.
+              dedupe: [
+                "react",
+                "react-dom",
+                "zustand",
+                "styled-components",
+                "framer-motion",
+              ],
+            },
           },
         });
 
-        addWatchFile(localPath("../../../.fachadarc.json"));
+        // Watch the single-app convention first, fall back to legacy config if present
+        try {
+          addWatchFile(localPath("../../../app/app.config.ts"));
+        } catch {
+          // ignore — file may not exist during migration; tooling can still
+          // auto-discover apps from `apps/` when needed
+        }
       },
     },
   };
