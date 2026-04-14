@@ -10,7 +10,7 @@ export type {
   AssetConfig,
   AppConfig,
 } from "./app.types";
-export type { SiteTreeConfig } from "./app.types";
+export type { SiteTreeConfig, NavbarConfig } from "./app.types";
 
 // profile.types.ts
 export type { ThemeStyle, ColorMode } from "./profile.types";

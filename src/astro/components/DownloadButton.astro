@@ -1,6 +1,7 @@
 ---
-const { href, label = 'Download' } = Astro.props;
+const { href, label = "Download" } = Astro.props;
 ---
+
 <a class="download-button" href={href} download>
   {label}
 </a>

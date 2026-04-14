@@ -1,88 +1,200 @@
 ---
 /**
  * Page header with config-driven navigation.
+ *
+ * Features:
  * - Logo/name on left (from appConfig.seo.name)
  * - Nav items derived from top-level siteTree landing subsections
  * - Contact CTA on right
+ * - Mobile hamburger menu (configurable via NavbarConfig)
+ * - Theme-aware styling
+ *
+ * Configuration:
+ * - navbar config loaded from appConfig.navbar (NavbarConfig interface)
+ * - Defaults to horizontal layout, sticky position, md mobile breakpoint
+ * - Fully backward compatible: apps without navbar config still work
  */
-import { getActiveAppConfig } from '@fachada/core';
-import { getBaseUrl } from '@fachada/core';
+import { getActiveAppConfig } from "@fachada/core";
+import { getBaseUrl } from "@fachada/core";
+import {
+  getNavbarConfig,
+  getNavbarClasses,
+  getMobileMenuAttrs,
+} from "../../navbar/navbar.utils";
+import "../../../navbar/navbar.css";
 
 interface Props {
   currentPath?: string;
 }
 
-const { currentPath = '/' } = Astro.props;
+const { currentPath = "/" } = Astro.props;
 const appConfig = getActiveAppConfig();
 const siteConfig = appConfig.seo;
 
+// Load navbar configuration with defaults
+const navbarConfig = getNavbarConfig(appConfig.navbar);
+const navbarClasses = getNavbarClasses(navbarConfig);
+const menuAttrs = getMobileMenuAttrs(navbarConfig);
+
 const subsections = appConfig.siteTree?.landing.subsections ?? [];
 const navItems = subsections
-  .filter(s => !s.meta.path.substring(1).includes('/'))
-  .map(s => ({
+  .filter((s) => !s.meta.path.substring(1).includes("/"))
+  .map((s) => ({
     href: getBaseUrl(s.meta.path),
-    label: s.id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-    active: currentPath === s.meta.path || currentPath.startsWith(s.meta.path + '/'),
+    label: s.id
+      .split("-")
+      .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" "),
+    active:
+      currentPath === s.meta.path || currentPath.startsWith(s.meta.path + "/"),
   }));
 
-const isLanding = currentPath === '/';
+const isLanding = currentPath === "/";
 ---
 
-<header class="border-b sticky top-0 z-50 backdrop-blur" style="border-color: var(--border); background-color: var(--bg-primary);">
-  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+<header
+  class="navbar border-b backdrop-blur"
+  style="border-color: var(--border);"
+  class:list={[navbarClasses]}
+>
+  <div
+    class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between w-full"
+  >
     <!-- Left: Logo / Name -->
-    <a href={getBaseUrl('/')} class="font-semibold text-lg transition-colors hover:text-accent" style="color: var(--text-primary);">
+    <a
+      href={getBaseUrl("/")}
+      class="navbar-brand"
+      style="color: var(--text-primary);"
+    >
       {siteConfig.name}
     </a>
 
-    <!-- Center: Navigation (hidden on mobile) -->
+    <!-- Center: Desktop Navigation (hidden on mobile) -->
     <nav class="hidden md:flex gap-8">
-      {!isLanding && (
-        <a
-          href={getBaseUrl('/')}
-          class="transition-colors"
-          style="color: var(--text-secondary);"
-        >
-          ← Inicio
-        </a>
-      )}
-      {navItems.map(item => (
-        <a
-          href={item.href}
-          class="transition-colors"
-          style={{ color: item.active ? 'var(--accent)' : 'var(--text-secondary)' }}
-        >
-          {item.label}
-        </a>
-      ))}
+      {
+        !isLanding && (
+          <a
+            href={getBaseUrl("/")}
+            class="transition-colors"
+            style="color: var(--text-secondary);"
+          >
+            ← Inicio
+          </a>
+        )
+      }
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            class="transition-colors"
+            style={{
+              color: item.active ? "var(--accent)" : "var(--text-secondary)",
+            }}
+          >
+            {item.label}
+          </a>
+        ))
+      }
     </nav>
 
+    <!-- Mobile Menu Trigger (hamburger button) -->
+    {
+      navbarConfig.hasMenu && (
+        <button
+          class="navbar-hamburger-toggle md:hidden"
+          aria-label={menuAttrs["aria-label"] as string}
+          aria-expanded={
+            menuAttrs["aria-expanded"] === "false" ? "false" : "true"
+          }
+          data-hamburger-trigger="true"
+          onclick="this.parentElement.nextElementSibling.classList.toggle('active')"
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      )
+    }
+
     <!-- Right: Contact CTA -->
-    {(siteConfig.social.whatsapp || siteConfig.social.email) && (
-      <a
-        href={siteConfig.social.whatsapp
-          ? siteConfig.social.whatsappMessage
-            ? `${siteConfig.social.whatsapp}?text=${encodeURIComponent(siteConfig.social.whatsappMessage)}`
-            : siteConfig.social.whatsapp
-          : `mailto:${siteConfig.social.email}`
-        }
-        class="px-4 py-2 rounded-lg transition-colors text-sm font-semibold"
-        style={{ backgroundColor: 'var(--accent)', color: 'var(--button-text-color, var(--bg-primary))' }}
-        target={siteConfig.social.whatsapp ? '_blank' : undefined}
-        rel={siteConfig.social.whatsapp ? 'noopener noreferrer' : undefined}
-      >
-        {siteConfig.social.whatsapp ? 'WhatsApp' : 'Contacto'}
-      </a>
-    )}
+    {
+      (siteConfig.social.whatsapp || siteConfig.social.email) && (
+        <a
+          href={
+            siteConfig.social.whatsapp
+              ? siteConfig.social.whatsappMessage
+                ? `${siteConfig.social.whatsapp}?text=${encodeURIComponent(siteConfig.social.whatsappMessage)}`
+                : siteConfig.social.whatsapp
+              : `mailto:${siteConfig.social.email}`
+          }
+          class="navbar-cta hidden md:block"
+          target={siteConfig.social.whatsapp ? "_blank" : undefined}
+          rel={siteConfig.social.whatsapp ? "noopener noreferrer" : undefined}
+        >
+          {siteConfig.social.whatsapp ? "WhatsApp" : "Contacto"}
+        </a>
+      )
+    }
   </div>
+
+  <!-- Mobile Navigation Menu (hidden by default, shown on button click) -->
+  {
+    navbarConfig.hasMenu && (
+      <nav class="navbar-mobile-menu md:hidden">
+        {!isLanding && (
+          <a
+            href={getBaseUrl("/")}
+            class="transition-colors"
+            style="color: var(--text-secondary);"
+            onclick="this.closest('.navbar-mobile-menu').classList.remove('active')"
+          >
+            ← Inicio
+          </a>
+        )}
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class="transition-colors"
+            style={{
+              color: item.active ? "var(--accent)" : "var(--text-secondary)",
+            }}
+            onclick="this.closest('.navbar-mobile-menu').classList.remove('active')"
+          >
+            {item.label}
+          </a>
+        ))}
+        {(siteConfig.social.whatsapp || siteConfig.social.email) && (
+          <a
+            href={
+              siteConfig.social.whatsapp
+                ? siteConfig.social.whatsappMessage
+                  ? `${siteConfig.social.whatsapp}?text=${encodeURIComponent(siteConfig.social.whatsappMessage)}`
+                  : siteConfig.social.whatsapp
+                : `mailto:${siteConfig.social.email}`
+            }
+            class="navbar-cta mt-2"
+            target={siteConfig.social.whatsapp ? "_blank" : undefined}
+            rel={siteConfig.social.whatsapp ? "noopener noreferrer" : undefined}
+            onclick="this.closest('.navbar-mobile-menu').classList.remove('active')"
+          >
+            {siteConfig.social.whatsapp ? "WhatsApp" : "Contacto"}
+          </a>
+        )}
+      </nav>
+    )
+  }
 </header>
 
-<style>
+<style
+  define:vars={{
+    "--navbar-mobile-breakpoint": `${navbarConfig.mobileBreakpoint === "md" ? "768px" : navbarConfig.mobileBreakpoint === "sm" ? "640px" : navbarConfig.mobileBreakpoint === "lg" ? "1024px" : navbarConfig.mobileBreakpoint === "xl" ? "1280px" : `${navbarConfig.mobileBreakpoint}px`}`,
+  }}
+>
   header {
     background-color: var(--bg-primary);
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     header {
       position: relative;
       backdrop-filter: blur(4px);

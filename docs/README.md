@@ -1,0 +1,150 @@
+# @fachada/core Documentation
+
+Complete guides for using and configuring the Fachada framework.
+
+## Configuration Guides
+
+### [Navbar Configuration Guide](./navbar-configuration.md)
+
+Learn how to customize navbar behavior and appearance per-app without modifying component code.
+
+- **Seven configurable properties**: variant, mobileBreakpoint, position, hasMenu, menuTriggerLabel, customClass, mobileMode
+- **Practical examples**: 5 complete configuration scenarios (default, mobile-only, fixed, sticky, theme-aware)
+- **Theming integration**: Use the Fachada theme system to control navbar colors
+- **Type-safe configuration**: Full TypeScript support with IntelliSense
+
+**Read this if you want to:**
+
+- Customize navbar layout or positioning per-app
+- Support different mobile breakpoints
+- Add custom navbar styling
+- Understand navbar configuration options
+
+### [Navbar Migration Guide](./navbar-migration-guide.md)
+
+Adopt the navbar configuration system safely. No breaking changes; migration is opt-in.
+
+- **Zero breaking changes**: All changes are backward compatible
+- **Optional adoption**: Existing apps work unchanged; customize only what you need
+- **Incremental migration**: Adopt properties one at a time
+- **Complete checklist**: Step-by-step migration process
+
+**Read this if you:**
+
+- Have an existing Fachada app
+- Want to customize your navbar
+- Need to understand backward compatibility
+- Are migrating from implicit to explicit configuration
+
+## Type Definitions
+
+Detailed type definitions are available in the source code:
+
+- [AppConfig Interface](../src/types/app.types.ts) — Aggregate root configuration
+- [NavbarConfig Interface](../src/types/navbar.types.ts) — Navbar-specific configuration with property docs
+- [Profile Types](../src/types/profile.types.ts) — Theme and site configuration types
+
+## Quick Links
+
+All **navbar configuration properties** with examples:
+
+| Property           | Type                                              | Purpose              | Default        |
+| ------------------ | ------------------------------------------------- | -------------------- | -------------- |
+| `variant`          | `"horizontal" \| "vertical" \| "auto"`            | Layout direction     | `"horizontal"` |
+| `mobileBreakpoint` | `"sm" \| "md" \| "lg" \| "xl" \| number`          | Mobile trigger point | `"md"`         |
+| `position`         | `"sticky" \| "fixed" \| "static" \| "relative"`   | Positioning behavior | `"sticky"`     |
+| `hasMenu`          | `boolean`                                         | Enable mobile menu   | `true`         |
+| `menuTriggerLabel` | `string`                                          | Menu button label    | `"Menu"`       |
+| `customClass`      | `string`                                          | Custom CSS classes   | `undefined`    |
+| `mobileMode`       | `"hamburger" \| "collapse" \| "hide" \| "inline"` | Mobile display mode  | `"hamburger"`  |
+
+## Getting Started
+
+**Step 1:** Review your app's current navbar configuration
+
+- Does it work as-is? → No changes needed
+- Do you want to customize it? → Read the Configuration Guide
+
+**Step 2:** (If customizing) Read the [Navbar Configuration Guide](./navbar-configuration.md)
+
+- Understand each property with examples
+- Choose your desired configuration
+- Review the design patterns section
+
+**Step 3:** Update your app's `app.config.ts`
+
+```typescript
+export const appConfig: AppConfig = {
+  // ... other config
+  navbar: {
+    // Your custom configuration
+  },
+};
+```
+
+**Step 4:** Test and deploy
+
+- Run `yarn dev` in your app
+- Test on desktop and mobile
+- Deploy with confidence (zero breaking changes)
+
+## Reference
+
+### Navbar Configuration Examples
+
+| Use Case                       | Config                                          |
+| ------------------------------ | ----------------------------------------------- |
+| **Default (no customization)** | Omit `navbar` property → uses sensible defaults |
+| **Mobile-only menu**           | `variant: "vertical"`, `mobileBreakpoint: "sm"` |
+| **Fixed navigation**           | `position: "fixed"`, `mobileMode: "collapse"`   |
+| **Sticky header**              | `position: "sticky"`, `variant: "horizontal"`   |
+| **Theme-aware**                | Add `customClass: "my-theme-navbar"`            |
+
+Full examples with rationale available in the [Configuration Guide](./navbar-configuration.md#configuration-examples).
+
+### Theme System Integration
+
+The navbar respects the Fachada theme system automatically:
+
+- **CSS Variables**: `--bg-primary`, `--text-primary`, `--accent`, `--border`
+- **Color Modes**: Light/dark mode switching implemented via `data-color-mode` attribute
+- **Custom Styling**: Use `customClass` property to apply per-app navbar styling
+
+See [Theme Configuration Guide](../../fachada-app/docs/THEME-CONFIGURATION.md) for full theme details.
+
+## Utilities
+
+Navbar utilities are exported from `@fachada/core`:
+
+```typescript
+import {
+  getNavbarConfig, // Merge user config with defaults
+  getNavbarClasses, // Generate CSS classes from config
+  getMobileMenuAttrs, // Generate ARIA attributes for menu button
+  getMobileMediaQuery, // Generate media query string for breakpoint
+  resolveMobileBreakpoint, // Convert breakpoint name to pixels
+} from "@fachada/core";
+```
+
+These utilities are used internally by components but are also available for custom implementations.
+
+## FAQ
+
+**Q: Do I have to update my app?**
+A: No. All existing apps continue to work unchanged. Customization is opt-in.
+
+**Q: How many apps are using the navbar system?**
+A: All Fachada apps use the navbar system by default. With explicit configuration, you can now customize per-app behavior.
+
+**Q: Can I customize just one property?**
+A: Yes. Omitted properties use sensible defaults. You only need to specify properties you want to customize.
+
+**Q: Is navbar configuration done per-app or globally?**
+A: Per-app. Each app defines its own `navbar` configuration in `app.config.ts`.
+
+**Q: How do I apply theme-aware navbar styling?**
+A: Use the `customClass` property to add a class, then target it in CSS with theme CSS variables or `[data-color-mode]` selectors.
+
+## Feedback & Issues
+
+Found a problem or have suggestions? Check the main Fachada repository's issues.

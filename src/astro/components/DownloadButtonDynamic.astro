@@ -34,7 +34,9 @@ const { filename, content } = Astro.props;
 
 <script>
   document
-    .querySelectorAll<HTMLButtonElement>("button.download-button[data-filename]")
+    .querySelectorAll<HTMLButtonElement>(
+      "button.download-button[data-filename]",
+    )
     .forEach((btn) => {
       btn.addEventListener("click", () => {
         const fname = btn.dataset.filename ?? "download.md";

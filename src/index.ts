@@ -79,6 +79,16 @@ export {
   getActiveTokens,
 } from "./utils/theme.config";
 
+// Navbar utilities
+export {
+  getNavbarConfig,
+  getNavbarClasses,
+  getMobileMenuAttrs,
+  resolveMobileBreakpoint,
+  getMobileMediaQuery,
+  getNavbarStyle,
+} from "./navbar/navbar.utils";
+
 export type {
   ThemeOperationResult,
   ThemeErrorType,

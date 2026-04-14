@@ -17,8 +17,10 @@ import type {
 } from "./profile.types";
 import type { WidgetLayoutConfig } from "./layout.types";
 import type { SiteTreeConfig } from "./site-tree.types";
+import type { NavbarConfig } from "./navbar.types";
 
 export type { SiteTreeConfig } from "./site-tree.types";
+export type { NavbarConfig } from "./navbar.types";
 
 /** Sentinel value — used by tests to confirm the module loaded correctly. */
 export const APP_CONFIG_VERSION = "v2" as const;
@@ -143,6 +145,14 @@ export interface AppConfig {
    * When omitted, robots.txt falls back to a permissive default.
    */
   siteTree?: SiteTreeConfig;
+  /**
+   * Navbar configuration for per-app customization of navigation behavior and appearance.
+   *
+   * Enables configuration-driven navbar customization without code changes.
+   * All properties are optional with sensible defaults to ensure backward compatibility.
+   * If omitted, navbar uses default horizontal layout with sticky positioning.
+   */
+  navbar?: NavbarConfig;
   /** Page composition hierarchy */
   page: PageConfig;
 }

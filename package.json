@@ -19,6 +19,7 @@
     "exports": {
         ".": "./dist/index.js",
         "./astro": "./dist/astro/integration.js",
+        "./astro/templates/LandingPage.astro": "./dist/astro/templates/LandingPage.astro",
         "./vite": "./dist/vite/fachada-plugin.js"
     },
     "types": "dist/index.d.ts",
@@ -35,8 +36,8 @@
         "zustand": ">=4.0.0"
     },
     "scripts": {
-        "build": "tsc -p tsconfig.build.json && find src/astro -name '*.astro' -o -name '*.css' | while read f; do dest=\"dist/astro/${f#src/astro/}\"; mkdir -p \"$(dirname \"$dest\")\"; cp \"$f\" \"$dest\"; done",
-        "prepare": "npm run build",
+        "build": "tsc -p tsconfig.build.json && mkdir -p dist/astro && cp -r src/astro/{components,layouts,pages,styles,templates} dist/astro/ 2>/dev/null; true",
+        "prepare": "yarn run build",
         "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage"
@@ -53,6 +54,7 @@
         "happy-dom": "^20.0.0",
         "react": "^19.2.5",
         "react-dom": "^19.2.5",
+        "styled-components": "^6.4.0",
         "typescript": "^6.0.2",
         "vitest": "^2.1.8",
         "zustand": "^5.0.12"

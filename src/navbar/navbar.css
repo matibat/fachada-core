@@ -1,0 +1,274 @@
+/**
+ * navbar.css — Navbar layout and styling
+ *
+ * - Horizontal flex-row layout by default
+ * - Mobile hamburger menu support
+ * - Responsive breakpoint behavior
+ * - Theme-aware styling via CSS variables
+ */
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* Base navbar layout                                                   */
+/* ─────────────────────────────────────────────────────────────────── */
+
+.navbar {
+  display: flex;
+  flex-direction: row; /* Explicit horizontal, not column */
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-primary, #ffffff);
+  border-color: var(--border, #e5e7eb);
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* Navbar positioning variants                                         */
+/* ─────────────────────────────────────────────────────────────────── */
+
+.navbar.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.navbar.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  width: 100%;
+}
+
+.navbar.static {
+  position: static;
+}
+
+.navbar.relative {
+  position: relative;
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* Navbar layout variants                                              */
+/* ─────────────────────────────────────────────────────────────────── */
+
+/* Horizontal layout (default) */
+.navbar.navbar-horizontal {
+  flex-direction: row;
+}
+
+.navbar.navbar-horizontal nav {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+/* Vertical layout */
+.navbar.navbar-vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.navbar.navbar-vertical nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Auto/responsive layout — switches based on screen size */
+.navbar.navbar-auto {
+  flex-direction: row;
+}
+
+.navbar.navbar-auto nav {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* Mobile hamburger menu                                               */
+/* ─────────────────────────────────────────────────────────────────── */
+
+/* Hamburger button styles */
+.navbar-hamburger-toggle {
+  display: none; /* Hidden on desktop */
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  align-items: center;
+}
+
+/* Hamburger icon lines (three horizontal lines) */
+.navbar-hamburger-toggle span {
+  display: block;
+  width: 1.5rem;
+  height: 2px;
+  background-color: var(--text-primary, #000000);
+  border-radius: 1px;
+  transition: all 0.3s ease;
+}
+
+/* Mobile navigation menu container (initially hidden) */
+.navbar-mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-primary, #ffffff);
+  z-index: 40;
+  transition: left 0.3s ease;
+  padding-top: 4rem;
+  overflow-y: auto;
+}
+
+/* Mobile menu visible when active */
+.navbar-mobile-menu.active {
+  left: 0;
+}
+
+/* Mobile menu navigation links */
+.navbar-mobile-menu nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem 1rem;
+}
+
+.navbar-mobile-menu nav a {
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s ease;
+}
+
+.navbar-mobile-menu nav a:hover {
+  background-color: var(--bg-secondary, #f3f4f6);
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* Responsive behavior — show hamburger on mobile                      */
+/* ─────────────────────────────────────────────────────────────────── */
+
+/* On screens smaller than md (768px), show hamburger and hide desktop nav */
+@media (max-width: 767px) {
+  /* Hide desktop navigation */
+  .navbar nav:not(.navbar-mobile-menu nav) {
+    display: none !important;
+  }
+
+  /* Show hamburger menu button */
+  .navbar.has-hamburger-menu .navbar-hamburger-toggle {
+    display: flex;
+  }
+
+  /* Mobile menu positioning */
+  .navbar-mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: auto;
+    background-color: var(--bg-primary, #ffffff);
+    border-bottom: 1px solid var(--border, #e5e7eb);
+  }
+
+  .navbar-mobile-menu.active {
+    left: 0;
+  }
+}
+
+/* On screens larger than md (768px+), show desktop nav and hide hamburger */
+@media (min-width: 768px) {
+  .navbar nav {
+    display: flex !important;
+  }
+
+  .navbar .navbar-hamburger-toggle {
+    display: none;
+  }
+
+  .navbar-mobile-menu {
+    display: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* Navbar logo/branding area                                           */
+/* ─────────────────────────────────────────────────────────────────── */
+
+.navbar-brand {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary, #000000);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.navbar-brand:hover {
+  color: var(--accent, #3b82f6);
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* Navbar action buttons (CTA, etc.)                                   */
+/* ─────────────────────────────────────────────────────────────────── */
+
+.navbar-cta {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  background-color: var(--accent, #3b82f6);
+  color: var(--button-text-color, #ffffff);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.navbar-cta:hover {
+  opacity: 0.9;
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* Navigation link styling                                             */
+/* ─────────────────────────────────────────────────────────────────── */
+
+.navbar a {
+  color: var(--text-secondary, #666666);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.navbar a:hover {
+  color: var(--accent, #3b82f6);
+}
+
+.navbar a.active {
+  color: var(--accent, #3b82f6);
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* Accessibility features                                              */
+/* ─────────────────────────────────────────────────────────────────── */
+
+/* Focus visible outline for keyboard navigation */
+.navbar a:focus-visible,
+.navbar-hamburger-toggle:focus-visible {
+  outline: 2px solid var(--accent, #3b82f6);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .navbar-hamburger-toggle span,
+  .navbar-mobile-menu,
+  .navbar a {
+    transition: none;
+  }
+}

@@ -26,43 +26,59 @@ const { Content, downloadFilename, backLink, nextLink } = data;
 const ContentComponent = Content as any;
 ---
 
-<BaseLayout title={meta.title} description={meta.description} ogImage={meta.ogImage}>
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  ogImage={meta.ogImage}
+>
   <Header currentPath={meta.path} />
 
   <main class="dp-page">
     <div class="dp-container">
-
       <div class="dp-header">
         <div>
-          {backLink && (
-            <a href={getBaseUrl(backLink.href)} class="dp-back-link">← {backLink.label}</a>
-          )}
+          {
+            backLink && (
+              <a href={getBaseUrl(backLink.href)} class="dp-back-link">
+                ← {backLink.label}
+              </a>
+            )
+          }
           <h1>{meta.title.split("—")[0].trim()}</h1>
           <p class="dp-subtitle">{meta.description}</p>
         </div>
-        {downloadFilename && (
-          <DownloadButton filename={downloadFilename} content="" />
-        )}
+        {
+          downloadFilename && (
+            <DownloadButton filename={downloadFilename} content="" />
+          )
+        }
       </div>
 
       <article class="dp-content">
         <ContentComponent />
       </article>
 
-      {(backLink || nextLink) && (
-        <nav class="dp-nav" aria-label="Page navigation">
-          {backLink
-            ? <a href={getBaseUrl(backLink.href)} class="dp-nav-link">← {backLink.label}</a>
-            : <span />
-          }
-          {nextLink && (
-            <a href={getBaseUrl(nextLink.href)} class="dp-nav-link dp-nav-link--next">
-              {nextLink.label} →
-            </a>
-          )}
-        </nav>
-      )}
-
+      {
+        (backLink || nextLink) && (
+          <nav class="dp-nav" aria-label="Page navigation">
+            {backLink ? (
+              <a href={getBaseUrl(backLink.href)} class="dp-nav-link">
+                ← {backLink.label}
+              </a>
+            ) : (
+              <span />
+            )}
+            {nextLink && (
+              <a
+                href={getBaseUrl(nextLink.href)}
+                class="dp-nav-link dp-nav-link--next"
+              >
+                {nextLink.label} →
+              </a>
+            )}
+          </nav>
+        )
+      }
     </div>
   </main>
   <Footer />
@@ -88,7 +104,9 @@ const ContentComponent = Content as any;
     margin-bottom: var(--spacing-section);
   }
 
-  .dp-header > div { flex: 1; }
+  .dp-header > div {
+    flex: 1;
+  }
 
   .dp-back-link {
     color: var(--accent);
@@ -98,7 +116,9 @@ const ContentComponent = Content as any;
     display: inline-block;
     transition: var(--transition);
   }
-  .dp-back-link:hover { transform: translateX(-4px); }
+  .dp-back-link:hover {
+    transform: translateX(-4px);
+  }
 
   .dp-header h1 {
     font-size: 2rem;
@@ -200,6 +220,10 @@ const ContentComponent = Content as any;
     font-weight: 500;
     transition: var(--transition);
   }
-  .dp-nav-link:hover { color: var(--accent-hover); }
-  .dp-nav-link--next { margin-left: auto; }
+  .dp-nav-link:hover {
+    color: var(--accent-hover);
+  }
+  .dp-nav-link--next {
+    margin-left: auto;
+  }
 </style>

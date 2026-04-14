@@ -24,8 +24,14 @@ const { meta, data } = Astro.props;
 const { contentKey, downloadFilename, backLink, nextLink } = data;
 
 // Load all docs at build time — static glob guarantees AOT bundling
-const mdModules = import.meta.glob<{ default: unknown }>("/docs/*.md", { eager: true });
-const mdRawFiles = import.meta.glob<string>("/docs/*.md", { eager: true, query: "?raw", import: "default" });
+const mdModules = import.meta.glob<{ default: unknown }>("/docs/*.md", {
+  eager: true,
+});
+const mdRawFiles = import.meta.glob<string>("/docs/*.md", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+});
 
 const componentKey = `/docs/${contentKey}.md`;
 const ContentComponent = (mdModules[componentKey]?.default ?? null) as any;
@@ -37,41 +43,55 @@ const rawContent = mdRawFiles[componentKey] ?? "";
 
   <main class="dp-page">
     <div class="dp-container">
-
       <div class="dp-header">
         <div>
-          {backLink && (
-            <a href={backLink.href} class="dp-back-link">← {backLink.label}</a>
-          )}
+          {
+            backLink && (
+              <a href={backLink.href} class="dp-back-link">
+                ← {backLink.label}
+              </a>
+            )
+          }
           <h1>{meta.title.split("—")[0].trim()}</h1>
           <p class="dp-subtitle">{meta.description}</p>
         </div>
-        {downloadFilename && (
-          <DownloadButton filename={downloadFilename} content={rawContent} />
-        )}
+        {
+          downloadFilename && (
+            <DownloadButton filename={downloadFilename} content={rawContent} />
+          )
+        }
       </div>
 
       <article class="dp-content">
-        {ContentComponent
-          ? <ContentComponent />
-          : <p class="dp-missing">Content not found for key: <code>{contentKey}</code></p>
+        {
+          ContentComponent ? (
+            <ContentComponent />
+          ) : (
+            <p class="dp-missing">
+              Content not found for key: <code>{contentKey}</code>
+            </p>
+          )
         }
       </article>
 
-      {(backLink || nextLink) && (
-        <nav class="dp-nav" aria-label="Page navigation">
-          {backLink
-            ? <a href={backLink.href} class="dp-nav-link">← {backLink.label}</a>
-            : <span />
-          }
-          {nextLink && (
-            <a href={nextLink.href} class="dp-nav-link dp-nav-link--next">
-              {nextLink.label} →
-            </a>
-          )}
-        </nav>
-      )}
-
+      {
+        (backLink || nextLink) && (
+          <nav class="dp-nav" aria-label="Page navigation">
+            {backLink ? (
+              <a href={backLink.href} class="dp-nav-link">
+                ← {backLink.label}
+              </a>
+            ) : (
+              <span />
+            )}
+            {nextLink && (
+              <a href={nextLink.href} class="dp-nav-link dp-nav-link--next">
+                {nextLink.label} →
+              </a>
+            )}
+          </nav>
+        )
+      }
     </div>
   </main>
   <Footer />
@@ -97,7 +117,9 @@ const rawContent = mdRawFiles[componentKey] ?? "";
     margin-bottom: var(--spacing-section);
   }
 
-  .dp-header > div { flex: 1; }
+  .dp-header > div {
+    flex: 1;
+  }
 
   .dp-back-link {
     color: var(--accent);
@@ -107,7 +129,9 @@ const rawContent = mdRawFiles[componentKey] ?? "";
     display: inline-block;
     transition: var(--transition);
   }
-  .dp-back-link:hover { transform: translateX(-4px); }
+  .dp-back-link:hover {
+    transform: translateX(-4px);
+  }
 
   .dp-header h1 {
     font-size: 2rem;
@@ -214,6 +238,10 @@ const rawContent = mdRawFiles[componentKey] ?? "";
     font-weight: 500;
     transition: var(--transition);
   }
-  .dp-nav-link:hover { color: var(--accent-hover); }
-  .dp-nav-link--next { margin-left: auto; }
+  .dp-nav-link:hover {
+    color: var(--accent-hover);
+  }
+  .dp-nav-link--next {
+    margin-left: auto;
+  }
 </style>
