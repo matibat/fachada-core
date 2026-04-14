@@ -4,6 +4,23 @@ Complete guides for using and configuring the Fachada framework.
 
 ## Configuration Guides
 
+### [Skin & Theme System](./skin-system.md)
+
+Token-driven theming that works for any skin — built-in or custom.
+
+- **28 CSS custom properties** drive all layout and component styles
+- **4 built-in skins**: minimalist, modern-tech, professional, vaporwave (light + dark each)
+- **Zero extra CSS** for custom skins — define tokens in `app.config.ts` only
+- **YAML → TypeScript generation** for adding new built-in skins in 4 steps
+- **Component classes**: `.theme-card`, `.theme-btn-primary`, `.theme-btn-outline`, `.theme-badge`
+
+**Read this if you want to:**
+
+- Add or customize a skin
+- Understand why all apps receive consistent structural styles
+- Define a fully custom skin inline in your app config
+- Add a new built-in YAML skin to the framework
+
 ### [Navbar Configuration Guide](./navbar-configuration.md)
 
 Learn how to customize navbar behavior and appearance per-app without modifying component code.
