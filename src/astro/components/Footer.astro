@@ -1,6 +1,6 @@
 ---
-import { getActiveAppConfig } from '@fachada/core';
-import { getBaseUrl } from '@fachada/core';
+import { getActiveAppConfig } from "@fachada/core";
+import { getBaseUrl } from "@fachada/core";
 
 const appConfig = getActiveAppConfig();
 const siteConfig = appConfig.seo;
@@ -8,22 +8,25 @@ const currentYear = new Date().getFullYear();
 
 const subsections = appConfig.siteTree?.landing.subsections ?? [];
 const navItems = subsections
-  .filter(s => !s.meta.path.substring(1).includes('/'))
-  .map(s => ({
+  .filter((s) => !s.meta.path.substring(1).includes("/"))
+  .map((s) => ({
     href: s.meta.path,
-    label: s.id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+    label: s.id
+      .split("-")
+      .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" "),
   }));
 
 const { social } = siteConfig;
 
 // Build a unified social links list from whatever is configured
 const socialLinks = [
-  social.instagram && { href: social.instagram, label: 'Instagram' },
-  social.facebook  && { href: social.facebook,  label: 'Facebook' },
-  social.blogger   && { href: social.blogger,   label: 'Blogger' },
-  social.github    && { href: social.github,    label: 'GitHub' },
-  social.linkedin  && { href: social.linkedin,  label: 'LinkedIn' },
-  social.twitter   && { href: social.twitter,   label: 'Twitter' },
+  social.instagram && { href: social.instagram, label: "Instagram" },
+  social.facebook && { href: social.facebook, label: "Facebook" },
+  social.blogger && { href: social.blogger, label: "Blogger" },
+  social.github && { href: social.github, label: "GitHub" },
+  social.linkedin && { href: social.linkedin, label: "LinkedIn" },
+  social.twitter && { href: social.twitter, label: "Twitter" },
 ].filter(Boolean) as { href: string; label: string }[];
 
 // Primary contact display
@@ -32,65 +35,79 @@ const waHref = social.whatsapp
     ? `${social.whatsapp}?text=${encodeURIComponent(social.whatsappMessage)}`
     : social.whatsapp
   : undefined;
-const contactHref = waHref ?? (social.email ? `mailto:${social.email}` : undefined);
-const contactDisplay = social.whatsapp
-  ? 'WhatsApp'
-  : social.email ?? '';
+const contactHref =
+  waHref ?? (social.email ? `mailto:${social.email}` : undefined);
+const contactDisplay = social.whatsapp ? "WhatsApp" : (social.email ?? "");
 const contactIsExternal = !!social.whatsapp;
 ---
 
-<footer class="px-4 py-12 border-t" style="border-color: var(--border);">
-  <div class="max-w-6xl mx-auto">
+<footer class="footer-wrapper">
+  <div class="footer-inner">
     <div class="footer-grid mb-8">
-
       <!-- Navigation sections (only if there are subsections) -->
-      {navItems.length > 0 && (
-        <div>
-          <p class="font-semibold mb-4" style="color: var(--text-primary);">Secciones</p>
-          <nav class="flex flex-col gap-2">
-            {navItems.map(item => (
-              <a href={getBaseUrl(item.href)} class="transition-colors footer-link" style="color: var(--text-secondary);">
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </div>
-      )}
+      {
+        navItems.length > 0 && (
+          <div>
+            <p class="font-semibold mb-4" style="color: var(--text-primary);">
+              Secciones
+            </p>
+            <nav class="footer-links-col">
+              {navItems.map((item) => (
+                <a
+                  href={getBaseUrl(item.href)}
+                  class="transition-colors footer-link"
+                  style="color: var(--text-secondary);"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+          </div>
+        )
+      }
 
       <!-- Social links (only if any are configured) -->
-      {socialLinks.length > 0 && (
-        <div>
-          <p class="font-semibold mb-4" style="color: var(--text-primary);">Redes</p>
-          <div class="flex flex-col gap-2">
-            {socialLinks.map(link => (
-              <a
-                href={link.href}
-                class="transition-colors footer-link"
-                style="color: var(--text-secondary);"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {link.label}
-              </a>
-            ))}
+      {
+        socialLinks.length > 0 && (
+          <div>
+            <p class="font-semibold mb-4" style="color: var(--text-primary);">
+              Redes
+            </p>
+            <div class="footer-links-col">
+              {socialLinks.map((link) => (
+                <a
+                  href={link.href}
+                  class="transition-colors footer-link"
+                  style="color: var(--text-secondary);"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       <!-- Contact -->
       <div>
-        <p class="font-semibold mb-4" style="color: var(--text-primary);">Contacto</p>
-        {contactHref && (
-          <a
-            href={contactHref}
-            class="transition-colors footer-link"
-            style="color: var(--accent);"
-            target={contactIsExternal ? '_blank' : undefined}
-            rel={contactIsExternal ? 'noopener noreferrer' : undefined}
-          >
-            {contactDisplay}
-          </a>
-        )}
+        <p class="font-semibold mb-4" style="color: var(--text-primary);">
+          Contacto
+        </p>
+        {
+          contactHref && (
+            <a
+              href={contactHref}
+              class="transition-colors footer-link"
+              style="color: var(--accent);"
+              target={contactIsExternal ? "_blank" : undefined}
+              rel={contactIsExternal ? "noopener noreferrer" : undefined}
+            >
+              {contactDisplay}
+            </a>
+          )
+        }
         <p class="text-sm mt-4" style="color: var(--text-secondary);">
           {siteConfig.location.city}, {siteConfig.location.country}
         </p>
@@ -98,9 +115,12 @@ const contactIsExternal = !!social.whatsapp;
     </div>
 
     <!-- Copyright line -->
-    <div class="border-t pt-6" style="border-color: var(--border);">
-      <p style="color: var(--text-secondary); text-align: center; font-size: 0.875rem;">
-        © {currentYear} {siteConfig.author}
+    <div class="footer-copyright">
+      <p
+        style="color: var(--text-secondary); text-align: center; font-size: 0.875rem;"
+      >
+        © {currentYear}
+        {siteConfig.author}
       </p>
     </div>
   </div>

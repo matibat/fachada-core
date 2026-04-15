@@ -57,9 +57,7 @@ const isLanding = currentPath === "/";
   style="border-color: var(--border);"
   class:list={[navbarClasses]}
 >
-  <div
-    class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between w-full"
-  >
+  <div class="navbar-inner">
     <!-- Left: Logo / Name -->
     <a
       href={getBaseUrl("/")}
@@ -69,8 +67,8 @@ const isLanding = currentPath === "/";
       {siteConfig.name}
     </a>
 
-    <!-- Center: Desktop Navigation (hidden on mobile) -->
-    <nav class="hidden md:flex gap-8">
+    <!-- Center: Desktop Navigation (hidden on mobile, shown via .navbar-desktop-nav CSS) -->
+    <nav class="navbar-desktop-nav">
       {
         !isLanding && (
           <a
@@ -127,7 +125,7 @@ const isLanding = currentPath === "/";
                 : siteConfig.social.whatsapp
               : `mailto:${siteConfig.social.email}`
           }
-          class="navbar-cta hidden md:block"
+          class="navbar-cta navbar-cta-desktop"
           target={siteConfig.social.whatsapp ? "_blank" : undefined}
           rel={siteConfig.social.whatsapp ? "noopener noreferrer" : undefined}
         >

@@ -1,18 +1,23 @@
 ---
-import { siteConfig } from '../../config';
-import Button from '../../components/ui/Button.astro';
+import { siteConfig } from "../../config";
+import Button from "../../components/ui/Button.astro";
 
-const primaryRole = siteConfig.roles.find(r => r.id === siteConfig.primaryRole) ?? siteConfig.roles[0];
+const primaryRole =
+  siteConfig.roles.find((r) => r.id === siteConfig.primaryRole) ??
+  siteConfig.roles[0];
 const isMultiRole = siteConfig.roles.length > 1;
 const roleLabel = isMultiRole
-  ? siteConfig.roles.filter(r => r.featured).map(r => r.title).join(' & ')
+  ? siteConfig.roles
+      .filter((r) => r.featured)
+      .map((r) => r.title)
+      .join(" & ")
   : primaryRole.title;
 ---
 
-<section class="min-h-screen flex items-center px-4 py-20" data-testid="hero-section">
-  <div class="hero-split-grid max-w-6xl mx-auto w-full">
+<section class="hero-section-full section-wrapper" data-testid="hero-section">
+  <div class="hero-split-grid section-inner-xl">
     <!-- Identity column -->
-    <div class="hero-identity flex flex-col justify-center">
+    <div class="hero-identity hero-column-center">
       <p
         class="hero-overline text-sm uppercase tracking-widest mb-4"
         style="color: var(--text-secondary); font-family: var(--font-mono);"
@@ -25,12 +30,21 @@ const roleLabel = isMultiRole
     </div>
 
     <!-- Content column -->
-    <div class="hero-content flex flex-col justify-center gap-6">
-      <p class="text-xl md:text-2xl" data-testid="hero-description" style="color: var(--text-secondary);">
+    <div class="hero-content hero-column-center gap-6">
+      <p
+        class="text-xl md:text-2xl"
+        data-testid="hero-description"
+        style="color: var(--text-secondary);"
+      >
         {siteConfig.description}
       </p>
-      <div class="flex flex-col sm:flex-row gap-4">
-        <Button href="#projects" variant="primary" size="lg" class="hero-primary-cta">
+      <div class="flex-col-sm-row">
+        <Button
+          href="#projects"
+          variant="primary"
+          size="lg"
+          class="hero-primary-cta"
+        >
           View Work
         </Button>
         <Button href="#contact" variant="outline" size="lg">

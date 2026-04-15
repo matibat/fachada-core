@@ -88,7 +88,8 @@ export const CSS_VAR_MAP: Record<keyof ThemeTokens, string> = {
 
 // Import auto-generated theme definitions from YAML → TypeScript build chain
 import { DEFAULT_SKINS } from "../skin/defaults";
-export const THEME_DEFINITIONS: Record<ThemeStyle, ThemeDefinition> = DEFAULT_SKINS;
+export const THEME_DEFINITIONS: Record<ThemeStyle, ThemeDefinition> =
+  DEFAULT_SKINS;
 
 export const THEME_STYLES = Object.keys(THEME_DEFINITIONS) as ThemeStyle[];
 

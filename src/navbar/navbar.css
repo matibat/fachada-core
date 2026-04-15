@@ -26,13 +26,13 @@
 /* Navbar positioning variants                                         */
 /* ─────────────────────────────────────────────────────────────────── */
 
-.navbar.sticky {
+.navbar-sticky {
   position: sticky;
   top: 0;
   z-index: 50;
 }
 
-.navbar.fixed {
+.navbar-fixed {
   position: fixed;
   top: 0;
   left: 0;
@@ -41,11 +41,11 @@
   width: 100%;
 }
 
-.navbar.static {
+.navbar-static {
   position: static;
 }
 
-.navbar.relative {
+.navbar-relative {
   position: relative;
 }
 
@@ -195,6 +195,54 @@
 
   .navbar-mobile-menu {
     display: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* Navbar inner container                                              */
+/* ─────────────────────────────────────────────────────────────────── */
+
+/**
+ * .navbar-inner — the flex row that holds logo, nav links, and CTA.
+ * Replaces Tailwind utilities: max-w-6xl mx-auto px-4 py-4 flex items-center justify-between w-full
+ */
+.navbar-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 72rem; /* equivalent to max-w-6xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1rem;
+}
+
+/**
+ * .navbar-desktop-nav — desktop nav links row (hidden on mobile).
+ * Replaces Tailwind utilities: hidden md:flex gap-8
+ */
+.navbar-desktop-nav {
+  display: none; /* hidden by default (mobile-first) */
+  flex-direction: row;
+  gap: 2rem;
+}
+
+/**
+ * .navbar-cta-desktop — CTA button shown on desktop only.
+ * Replaces Tailwind utility: hidden md:block
+ */
+.navbar-cta-desktop {
+  display: none; /* hidden by default (mobile-first) */
+}
+
+@media (min-width: 768px) {
+  .navbar-desktop-nav {
+    display: flex;
+  }
+
+  .navbar-cta-desktop {
+    display: block;
   }
 }
 

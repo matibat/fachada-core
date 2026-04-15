@@ -1,6 +1,9 @@
 /* Import shared CSS variable definitions (z-index scale, etc.) */
 @import './themes.css';
 
+/* Import core component layout styles — available to all apps unconditionally */
+@import '../../navbar/navbar.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -141,6 +144,382 @@
     font-size: 0.8rem;
     color: var(--text-secondary);
     white-space: nowrap;
+  }
+}
+
+/* ── Footer structural layout (no Tailwind dependency) ──────────────────── */
+@layer components {
+  /**
+   * .footer-wrapper — the <footer> element itself.
+   * Replaces Tailwind utilities: px-4 py-12 border-t
+   */
+  .footer-wrapper {
+    padding: 3rem 1rem;
+    border-top: 1px solid var(--border, #e5e7eb);
+  }
+
+  /**
+   * .footer-inner — the max-width container inside footer.
+   * Replaces Tailwind utilities: max-w-6xl mx-auto
+   */
+  .footer-inner {
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /**
+   * .footer-links-col — vertical list of footer links.
+   * Replaces Tailwind utilities: flex flex-col gap-2
+   */
+  .footer-links-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /**
+   * .footer-copyright — the bottom copyright bar.
+   * Replaces Tailwind utilities: border-t pt-6
+   */
+  .footer-copyright {
+    border-top: 1px solid var(--border, #e5e7eb);
+    padding-top: 1.5rem;
+  }
+
+  /* ── Section wrapper patterns ─────────────────────────────────────────── */
+
+  /**
+   * .section-wrapper — standard section padding (horizontal + vertical)
+   * Replaces Tailwind utilities: px-4 py-20
+   */
+  .section-wrapper {
+    padding: 5rem 1rem;
+  }
+
+  /**
+   * .section-inner-sm — max-width container for narrow sections
+   * Replaces Tailwind utilities: max-w-3xl mx-auto
+   */
+  .section-inner-sm {
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /**
+   * .section-inner-md — max-width container for medium sections
+   * Replaces Tailwind utilities: max-w-4xl mx-auto
+   */
+  .section-inner-md {
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /**
+   * .section-inner-lg — max-width container for large sections
+   * Replaces Tailwind utilities: max-w-5xl mx-auto
+   */
+  .section-inner-lg {
+    max-width: 64rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /**
+   * .section-inner-xl — max-width container for extra-large sections
+   * Replaces Tailwind utilities: max-w-6xl mx-auto
+   */
+  .section-inner-xl {
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /**
+   * .section-inner-full — full-width container without max constraint
+   * Replaces Tailwind utilities: w-full (for wide content)
+   */
+  .section-inner-full {
+    width: 100%;
+  }
+
+  /* ── Hero section patterns ────────────────────────────────────────────── */
+
+  /**
+   * .hero-section-full — full-screen hero container
+   * Replaces Tailwind utilities: min-h-screen flex items-center
+   */
+  .hero-section-full {
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  /**
+   * .hero-section-centered — full-screen hero with center alignment
+   * Replaces Tailwind utilities: min-h-screen flex items-center justify-center
+   */
+  .hero-section-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+  }
+
+  /**
+   * .hero-column-center — flex column with vertical centering
+   * Replaces Tailwind utilities: flex flex-col justify-center
+   */
+  .hero-column-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /**
+   * .hero-split-grid — 2-column hero layout grid
+   * Replaces inline style + Tailwind utilities
+   */
+  .hero-split-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    width: 100%;
+  }
+
+  /* ── Flex utility patterns ───────────────────────────────────────────── */
+
+  /**
+   * .flex-col — flex column layout
+   * Replaces Tailwind utilities: flex flex-col
+   */
+  .flex-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /**
+   * .flex-row — flex row layout
+   * Replaces Tailwind utilities: flex flex-row (or just flex)
+   */
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+  }
+
+  /**
+   * .flex-col-center — flex column with item centering
+   * Replaces Tailwind utilities: flex flex-col items-center
+   */
+  .flex-col-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /**
+   * .flex-row-center — flex row with item centering
+   * Replaces Tailwind utilities: flex flex-row items-center
+   */
+  .flex-row-center {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  /**
+   * .flex-row-start — flex row with items-start alignment
+   * Replaces Tailwind utilities: flex flex-col gap-4 items-start
+   */
+  .flex-row-start {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /**
+   * .flex-row-between — flex row with space-between
+   * Replaces Tailwind utilities: flex justify-between
+   */
+  .flex-row-between {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /**
+   * .flex-row-center-between — flex row with center + justify
+   * Replaces Tailwind utilities: flex items-center justify-between
+   */
+  .flex-row-center-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /**
+   * Gap utility classes — replace Tailwind gap-*
+   */
+  .gap-2 { gap: 0.5rem; }
+  .gap-3 { gap: 0.75rem; }
+  .gap-4 { gap: 1rem; }
+  .gap-5 { gap: 1.25rem; }
+  .gap-6 { gap: 1.5rem; }
+  .gap-8 { gap: 2rem; }
+  .gap-10 { gap: 2.5rem; }
+
+  /**
+   * .flex-wrap — wrap flex items
+   * Replaces Tailwind utilities: flex flex-wrap
+   */
+  .flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  /* ── Grid layout patterns ────────────────────────────────────────────── */
+
+  /**
+   * .grid — base grid container
+   */
+  .grid {
+    display: grid;
+  }
+
+  /**
+   * .grid-cols-2 — 2-column grid on medium+ screens
+   * Replaces Tailwind utilities: grid md:grid-cols-2
+   */
+  .grid-cols-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 768px) {
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /**
+   * .grid-cols-3 — 3-column grid, 2-col on tablet, 1 on mobile
+   * Replaces Tailwind utilities: grid md:grid-cols-2 lg:grid-cols-3
+   */
+  .grid-cols-3 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 768px) {
+    .grid-cols-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .grid-cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /**
+   * .grid-cols-2-lg — 2-column grid on large screens
+   * Replaces Tailwind utilities: grid md:grid-cols-2 gap-8
+   */
+  .grid-cols-2-lg {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 768px) {
+    .grid-cols-2-lg {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.5rem;
+    }
+  }
+
+  /**
+   * .grid-cols-3-gap-6 — 3-column grid with smaller gap
+   * Replaces Tailwind utilities: grid md:grid-cols-2 lg:grid-cols-3 gap-6
+   */
+  .grid-cols-3-gap-6 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .grid-cols-3-gap-6 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .grid-cols-3-gap-6 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /**
+   * .grid-cols-2-gap-10 — 2-column grid with larger gap
+   * Replaces Tailwind utilities: grid md:grid-cols-2 gap-10
+   */
+  .grid-cols-2-gap-10 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  @media (min-width: 768px) {
+    .grid-cols-2-gap-10 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /**
+   * .grid-cols-3-gap-8 — 3-column grid with medium-large gap
+   * Replaces Tailwind utilities: grid md:grid-cols-3 gap-8
+   */
+  .grid-cols-3-gap-8 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 768px) {
+    .grid-cols-3-gap-8 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* ── Responsive flex patterns ────────────────────────────────────────── */
+
+  /**
+   * .flex-col-sm-row — flex col on mobile, row on small screens+
+   * Replaces Tailwind utilities: flex flex-col sm:flex-row gap-4
+   */
+  .flex-col-sm-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  @media (min-width: 640px) {
+    .flex-col-sm-row {
+      flex-direction: row;
+    }
+  }
+
+  /**
+   * .flex-col-sm-row-centered — flex col on mobile, row centered on small screens+
+   * Replaces Tailwind utilities: flex flex-col sm:flex-row gap-4 justify-center
+   */
+  .flex-col-sm-row-centered {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+  }
+  @media (min-width: 640px) {
+    .flex-col-sm-row-centered {
+      flex-direction: row;
+    }
   }
 }
 

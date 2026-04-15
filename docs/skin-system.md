@@ -13,41 +13,41 @@ This means **any skin works out of the box**. Custom skins defined in `app.confi
 
 ## Built-in Skins
 
-| Skin | Key | Description |
-|------|-----|-------------|
-| Minimalist | `minimalist` | Clean, typographic, light default |
-| Modern Tech | `modern-tech` | Dark, high-contrast, monospace accents |
-| Professional | `professional` | Balanced, business-appropriate |
-| Vaporwave | `vaporwave` | Bold gradients, retro-futurist palette |
+| Skin         | Key            | Description                            |
+| ------------ | -------------- | -------------------------------------- |
+| Minimalist   | `minimalist`   | Clean, typographic, light default      |
+| Modern Tech  | `modern-tech`  | Dark, high-contrast, monospace accents |
+| Professional | `professional` | Balanced, business-appropriate         |
+| Vaporwave    | `vaporwave`    | Bold gradients, retro-futurist palette |
 
 Each skin has both **light** and **dark** token sets.
 
 ## Design Tokens (28 CSS Custom Properties)
 
-| Token | CSS Property | Purpose |
-|-------|-------------|---------|
-| `bgPrimary` | `--bg-primary` | Main background |
-| `bgSecondary` | `--bg-secondary` | Card / section background |
-| `textPrimary` | `--text-primary` | Body text |
-| `textSecondary` | `--text-secondary` | Muted / secondary text |
-| `accent` | `--accent` | Primary brand color |
-| `accentHover` | `--accent-hover` | Accent on hover |
-| `accentSecondary` | `--accent-secondary` | Secondary brand color (nullable) |
-| `accentTertiary` | `--accent-tertiary` | Tertiary brand color (nullable) |
-| `border` | `--border` | Border / divider color |
-| `shadow` | `--shadow` | Box shadow value |
-| `fontBody` | `--font-body` | Body font stack |
-| `fontHeading` | `--font-heading` | Heading font stack |
-| `fontMono` | `--font-mono` | Monospace font stack |
-| `headingWeight` | `--heading-weight` | Heading font weight |
-| `headingLetterSpacing` | `--heading-letter-spacing` | Heading letter spacing |
-| `bodyLineHeight` | `--body-line-height` | Body line height |
-| `borderRadius` | `--border-radius` | Component border radius |
-| `transition` | `--transition` | CSS transition shorthand |
-| `contentMaxWidth` | `--content-max-width` | `<main>` max width |
-| `spacingSection` | `--spacing-section` | `<section>` vertical padding |
-| `spacingCard` | `--spacing-card` | Card internal padding |
-| `buttonTextColor` | `--button-text-color` | Text on filled buttons |
+| Token                  | CSS Property               | Purpose                          |
+| ---------------------- | -------------------------- | -------------------------------- |
+| `bgPrimary`            | `--bg-primary`             | Main background                  |
+| `bgSecondary`          | `--bg-secondary`           | Card / section background        |
+| `textPrimary`          | `--text-primary`           | Body text                        |
+| `textSecondary`        | `--text-secondary`         | Muted / secondary text           |
+| `accent`               | `--accent`                 | Primary brand color              |
+| `accentHover`          | `--accent-hover`           | Accent on hover                  |
+| `accentSecondary`      | `--accent-secondary`       | Secondary brand color (nullable) |
+| `accentTertiary`       | `--accent-tertiary`        | Tertiary brand color (nullable)  |
+| `border`               | `--border`                 | Border / divider color           |
+| `shadow`               | `--shadow`                 | Box shadow value                 |
+| `fontBody`             | `--font-body`              | Body font stack                  |
+| `fontHeading`          | `--font-heading`           | Heading font stack               |
+| `fontMono`             | `--font-mono`              | Monospace font stack             |
+| `headingWeight`        | `--heading-weight`         | Heading font weight              |
+| `headingLetterSpacing` | `--heading-letter-spacing` | Heading letter spacing           |
+| `bodyLineHeight`       | `--body-line-height`       | Body line height                 |
+| `borderRadius`         | `--border-radius`          | Component border radius          |
+| `transition`           | `--transition`             | CSS transition shorthand         |
+| `contentMaxWidth`      | `--content-max-width`      | `<main>` max width               |
+| `spacingSection`       | `--spacing-section`        | `<section>` vertical padding     |
+| `spacingCard`          | `--spacing-card`           | Card internal padding            |
+| `buttonTextColor`      | `--button-text-color`      | Text on filled buttons           |
 
 ## Shared Component Classes
 
@@ -69,8 +69,8 @@ import type { AppConfig } from "@fachada/core";
 
 export const appConfig: AppConfig = {
   themes: {
-    default: "minimalist",   // one of the 4 built-in keys, or your custom key
-    defaultMode: "light",    // "light" | "dark"
+    default: "minimalist", // one of the 4 built-in keys, or your custom key
+    defaultMode: "light", // "light" | "dark"
     // optional: define a custom skin
     custom: {
       myBrand: {

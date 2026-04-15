@@ -88,19 +88,13 @@ export function resolveMobileBreakpoint(
  */
 export function getNavbarClasses(config: Required<NavbarConfig>): string {
   const classes: string[] = [
-    // Base structure
-    "flex",
-    "items-center",
-    "justify-between",
-
-    // Layout variant
-    config.variant === "vertical" ? "flex-col" : "flex-row",
+    // Layout variant (semantic, defined in navbar.css)
     `navbar-${config.variant}`,
 
-    // Positioning
-    config.position,
+    // Positioning (semantic, defined in navbar.css)
+    `navbar-${config.position}`,
 
-    // Mobile menu mode
+    // Mobile menu mode (semantic, can be styled in navbar.css)
     config.mobileMode === "hamburger" ? "has-hamburger-menu" : "",
 
     // Custom classes

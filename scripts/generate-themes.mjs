@@ -63,8 +63,10 @@ function parseValue(value) {
   if (value === "null") return null;
   if (value === "true") return true;
   if (value === "false") return false;
-  if ((value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))) {
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    (value.startsWith("'") && value.endsWith("'"))
+  ) {
     return value.slice(1, -1);
   }
   return value;

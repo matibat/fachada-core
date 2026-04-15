@@ -196,6 +196,8 @@ function buildPackageJson(name: string): string {
       "test:ui": "vitest --ui",
       "test:e2e": "playwright test",
       "test:e2e:ui": "playwright test --ui",
+      clean: "rm -rf node_modules/.vite",
+      "dev:clean": "rm -rf node_modules/.vite && yarn dev",
     },
     dependencies: {
       "@astrojs/react": "^5.0.3",

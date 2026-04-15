@@ -1,0 +1,42 @@
+#!/bin/bash
+# Git pre-commit hook to enforce semantic CSS in core widgets
+# Prevents regression of structural Tailwind utilities that break determinism
+
+CRITICAL_UTILS=(
+  "min-h-screen"
+  "px-4"
+  "py-20"
+  "flex flex-col"
+  "flex flex-row"
+  "max-w-4xl"
+  "max-w-5xl"
+  "max-w-6xl"
+  "items-center"
+  "justify-between"
+  "justify-center"
+)
+
+echo "🔍 Enforcing semantic CSS in @fachada/core widgets..."
+
+VIOLATIONS=0
+for util in "${CRITICAL_UTILS[@]}"; do
+  if grep -r "class=\"[^\"]*$util" src/astro/widgets/ 2>/dev/null | grep -v node_modules | grep -v ".astro~"; then
+    VIOLATIONS=$((VIOLATIONS + 1))
+  fi
+done
+
+if [ $VIOLATIONS -gt 0 ]; then
+  echo "❌ Structural Tailwind utilities detected in core widgets!"
+  echo "   These utilities will be overridden by app Tailwind configs, breaking determinism."
+  echo ""
+  echo "   ✅ SOLUTION: Replace with semantic CSS classes from src/astro/styles/globals.css"
+  echo "   Examples:"
+  echo "     - 'px-4 py-20' → 'section-wrapper'"
+  echo "     - 'max-w-6xl mx-auto' → 'section-inner-xl'"
+  echo "     - 'flex flex-col justify-center gap-6' → 'hero-column-center gap-6'"
+  echo ""
+  exit 1
+fi
+
+echo "✅ Core widgets are deterministic (zero structural Tailwind utilities)"
+exit 0
