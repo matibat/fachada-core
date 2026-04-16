@@ -1,11 +1,10 @@
 ---
-import type { ProjectsLayout } from '@fachada/core';
 import ProjectsGrid3 from './projects/ProjectsGrid3.astro';
 import ProjectsGrid2 from './projects/ProjectsGrid2.astro';
 import ProjectsList from './projects/ProjectsList.astro';
 
 export interface Props {
-  layout?: ProjectsLayout;
+  layout?: string;
   filterRoles?: string[];
   heading?: string;
 }

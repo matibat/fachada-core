@@ -1,0 +1,25 @@
+---
+import type { GalleryConfig } from "@fachada/core";
+import GalleryCarousel from "./gallery/GalleryCarousel.astro";
+import GalleryGrid from "./gallery/GalleryGrid.astro";
+import GalleryList from "./gallery/GalleryList.astro";
+import { appConfig } from "virtual:fachada/active-app";
+
+export interface Props {
+  layout?: string;
+}
+
+const { layout = "carousel" } = Astro.props;
+
+const gallery: GalleryConfig | undefined = appConfig.gallery;
+
+if (!gallery || gallery.images.length === 0) {
+  // Nothing to render when gallery data is absent
+  return;
+}
+---
+
+{layout === "carousel" && <GalleryCarousel gallery={gallery} />}
+{layout === "grid-3" && <GalleryGrid gallery={gallery} columns={3} />}
+{layout === "grid-2" && <GalleryGrid gallery={gallery} columns={2} />}
+{layout === "list" && <GalleryList gallery={gallery} />}

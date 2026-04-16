@@ -1,10 +1,9 @@
 ---
-import type { AboutLayout } from '@fachada/core';
 import AboutCard from './about/AboutCard.astro';
 import AboutPlain from './about/AboutPlain.astro';
 
 export interface Props {
-  layout?: AboutLayout;
+  layout?: string;
 }
 
 const { layout = 'card' } = Astro.props;

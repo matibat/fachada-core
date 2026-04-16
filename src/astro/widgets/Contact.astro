@@ -1,10 +1,9 @@
 ---
-import type { ContactLayout } from '@fachada/core';
 import ContactCentered from './contact/ContactCentered.astro';
 import ContactSplit from './contact/ContactSplit.astro';
 
 export interface Props {
-  layout?: ContactLayout;
+  layout?: string;
   /** Page-level message override. Takes priority over profileConfig.contactMessage. */
   message?: string;
 }

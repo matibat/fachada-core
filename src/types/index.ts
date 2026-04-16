@@ -8,6 +8,8 @@ export type {
   CustomThemeDefinition,
   AppThemes,
   AssetConfig,
+  GalleryImage,
+  GalleryConfig,
   AppConfig,
 } from "./app.types";
 export type { SiteTreeConfig, NavbarConfig } from "./app.types";
@@ -28,12 +30,8 @@ export type {
 
 // layout.types.ts
 export type {
-  HeroLayout,
-  AboutLayout,
-  SkillsLayout,
-  ProjectsLayout,
-  ContactLayout,
   WidgetLayoutConfig,
+  WidgetComponentMap,
 } from "./layout.types";
 
 // site-tree.types.ts
