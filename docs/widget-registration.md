@@ -33,7 +33,7 @@ const widgetComponents: WidgetComponentMap = {
 **Step 4** — Enable the section in `app.config.ts`:
 
 ```typescript
-sections: [{ id: "portfolio", enabled: true, order: 5 }]
+sections: [{ id: "portfolio", enabled: true, order: 5 }];
 ```
 
 **Step 5** — Build. No changes to WidgetRenderer, `layout.types.ts`, or any CSS file.
@@ -65,7 +65,7 @@ sections: [
     order: 2,
     background: "#1A1410",
   },
-]
+];
 ```
 
 When `background` is absent, no inline style is emitted.
