@@ -1,0 +1,120 @@
+---
+import type { GalleryConfig } from "@fachada/core";
+
+export interface Props {
+  gallery: GalleryConfig;
+  columns?: 2 | 3;
+}
+
+const { gallery, columns = 3 } = Astro.props;
+const { title, description, images } = gallery;
+
+const gridClass = columns === 2 ? "gallery-grid--2" : "gallery-grid--3";
+---
+
+<section
+  id="gallery"
+  class="gallery-section section-wrapper"
+>
+  <div class="section-inner-md">
+    {
+      title && (
+        <h2 class="gallery-title" data-testid="gallery-title">
+          {title}
+        </h2>
+      )
+    }
+    {description && <p class="gallery-description">{description}</p>}
+
+    <div class={`gallery-grid ${gridClass}`} data-testid="gallery-grid">
+      {
+        images.map((img) => (
+          <figure class="gallery-card">
+            <img
+              src={img.src}
+              alt={img.alt}
+              class="gallery-card-image"
+              loading="lazy"
+            />
+            {img.caption && (
+              <figcaption class="gallery-card-caption">
+                {img.caption}
+              </figcaption>
+            )}
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery-section {
+    padding: var(--spacing-section) 1.5rem;
+  }
+
+  .gallery-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--accent);
+  }
+
+  .gallery-description {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .gallery-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .gallery-grid--3 {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .gallery-grid--2 {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  @media (min-width: 640px) {
+    .gallery-grid--3,
+    .gallery-grid--2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .gallery-grid--3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .gallery-card {
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px var(--shadow);
+    margin: 0;
+    background: var(--bg-secondary);
+  }
+
+  .gallery-card-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--transition);
+  }
+
+  .gallery-card:hover .gallery-card-image {
+    transform: scale(1.04);
+  }
+
+  .gallery-card-caption {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+</style>

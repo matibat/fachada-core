@@ -1,9 +1,10 @@
 ---
-import { getActiveAppConfig } from '@fachada/core';
-import { LayoutWrapper } from '@fachada/core';
-import { THEME_DEFINITIONS, CSS_VAR_MAP } from '@fachada/core';
-import { validateThemeConfigOrThrow } from '@fachada/core';
-import '../styles/globals.css';
+import { getActiveAppConfig } from "@fachada/core";
+import { LayoutWrapper } from "@fachada/core";
+import { THEME_DEFINITIONS, CSS_VAR_MAP } from "@fachada/core";
+import { validateThemeConfigOrThrow } from "@fachada/core";
+import "../styles/globals.css";
+import "../styles/section-backgrounds.css";
 
 export interface Props {
   title?: string;
@@ -29,7 +30,9 @@ const theme = appConfig.theme;
 const appThemeVariants = appConfig.themeVariants || {};
 
 // Validate theme configuration and get resolved theme pool for this app
-const { resolvedThemes, defaultTheme: effectiveDefaultTheme } = validateThemeConfigOrThrow(appConfig, 'active-app');
+const { resolvedThemes, defaultTheme: effectiveDefaultTheme } =
+  validateThemeConfigOrThrow(appConfig, "active-app");
+
 ---
 
 <!doctype html>
@@ -40,41 +43,47 @@ const { resolvedThemes, defaultTheme: effectiveDefaultTheme } = validateThemeCon
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
-    
+
     <!-- Primary Meta Tags -->
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageURL} />
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={canonicalURL} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={ogImageURL} />
-    
+
     <!-- Google Fonts — all four theme typefaces loaded upfront to avoid FOUC on switch -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Exo+2:wght@400;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Exo+2:wght@400;700;800&family=JetBrains+Mono:wght@400;500&family=Pinyon+Script&display=swap"
       rel="stylesheet"
     />
 
     <!-- Plausible Analytics -->
-    {siteConfig.analytics.plausibleDomain && (
-      <script defer data-domain={siteConfig.analytics.plausibleDomain} src="https://plausible.io/js/script.js"></script>
-    )}
-    
+    {
+      siteConfig.analytics.plausibleDomain && (
+        <script
+          defer
+          data-domain={siteConfig.analytics.plausibleDomain}
+          src="https://plausible.io/js/script.js"
+        />
+      )
+    }
+
     <!--
       FOUC prevention: read saved preferences from localStorage and apply the dark
       class, data-theme attribute, and all CSS custom properties synchronously
@@ -83,34 +92,59 @@ const { resolvedThemes, defaultTheme: effectiveDefaultTheme } = validateThemeCon
       template strings reference var(--token) and therefore produce identical
       class names on server and client, eliminating the hydration mismatch.
     -->
-    <script is:inline define:vars={{ defaultStyle: theme.style, defaultMode: theme.defaultMode, enableModeToggle: theme.enableModeToggle ?? true, resolvedThemesJson: JSON.stringify(resolvedThemes), cssVarMap: CSS_VAR_MAP, defaultStyleTheme: appConfig.themes?.default ?? 'minimalist', themeLayouts: appConfig.themeLayouts ?? null }}>
+    <script
+      is:inline
+      define:vars={{
+        defaultStyle: theme.style,
+        defaultMode: theme.defaultMode,
+        enableModeToggle: theme.enableModeToggle ?? true,
+        resolvedThemesJson: JSON.stringify(resolvedThemes),
+        cssVarMap: CSS_VAR_MAP,
+        defaultStyleTheme: appConfig.themes?.default ?? "minimalist",
+        themeLayouts: appConfig.themeLayouts ?? null,
+      }}
+    >
       (function () {
         function parseStored(raw, fallback) {
           if (!raw) return fallback;
-          try { return JSON.parse(raw); } catch { return raw; }
+          try {
+            return JSON.parse(raw);
+          } catch {
+            return raw;
+          }
         }
 
-        var savedStyle = parseStored(localStorage.getItem('themeStyle'), defaultStyle);
-        var savedMode  = enableModeToggle ? parseStored(localStorage.getItem('theme'), null) : null;
-        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var savedStyle = parseStored(
+          localStorage.getItem("themeStyle"),
+          defaultStyle,
+        );
+        var savedMode = enableModeToggle
+          ? parseStored(localStorage.getItem("theme"), null)
+          : null;
+        var prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
 
         var initialMode;
-        if (savedMode && savedMode !== 'auto') {
+        if (savedMode && savedMode !== "auto") {
           initialMode = savedMode;
-        } else if (savedMode === 'auto' || defaultMode === 'system') {
-          initialMode = prefersDark ? 'dark' : 'light';
+        } else if (savedMode === "auto" || defaultMode === "system") {
+          initialMode = prefersDark ? "dark" : "light";
         } else {
           initialMode = defaultMode;
         }
 
         // Normalise: only 'light' | 'dark' are valid token keys
-        if (initialMode !== 'dark') initialMode = 'light';
+        if (initialMode !== "dark") initialMode = "light";
 
         // Apply dark class (Tailwind darkMode: "class" + dark: utilities)
-        document.documentElement.classList.toggle('dark', initialMode === 'dark');
+        document.documentElement.classList.toggle(
+          "dark",
+          initialMode === "dark",
+        );
 
         // Apply data-theme attribute (informational, for CSS attribute selectors)
-        document.documentElement.setAttribute('data-theme', savedStyle);
+        document.documentElement.setAttribute("data-theme", savedStyle);
 
         // Apply every CSS custom property so styled elements have the right
         // colour on the very first paint, with no flash of wrong theme.
@@ -121,7 +155,10 @@ const { resolvedThemes, defaultTheme: effectiveDefaultTheme } = validateThemeCon
         if (tokens) {
           var root = document.documentElement;
           for (var key in cssVarMap) {
-            if (Object.prototype.hasOwnProperty.call(cssVarMap, key) && tokens[key] !== undefined) {
+            if (
+              Object.prototype.hasOwnProperty.call(cssVarMap, key) &&
+              tokens[key] !== undefined
+            ) {
               root.style.setProperty(cssVarMap[key], tokens[key]);
             }
           }
@@ -129,11 +166,16 @@ const { resolvedThemes, defaultTheme: effectiveDefaultTheme } = validateThemeCon
 
         // Layout variant FOUC prevention — write data-layout-<section> attributes to <html>
         // before first paint so the CSS activation rules show the correct pre-rendered variant.
-        var layoutTheme = themeLayouts && (themeLayouts[savedStyle] || themeLayouts[defaultStyleTheme]);
+        var layoutTheme =
+          themeLayouts &&
+          (themeLayouts[savedStyle] || themeLayouts[defaultStyleTheme]);
         if (layoutTheme) {
           for (var section in layoutTheme) {
             if (Object.prototype.hasOwnProperty.call(layoutTheme, section)) {
-              document.documentElement.setAttribute('data-layout-' + section, layoutTheme[section]);
+              document.documentElement.setAttribute(
+                "data-layout-" + section,
+                layoutTheme[section],
+              );
             }
           }
         }
@@ -145,7 +187,13 @@ const { resolvedThemes, defaultTheme: effectiveDefaultTheme } = validateThemeCon
       Make custom themes available to client-side React components before hydration.
       This window variable is accessed by ThemeContext to resolve custom themes.
     -->
-    <script is:inline define:vars={{ resolvedThemesJson: JSON.stringify(resolvedThemes), themeLayoutsJson: JSON.stringify(appConfig.themeLayouts ?? null) }}>
+    <script
+      is:inline
+      define:vars={{
+        resolvedThemesJson: JSON.stringify(resolvedThemes),
+        themeLayoutsJson: JSON.stringify(appConfig.themeLayouts ?? null),
+      }}
+    >
       window.__FACHADA_THEME_POOL__ = JSON.parse(resolvedThemesJson);
       if (themeLayoutsJson !== null) {
         window.__FACHADA_THEME_LAYOUTS__ = JSON.parse(themeLayoutsJson);

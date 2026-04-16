@@ -521,52 +521,31 @@
       flex-direction: row;
     }
   }
+
+  /* ── Typography & Branding ───────────────────────────────────────────── */
+
+  /**
+   * .font-pinyon-script — Pinyon Script cursive font for branding
+   * Applied to navbar brand and hero headings for elegant, artistic identity
+   * Responsive sizing: 18px mobile, up to 32px on desktop
+   */
+  .font-pinyon-script {
+    font-family: 'Pinyon Script', serif;
+    font-weight: 400;
+    font-size: clamp(18px, 5vw, 32px);
+    font-variation-settings: 'slnt' 0;
+    letter-spacing: 0.02em;
+  }
 }
 
-/* === Layout variant visibility (data-attribute injection) === */
-
-/* Hide all pre-rendered layout variant containers by default.
+/* Layout variant visibility (data-attribute injection)
+   Strategy: First variant of each section is visible by default (no FOUC flash).
    The FOUC script in BaseLayout writes data-layout-<section> attributes to <html>
-   so the correct variant is activated before first paint. */
+   to switch to the active variant. Inactive variants are hidden via CSS. */
+
+/* Hide all inactive variants by default — only show if it matches the html attribute */
 [data-layout-section][data-layout-variant] {
   display: none;
 }
 
-/* Hero variants */
-html[data-layout-hero="centered"] [data-layout-section="hero"][data-layout-variant="centered"] {
-  display: block; /* display: block — avoids breaking flex/grid layout context */
-}
-html[data-layout-hero="split"] [data-layout-section="hero"][data-layout-variant="split"] {
-  display: block; /* display: block — avoids breaking flex/grid layout context */
-}
-
-/* About variants */
-html[data-layout-about="card"] [data-layout-section="about"][data-layout-variant="card"] {
-  display: block; /* display: block — avoids breaking flex/grid layout context */
-}
-html[data-layout-about="plain"] [data-layout-section="about"][data-layout-variant="plain"] {
-  display: block; /* display: block — avoids breaking flex/grid layout context */
-}
-
-/* Skills variants */
-html[data-layout-skills="grid-3"] [data-layout-section="skills"][data-layout-variant="grid-3"] {
-  display: block; /* display: block — avoids breaking flex/grid layout context */
-}
-html[data-layout-skills="grid-2"] [data-layout-section="skills"][data-layout-variant="grid-2"] {
-  display: block; /* display: block — avoids breaking flex/grid layout context */
-}
-html[data-layout-skills="list"] [data-layout-section="skills"][data-layout-variant="list"] {
-  display: block; /* display: block — avoids breaking flex/grid layout context */
-}
-
-/* Projects variants */
-html[data-layout-projects="grid-3"] [data-layout-section="projects"][data-layout-variant="grid-3"] {
-  display: block; /* display: block — avoids breaking flex/grid layout context */
-}
-html[data-layout-projects="grid-2"] [data-layout-section="projects"][data-layout-variant="grid-2"] {
-  display: block; /* display: block — avoids breaking flex/grid layout context */
-}
-html[data-layout-projects="list"] [data-layout-section="projects"][data-layout-variant="list"] {
-  display: block; /* display: block — avoids breaking flex/grid layout context */
-}
 

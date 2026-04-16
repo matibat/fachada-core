@@ -1,0 +1,285 @@
+---
+import type { GalleryConfig } from "@fachada/core";
+
+export interface Props {
+  gallery: GalleryConfig;
+}
+
+const { gallery } = Astro.props;
+const {
+  title,
+  description,
+  images,
+  autoRotate = true,
+  rotationSpeed = 5000,
+} = gallery;
+---
+
+<section id="gallery" class="gallery-section section-wrapper">
+  <div class="section-inner-md">
+    {
+      title && (
+        <h2 class="gallery-title" data-testid="gallery-title">
+          {title}
+        </h2>
+      )
+    }
+    {description && <p class="gallery-description">{description}</p>}
+
+    <div
+      class="carousel-root"
+      data-auto-rotate={autoRotate ? "true" : "false"}
+      data-rotation-speed={rotationSpeed}
+      data-testid="gallery-carousel"
+    >
+      <div class="carousel-track" aria-live="polite">
+        {
+          images.map((img, idx) => (
+            <figure
+              class={`carousel-slide ${idx === 0 ? "is-active" : ""}`}
+              aria-hidden={idx !== 0 ? "true" : undefined}
+              data-index={idx}
+            >
+              <img
+                src={img.src}
+                alt={img.alt}
+                class="carousel-image"
+                loading={idx === 0 ? "eager" : "lazy"}
+              />
+              {img.caption && (
+                <figcaption class="carousel-caption">{img.caption}</figcaption>
+              )}
+            </figure>
+          ))
+        }
+      </div>
+
+      {
+        images.length > 1 && (
+          <div class="carousel-controls">
+            <button
+              class="carousel-btn carousel-btn--prev"
+              aria-label="Previous image"
+              type="button"
+            >
+              ←
+            </button>
+            <div
+              class="carousel-dots"
+              role="tablist"
+              aria-label="Gallery slides"
+            >
+              {images.map((img, idx) => (
+                <button
+                  class={`carousel-dot ${idx === 0 ? "is-active" : ""}`}
+                  data-index={idx}
+                  role="tab"
+                  aria-selected={idx === 0 ? "true" : "false"}
+                  aria-label={`Slide ${idx + 1}: ${img.alt}`}
+                  type="button"
+                />
+              ))}
+            </div>
+            <button
+              class="carousel-btn carousel-btn--next"
+              aria-label="Next image"
+              type="button"
+            >
+              →
+            </button>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .gallery-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--accent);
+  }
+
+  .gallery-description {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .carousel-root {
+    position: relative;
+  }
+
+  .carousel-track {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    aspect-ratio: 4 / 3;
+    background: var(--bg-secondary);
+  }
+
+  .carousel-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    margin: 0;
+  }
+
+  .carousel-slide.is-active {
+    opacity: 1;
+    position: relative;
+  }
+
+  .carousel-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .carousel-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    color: #fff;
+    font-size: 0.9rem;
+  }
+
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .carousel-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    transition:
+      background var(--transition),
+      color var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .carousel-btn:hover {
+    background: var(--accent);
+    color: var(--button-text-color, #fff);
+    border-color: var(--accent);
+  }
+
+  .carousel-dots {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .carousel-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    border: none;
+    background: var(--border);
+    cursor: pointer;
+    padding: 0;
+    transition: background var(--transition);
+  }
+
+  .carousel-dot.is-active {
+    background: var(--accent);
+  }
+</style>
+
+<script>
+  function initCarousel(root: HTMLElement) {
+    const slides = Array.from(
+      root.querySelectorAll<HTMLElement>(".carousel-slide"),
+    );
+    const dots = Array.from(
+      root.querySelectorAll<HTMLElement>(".carousel-dot"),
+    );
+    const prevBtn = root.querySelector<HTMLButtonElement>(
+      ".carousel-btn--prev",
+    );
+    const nextBtn = root.querySelector<HTMLButtonElement>(
+      ".carousel-btn--next",
+    );
+
+    if (slides.length <= 1) return;
+
+    let current = 0;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const autoRotate = root.dataset.autoRotate === "true";
+    const speed = parseInt(root.dataset.rotationSpeed ?? "5000", 10);
+
+    function goTo(index: number) {
+      slides[current].classList.remove("is-active");
+      slides[current].setAttribute("aria-hidden", "true");
+      dots[current]?.classList.remove("is-active");
+      dots[current]?.setAttribute("aria-selected", "false");
+
+      current = (index + slides.length) % slides.length;
+
+      slides[current].classList.add("is-active");
+      slides[current].removeAttribute("aria-hidden");
+      dots[current]?.classList.add("is-active");
+      dots[current]?.setAttribute("aria-selected", "true");
+    }
+
+    prevBtn?.addEventListener("click", () => {
+      goTo(current - 1);
+      resetTimer();
+    });
+
+    nextBtn?.addEventListener("click", () => {
+      goTo(current + 1);
+      resetTimer();
+    });
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener("click", () => {
+        goTo(i);
+        resetTimer();
+      });
+    });
+
+    function startTimer() {
+      if (!autoRotate) return;
+      timer = setInterval(() => goTo(current + 1), speed);
+    }
+
+    function resetTimer() {
+      if (timer) clearInterval(timer);
+      startTimer();
+    }
+
+    // Pause on hover / focus
+    root.addEventListener("mouseenter", () => {
+      if (timer) clearInterval(timer);
+    });
+    root.addEventListener("mouseleave", startTimer);
+    root.addEventListener("focusin", () => {
+      if (timer) clearInterval(timer);
+    });
+    root.addEventListener("focusout", startTimer);
+
+    startTimer();
+  }
+
+  document
+    .querySelectorAll<HTMLElement>(".carousel-root")
+    .forEach(initCarousel);
+</script>
