@@ -21,7 +21,9 @@
  *
  * See ADR SB-2 for the full design rationale and selector pattern specification.
  */
-export function generateFoucCss(sectionVariants: Map<string, string[]>): string {
+export function generateFoucCss(
+  sectionVariants: Map<string, string[]>,
+): string {
   const rules: string[] = [];
 
   for (const [sectionId, variants] of sectionVariants) {
@@ -29,13 +31,13 @@ export function generateFoucCss(sectionVariants: Map<string, string[]>): string 
 
     // Rule 1: default visibility — show the first variant before the FOUC script runs.
     rules.push(
-      `[data-layout-section="${sectionId}"][data-layout-variant="${variants[0]}"] { display: block; }`
+      `[data-layout-section="${sectionId}"][data-layout-variant="${variants[0]}"] { display: block; }`,
     );
 
     // Rule 2: activation rules — show the correct variant once the FOUC script has run.
     for (const v of variants) {
       rules.push(
-        `html[data-layout-${sectionId}="${v}"] [data-layout-section="${sectionId}"][data-layout-variant="${v}"] { display: block !important; }`
+        `html[data-layout-${sectionId}="${v}"] [data-layout-section="${sectionId}"][data-layout-variant="${v}"] { display: block !important; }`,
       );
     }
   }

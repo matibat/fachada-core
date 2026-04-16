@@ -30,10 +30,10 @@ describe("generateFoucCss", () => {
     const result = generateFoucCss(new Map([["hero", ["centered"]]]));
 
     expect(result).toContain(
-      '[data-layout-section="hero"][data-layout-variant="centered"] { display: block; }'
+      '[data-layout-section="hero"][data-layout-variant="centered"] { display: block; }',
     );
     expect(result).toContain(
-      'html[data-layout-hero="centered"] [data-layout-section="hero"][data-layout-variant="centered"] { display: block !important; }'
+      'html[data-layout-hero="centered"] [data-layout-section="hero"][data-layout-variant="centered"] { display: block !important; }',
     );
   });
 
@@ -42,24 +42,22 @@ describe("generateFoucCss", () => {
     // When: generateFoucCss is called
     // Then: only "centered" (first) gets a plain display:block rule
     //        both "centered" and "split" get activation rules
-    const result = generateFoucCss(
-      new Map([["hero", ["centered", "split"]]])
-    );
+    const result = generateFoucCss(new Map([["hero", ["centered", "split"]]]));
 
     // First variant: default visibility rule present
     expect(result).toContain(
-      '[data-layout-section="hero"][data-layout-variant="centered"] { display: block; }'
+      '[data-layout-section="hero"][data-layout-variant="centered"] { display: block; }',
     );
     // Second variant: no default visibility rule
     expect(result).not.toContain(
-      '[data-layout-section="hero"][data-layout-variant="split"] { display: block; }'
+      '[data-layout-section="hero"][data-layout-variant="split"] { display: block; }',
     );
     // Both variants: activation rules present
     expect(result).toContain(
-      'html[data-layout-hero="centered"] [data-layout-section="hero"][data-layout-variant="centered"] { display: block !important; }'
+      'html[data-layout-hero="centered"] [data-layout-section="hero"][data-layout-variant="centered"] { display: block !important; }',
     );
     expect(result).toContain(
-      'html[data-layout-hero="split"] [data-layout-section="hero"][data-layout-variant="split"] { display: block !important; }'
+      'html[data-layout-hero="split"] [data-layout-section="hero"][data-layout-variant="split"] { display: block !important; }',
     );
   });
 
@@ -72,7 +70,7 @@ describe("generateFoucCss", () => {
       new Map([
         ["hero", ["centered"]],
         ["about", []],
-      ])
+      ]),
     );
 
     expect(result).toContain('"hero"');
@@ -88,15 +86,23 @@ describe("generateFoucCss", () => {
       new Map([
         ["hero", ["centered"]],
         ["skills", ["grid-3", "grid-2"]],
-      ])
+      ]),
     );
 
     // hero rules
-    expect(result).toContain('[data-layout-section="hero"][data-layout-variant="centered"] { display: block; }');
+    expect(result).toContain(
+      '[data-layout-section="hero"][data-layout-variant="centered"] { display: block; }',
+    );
     // skills default (first variant only)
-    expect(result).toContain('[data-layout-section="skills"][data-layout-variant="grid-3"] { display: block; }');
-    expect(result).not.toContain('[data-layout-section="skills"][data-layout-variant="grid-2"] { display: block; }');
+    expect(result).toContain(
+      '[data-layout-section="skills"][data-layout-variant="grid-3"] { display: block; }',
+    );
+    expect(result).not.toContain(
+      '[data-layout-section="skills"][data-layout-variant="grid-2"] { display: block; }',
+    );
     // skills activation for grid-2
-    expect(result).toContain('html[data-layout-skills="grid-2"] [data-layout-section="skills"][data-layout-variant="grid-2"] { display: block !important; }');
+    expect(result).toContain(
+      'html[data-layout-skills="grid-2"] [data-layout-section="skills"][data-layout-variant="grid-2"] { display: block !important; }',
+    );
   });
 });

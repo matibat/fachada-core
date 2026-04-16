@@ -156,12 +156,7 @@ describe("Scenario 3: resolveWidgetLayout applies correct precedence with generi
 
   it("Given themeLayouts is undefined, When resolving any section, Then section.layout is returned (B3 baseline)", () => {
     // Given / When
-    const result = resolveWidgetLayout(
-      "contact",
-      "split",
-      undefined,
-      "dark",
-    );
+    const result = resolveWidgetLayout("contact", "split", undefined, "dark");
 
     // Then
     expect(result).toBe("split");
