@@ -2,124 +2,160 @@
 /**
  * WidgetRenderer — application service.
  *
- * Drives page composition from a SectionConfig[] (subset of AppConfig.page.sections).
- * Calls filterSections to determine which sections are enabled, then renders each
- * section widget in order.
+ * Drives page composition from a SectionConfig[] (subset of AppConfig.page.sections)
+ * and a caller-provided WidgetComponentMap.
+ *
+ * The caller (SectionsPage.astro) statically imports all widget components and passes
+ * them as the `widgetComponents` prop. WidgetRenderer iterates over enabledIds
+ * (from filterSections) and looks up each section's component from the map.
+ * Section IDs absent from the map are skipped with a console.warn.
  *
  * Layout variant strategy (F3 Phase A — pre-render all variants):
- *   All unique layout variants for each section (collected from themeLayouts across all
- *   configured themes) are pre-rendered in static HTML, each wrapped in a
- *   data-layout-section / data-layout-variant container. CSS hides non-active containers;
- *   the FOUC script in BaseLayout writes data-layout-* attributes to <html> so the
- *   correct variant is shown before first paint.
+ *   All unique layout variants for each registered section (collected from themeLayouts
+ *   across all configured themes) are pre-rendered in static HTML, each wrapped in a
+ *   data-layout-section / data-layout-variant container. A dynamically generated
+ *   <style is:global> block (ADR SB-2) contains the FOUC activation rules derived from
+ *   the registered sections. The FOUC script in BaseLayout writes data-layout-* attributes
+ *   to <html> so the correct variant is shown before first paint.
  *
- *   For sections with no themeLayouts entries (e.g. contact), the widget is rendered
- *   directly without a wrapper — it is always visible (no CSS hide rule applies).
+ *   For sections with no themeLayouts entries, the widget renders directly without a
+ *   variant wrapper — it is always visible (no CSS hide rule applies).
  *
- * An unknown section id renders nothing — no runtime crash.
+ * RoleExplorer named exception:
+ *   RoleExplorer is a React island that requires the `client:load` Astro directive.
+ *   The `client:load` directive cannot be passed as a prop through WidgetComponentMap —
+ *   Astro directives are special compiler annotations that cannot be expressed as
+ *   JavaScript values. RoleExplorer is therefore rendered after the generic loop as an
+ *   explicit named block. This is documented as ID-3 in the requirements analysis.
+ *   Preferred long-term solution: move RoleExplorer handling to SectionsPage.astro
+ *   (planned for the next task).
  */
 
-import type { PageSectionConfig } from '@fachada/core';
-import type { HeroLayout, AboutLayout, SkillsLayout, ProjectsLayout, ContactLayout } from '@fachada/core';
-import { filterSections } from '@fachada/core';
-import { appConfig } from 'virtual:fachada/active-app';
-import { resolveWidgetLayout } from '@fachada/core';
-
-// ── Widget imports (static — Astro build requirement) ──────────────────────────
-import Hero    from './Hero.astro';
-import About   from './About.astro';
-import Skills  from './Skills.astro';
-import Projects from './Projects.astro';
-import Contact from './Contact.astro';
-import { RoleExplorer } from '@fachada/core';
+import type { PageSectionConfig } from "@fachada/core";
+import type { WidgetComponentMap } from "@fachada/core";
+import { filterSections } from "@fachada/core";
+import { resolveWidgetLayout } from "@fachada/core";
+import { appConfig } from "virtual:fachada/active-app";
+import { RoleExplorer } from "@fachada/core";
+import { generateFoucCss } from "../../widgets/generateFoucCss.js";
 
 export interface Props {
+  /** Section configs from appConfig.page.sections. */
   sections: PageSectionConfig[];
+  /** Number of entries in the 'projects' content collection. Pass 0 when absent. */
   projectsCount: number;
+  /** Number of entries in the 'blog' content collection. Pass 0 when absent. */
   blogCount: number;
+  /**
+   * Map of section IDs to statically-imported Astro component references.
+   * The caller MUST statically import every component it registers here.
+   * Section IDs absent from this map are skipped with a console.warn.
+   */
+  widgetComponents: WidgetComponentMap;
 }
 
-const { sections, projectsCount, blogCount } = Astro.props;
+const { sections, projectsCount, blogCount, widgetComponents } = Astro.props;
 
 const enabledIds = filterSections(sections, {
   projectsCount,
   blogCount,
-  availableRoles: appConfig.seo.roles.map(r => r.id),
+  availableRoles: appConfig.seo.roles.map((r) => r.id),
 });
 
-// themeLayouts: used to collect all unique variants per section at build time.
 const activeStyleTheme = appConfig.themes?.default;
 const themeLayouts = appConfig.themeLayouts;
 
-// Index sections by id for O(1) layout lookup per widget.
-const sectionMap = new Map(sections.map(s => [s.id, s]));
+// Index sections by id for O(1) layout and background lookup per widget.
+const sectionMap = new Map(sections.map((s) => [s.id, s]));
 
-const filterRoles = appConfig.seo.roles.map(r => r.id);
-
-// Returns all unique layout variants for a section across every configured theme.
-// Returns an empty array when no theme configures that section.
-function getUniqueVariants<T extends string>(sectionId: string): T[] {
-  const variants = new Set<T>();
+/** Returns all unique layout variants for a section across every configured theme. */
+function getUniqueVariants(sectionId: string): string[] {
+  const variants = new Set<string>();
   if (themeLayouts) {
     for (const themeLayout of Object.values(themeLayouts)) {
-      const variant = (themeLayout as Record<string, T>)[sectionId];
+      const variant = (themeLayout as Record<string, string>)[sectionId];
       if (variant) variants.add(variant);
     }
   }
   return [...variants];
 }
 
-const heroVariants     = getUniqueVariants<HeroLayout>('hero');
-const aboutVariants    = getUniqueVariants<AboutLayout>('about');
-const skillsVariants   = getUniqueVariants<SkillsLayout>('skills');
-const projectsVariants = getUniqueVariants<ProjectsLayout>('projects');
-const contactVariants  = getUniqueVariants<ContactLayout>('contact');
+// Build variant map for all registered enabled sections — used for FOUC CSS generation.
+const sectionVariantsMap = new Map(
+  enabledIds
+    .filter((id) => widgetComponents[id] !== undefined)
+    .map((sectionId) => [sectionId, getUniqueVariants(sectionId)] as [string, string[]])
+);
+
+// Generate per-section-per-variant FOUC activation rules (ADR SB-2).
+// The static hide-all rule remains in globals.css unchanged.
+const foucCss = generateFoucCss(sectionVariantsMap);
 ---
 
-{enabledIds.includes('hero') && heroVariants.length > 0 && heroVariants.map(variant => (
-  <div data-layout-section="hero" data-layout-variant={variant} aria-hidden="true">
-    <Hero layout={variant} />
-  </div>
-))}
-{enabledIds.includes('hero') && heroVariants.length === 0 && (
-  <Hero layout={resolveWidgetLayout('hero', sectionMap.get('hero')?.layout, themeLayouts, activeStyleTheme) as HeroLayout | undefined} />
-)}
-{enabledIds.includes('about') && aboutVariants.length > 0 && aboutVariants.map(variant => (
-  <div data-layout-section="about" data-layout-variant={variant} aria-hidden="true">
-    <About layout={variant} />
-  </div>
-))}
-{enabledIds.includes('about') && aboutVariants.length === 0 && (
-  <About layout={resolveWidgetLayout('about', sectionMap.get('about')?.layout, themeLayouts, activeStyleTheme) as AboutLayout | undefined} />
-)}
-{enabledIds.includes('skills') && skillsVariants.length > 0 && skillsVariants.map(variant => (
-  <div data-layout-section="skills" data-layout-variant={variant} aria-hidden="true">
-    <Skills layout={variant} />
-  </div>
-))}
-{enabledIds.includes('skills') && skillsVariants.length === 0 && (
-  <Skills layout={resolveWidgetLayout('skills', sectionMap.get('skills')?.layout, themeLayouts, activeStyleTheme) as SkillsLayout | undefined} />
-)}
-{enabledIds.includes('role-explorer') && (
+{foucCss && <style is:global set:html={foucCss}></style>}
+
+{enabledIds.map((sectionId) => {
+  // RoleExplorer is rendered separately below — skip it in the generic loop.
+  if (sectionId === "role-explorer") return null;
+
+  const Component = widgetComponents[sectionId];
+  if (!Component) {
+    console.warn(
+      `[WidgetRenderer] No component registered for section: ${sectionId} — section will be skipped`
+    );
+    return null;
+  }
+
+  const section = sectionMap.get(sectionId);
+  const variants = getUniqueVariants(sectionId);
+  const resolvedLayout = resolveWidgetLayout(
+    sectionId,
+    section?.layout,
+    themeLayouts,
+    activeStyleTheme,
+  );
+  const bgStyle = section?.background ? `background: ${section.background}` : undefined;
+
+  if (variants.length > 0) {
+    return variants.map((variant) => (
+      <div
+        data-layout-section={sectionId}
+        data-layout-variant={variant}
+        style={bgStyle}
+        aria-hidden="true"
+      >
+        <Component layout={variant} />
+      </div>
+    ));
+  }
+
+  return (
+    <div style={bgStyle}>
+      <Component layout={resolvedLayout} />
+    </div>
+  );
+})}
+
+{/*
+  RoleExplorer — named exception.
+
+  RoleExplorer is a React island that requires `client:load`. Astro client
+  directives are compiler-level annotations and cannot be passed as prop values,
+  so RoleExplorer cannot participate in the generic widgetComponents map.
+
+  It is rendered here as an explicit named block, after the generic loop,
+  guarded by the same enabledIds check that governs all sections. The section
+  ID "role-explorer" is intentionally skipped in the loop above so it is not
+  double-rendered.
+
+  Planned: move this block to SectionsPage.astro in the next refactor task,
+  eliminating the last hardcoded section reference from WidgetRenderer.
+  See: analysis.md ID-3, ADR SB-1 Consequences.
+*/}
+{enabledIds.includes("role-explorer") && (
   <RoleExplorer
     client:load
-    roles={siteConfig.roles}
-    primaryRole={siteConfig.primaryRole}
+    roles={appConfig.seo.roles}
+    primaryRole={appConfig.seo.primaryRole}
   />
-)}
-{enabledIds.includes('projects') && projectsVariants.length > 0 && projectsVariants.map(variant => (
-  <div data-layout-section="projects" data-layout-variant={variant} aria-hidden="true">
-    <Projects layout={variant} filterRoles={filterRoles} />
-  </div>
-))}
-{enabledIds.includes('projects') && projectsVariants.length === 0 && (
-  <Projects layout={resolveWidgetLayout('projects', sectionMap.get('projects')?.layout, themeLayouts, activeStyleTheme) as ProjectsLayout | undefined} filterRoles={filterRoles} />
-)}
-{enabledIds.includes('contact') && contactVariants.length > 0 && contactVariants.map(variant => (
-  <div data-layout-section="contact" data-layout-variant={variant} aria-hidden="true">
-    <Contact layout={variant} />
-  </div>
-))}
-{enabledIds.includes('contact') && contactVariants.length === 0 && (
-  <Contact layout={resolveWidgetLayout('contact', sectionMap.get('contact')?.layout, themeLayouts, activeStyleTheme) as ContactLayout | undefined} />
 )}

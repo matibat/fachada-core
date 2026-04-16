@@ -54,15 +54,23 @@ export interface PageSectionConfig {
   /** Only show this section when the named content collection is non-empty */
   requiresContent?: "projects" | "blog";
   /**
-   * Layout variant for this widget. Valid values depend on the widget type:
-   * - hero:     HeroLayout     — "centered" | "split"
-   * - about:    AboutLayout    — "card" | "plain"
-   * - skills:   SkillsLayout   — "grid-3" | "grid-2" | "list"
-   * - projects: ProjectsLayout — "grid-3" | "grid-2" | "list"
-   * - contact:  ContactLayout  — "centered" | "split"
+   * Layout variant for this widget. Valid values depend on the widget type.
    * Omit to use each widget's built-in default.
    */
   layout?: string;
+  /**
+   * CSS `background` shorthand value applied as an inline style on the section wrapper.
+   * Accepts any valid CSS background value, including multi-layer gradients and image URLs.
+   *
+   * Examples:
+   *   "url(/images/hero.jpg) center/cover no-repeat"
+   *   "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(/images/hero.jpg) center/cover fixed"
+   *   "#1A1410"
+   *
+   * When absent, no inline style is applied — the section renders with inherited or
+   * component-defined background.
+   */
+  background?: string;
 }
 
 // ─── Multi-Role Display ───────────────────────────────────────────────────────
