@@ -85,6 +85,8 @@ This ensures the dist directory is always up-to-date.
 
 ### Framework Configuration
 
+- **[Widget Registration Guide](./docs/widget-registration.md)** — Add new widgets using the generic `WidgetComponentMap` pattern. Static imports, zero core changes.
+- **[Widget Layout Migration Guide](./docs/widget-layout-migration.md)** — Migrate from the v1 typed `WidgetLayoutConfig` to the v2 generic `Record<string, string>`. Covers removed named layout union types.
 - **[Navbar Configuration Guide](./docs/navbar-configuration.md)** — Customize navbar layout, positioning, mobile behavior, and styling per-app. Complete property reference with 5 practical examples.
 - **[Navbar Migration Guide](./docs/navbar-migration-guide.md)** — Adopt the navbar configuration system. Zero breaking changes; migration is opt-in. Backward compatibility guaranteed.
 

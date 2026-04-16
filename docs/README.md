@@ -4,6 +4,34 @@ Complete guides for using and configuring the Fachada framework.
 
 ## Configuration Guides
 
+### [Widget Registration Guide](./widget-registration.md)
+
+Generic widget system — bring your own imports, register in `widgetComponents`.
+
+- **5-step guide** to add a new widget without touching WidgetRenderer
+- **WidgetComponentMap** type with a usage example
+- **Section background field** — apply any CSS background value via config
+- **RoleExplorer exception** — React island handled outside the generic registry
+
+**Read this if you want to:**
+
+- Add a new widget to a Fachada app
+- Understand the bring-your-own-imports pattern
+- Set a per-section background image or color from config
+
+### [Widget Layout Migration Guide](./widget-layout-migration.md)
+
+Migrate from the v1 typed `WidgetLayoutConfig` interface to the v2 generic record.
+
+- **Before/after** TypeScript snippets for `WidgetLayoutConfig`
+- **Removed exports**: the 6 named layout union types
+- **themeLayouts config**: no structural change required
+
+**Read this if you:**
+
+- Are upgrading from fachada-core v1 to v2
+- See TypeScript errors after updating `WidgetLayoutConfig` imports
+
 ### [Skin & Theme System](./skin-system.md)
 
 Token-driven theming that works for any skin — built-in or custom.
