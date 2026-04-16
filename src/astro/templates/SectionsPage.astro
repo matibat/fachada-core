@@ -1,0 +1,70 @@
+---
+/**
+ * SectionsPage — widget-driven landing page template.
+ *
+ * Renders sections via WidgetRenderer using appConfig.page.sections.
+ * Designed for apps that configure their entire landing page through
+ * section widgets rather than the hardcoded LandingPage layout.
+ *
+ * Usage: set `template: "sections"` in appConfig.siteTree.landing.
+ */
+import type { PageMeta, WidgetComponentMap } from "@fachada/core";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import WidgetRenderer from "../widgets/WidgetRenderer.astro";
+import { getActiveAppConfig } from "@fachada/core";
+import { getCollection } from "astro:content";
+import Hero from "../widgets/Hero.astro";
+import About from "../widgets/About.astro";
+import Skills from "../widgets/Skills.astro";
+import Projects from "../widgets/Projects.astro";
+import Contact from "../widgets/Contact.astro";
+import Gallery from "../widgets/Gallery.astro";
+
+interface Props {
+  meta: PageMeta;
+}
+
+const { meta } = Astro.props;
+
+const appConfig = getActiveAppConfig();
+const sections = appConfig.page.sections;
+
+let projectsCount = 0;
+let blogCount = 0;
+try {
+  const projects = await getCollection("projects");
+  projectsCount = projects.length;
+} catch {
+  /* collection absent */
+}
+try {
+  const blog = await getCollection("blog");
+  blogCount = blog.length;
+} catch {
+  /* collection absent */
+}
+
+const widgetComponents: WidgetComponentMap = {
+  hero: Hero,
+  about: About,
+  skills: Skills,
+  projects: Projects,
+  contact: Contact,
+  gallery: Gallery,
+};
+---
+
+<BaseLayout title={meta.title} description={meta.description}>
+  <Header currentPath="/" />
+  <main>
+    <WidgetRenderer
+      sections={sections}
+      projectsCount={projectsCount}
+      blogCount={blogCount}
+      widgetComponents={widgetComponents}
+    />
+  </main>
+  <Footer />
+</BaseLayout>
