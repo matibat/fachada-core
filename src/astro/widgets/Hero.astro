@@ -1,13 +1,13 @@
 ---
-import HeroCentered from './hero/HeroCentered.astro';
-import HeroSplit from './hero/HeroSplit.astro';
+import HeroCentered from "./hero/HeroCentered.astro";
+import HeroSplit from "./hero/HeroSplit.astro";
 
 export interface Props {
   layout?: string;
 }
 
-const { layout = 'centered' } = Astro.props;
+const { layout = "centered" } = Astro.props;
 ---
 
-{layout === 'centered' && <HeroCentered />}
-{layout === 'split' && <HeroSplit />}
+{layout === "centered" && <HeroCentered />}
+{layout === "split" && <HeroSplit />}

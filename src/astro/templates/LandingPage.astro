@@ -27,8 +27,9 @@ interface Props {
 const { meta, data } = Astro.props;
 
 const isMultiRole = siteConfig.roles.length > 1;
-const primaryRole = siteConfig.roles.find((r) => r.id === siteConfig.primaryRole)
-  ?? siteConfig.roles[0];
+const primaryRole =
+  siteConfig.roles.find((r) => r.id === siteConfig.primaryRole) ??
+  siteConfig.roles[0];
 
 const hook = data?.hook ?? siteConfig.title;
 const subheading = data?.subheading ?? siteConfig.description;
@@ -40,8 +41,9 @@ const ctaMessage = data?.ctaMessage ?? ctaMessageDefault;
 const ctaLabel = data?.ctaLabel ?? "Get in touch";
 
 // Primary contact href: prefer WhatsApp, then email
-const primaryContactHref = siteConfig.social.whatsapp
-  ?? (siteConfig.social.email ? `mailto:${siteConfig.social.email}` : undefined);
+const primaryContactHref =
+  siteConfig.social.whatsapp ??
+  (siteConfig.social.email ? `mailto:${siteConfig.social.email}` : undefined);
 
 let featuredByRole: Record<string, typeof projects> = {};
 let projects: any[] = [];
@@ -74,122 +76,136 @@ const personSchema = {
   <StructuredData type="Person" data={personSchema} />
   <Header currentPath="/" />
   <main>
-
     <!-- ── HOOK: Hero ──────────────────────────────────────────── -->
     <section class="lp-hero">
       <div class="lp-hero-inner">
-        <h1 class="lp-hook" set:html={hook.replace(/\./g, '.<br />')} />
+        <h1 class="lp-hook" set:html={hook.replace(/\./g, ".<br />")} />
         <p class="lp-subheading">{subheading}</p>
 
         <!-- CTAs: fork buttons for multi-role, single CTA for single-role -->
         <div class="lp-ctas">
-          {isMultiRole
-            ? siteConfig.roles.map((role) => (
-                <a href={role.id === siteConfig.primaryRole
-                    ? `/${siteConfig.primaryRole}`
-                    : `/${role.id}`}
-                  class:list={["lp-cta", { "lp-cta--primary": role.id === siteConfig.primaryRole }]}
-                >
-                  → {role.title}
-                </a>
-              ))
-            : primaryContactHref && (
-                <a href={primaryContactHref} class="lp-cta lp-cta--primary">
-                  {ctaLabel}
-                </a>
-              )
+          {
+            isMultiRole
+              ? siteConfig.roles.map((role) => (
+                  <a
+                    href={
+                      role.id === siteConfig.primaryRole
+                        ? `/${siteConfig.primaryRole}`
+                        : `/${role.id}`
+                    }
+                    class:list={[
+                      "lp-cta",
+                      { "lp-cta--primary": role.id === siteConfig.primaryRole },
+                    ]}
+                  >
+                    → {role.title}
+                  </a>
+                ))
+              : primaryContactHref && (
+                  <a href={primaryContactHref} class="lp-cta lp-cta--primary">
+                    {ctaLabel}
+                  </a>
+                )
           }
         </div>
       </div>
     </section>
 
     <!-- ── MEAT: Featured work (multi-role only) ───────────────── -->
-    {isMultiRole && projects.length > 0 && (
-      <section class="lp-featured">
-        <div class="lp-section-inner">
-          <h2 class="lp-section-heading">Featured Work</h2>
-          <div class="lp-featured-grid">
-            {siteConfig.roles.flatMap((role) =>
-              (featuredByRole[role.id] ?? []).map((project: any) => (
-                <a
-                  href={`/projects/${project.slug}`}
-                  class="lp-project-card"
-                >
-                  <div class="lp-project-thumb">
-                    {project.data.image && (
-                      <img src={project.data.image} alt={project.data.title} />
-                    )}
-                  </div>
-                  <h3>{project.data.title}</h3>
-                  {project.data.stack && (
-                    <div class="lp-project-tags">
-                      {project.data.stack.slice(0, 3).map((t: string) => (
-                        <span>{t}</span>
-                      ))}
+    {
+      isMultiRole && projects.length > 0 && (
+        <section class="lp-featured">
+          <div class="lp-section-inner">
+            <h2 class="lp-section-heading">Featured Work</h2>
+            <div class="lp-featured-grid">
+              {siteConfig.roles.flatMap((role) =>
+                (featuredByRole[role.id] ?? []).map((project: any) => (
+                  <a href={`/projects/${project.slug}`} class="lp-project-card">
+                    <div class="lp-project-thumb">
+                      {project.data.image && (
+                        <img
+                          src={project.data.image}
+                          alt={project.data.title}
+                        />
+                      )}
                     </div>
-                  )}
-                  {project.data.medium && (
-                    <p class="lp-project-medium">{project.data.medium}</p>
-                  )}
-                </a>
-              ))
-            )}
+                    <h3>{project.data.title}</h3>
+                    {project.data.stack && (
+                      <div class="lp-project-tags">
+                        {project.data.stack.slice(0, 3).map((t: string) => (
+                          <span>{t}</span>
+                        ))}
+                      </div>
+                    )}
+                    {project.data.medium && (
+                      <p class="lp-project-medium">{project.data.medium}</p>
+                    )}
+                  </a>
+                )),
+              )}
+            </div>
           </div>
-        </div>
-      </section>
-    )}
+        </section>
+      )
+    }
 
     <!-- ── Role navigation (multi-role): two equal cards ─────── -->
-    {isMultiRole && (
-      <section class="lp-roles">
-        <div class="lp-section-inner">
-          <div class="lp-roles-grid">
-            {siteConfig.roles.map((role) => (
-              <a
-                href={`/${role.id}`}
-                class="lp-role-card"
-              >
-                <h3>{role.title}</h3>
-                {role.specialties && (
-                  <p class="lp-role-specialties">{role.specialties.join(" · ")}</p>
-                )}
-                {role.description && (
-                  <p class="lp-role-desc">{role.description}</p>
-                )}
-                <span class="lp-role-explore">Explore →</span>
-              </a>
-            ))}
+    {
+      isMultiRole && (
+        <section class="lp-roles">
+          <div class="lp-section-inner">
+            <div class="lp-roles-grid">
+              {siteConfig.roles.map((role) => (
+                <a href={`/${role.id}`} class="lp-role-card">
+                  <h3>{role.title}</h3>
+                  {role.specialties && (
+                    <p class="lp-role-specialties">
+                      {role.specialties.join(" · ")}
+                    </p>
+                  )}
+                  {role.description && (
+                    <p class="lp-role-desc">{role.description}</p>
+                  )}
+                  <span class="lp-role-explore">Explore →</span>
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
-    )}
+        </section>
+      )
+    }
 
     <!-- ── Single-role hero sections ───────────────────────────── -->
-    {!isMultiRole && primaryRole.about && (
-      <section class="lp-about">
-        <div class="lp-section-inner lp-section-inner--narrow">
-          <div class="lp-about-body">
-            {primaryRole.about.paragraphs.map((p) => (
-              <p>{p}</p>
-            ))}
+    {
+      !isMultiRole && primaryRole.about && (
+        <section class="lp-about">
+          <div class="lp-section-inner lp-section-inner--narrow">
+            <div class="lp-about-body">
+              {primaryRole.about.paragraphs.map((p) => (
+                <p>{p}</p>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
-    )}
+        </section>
+      )
+    }
 
     <!-- ── CTA ──────────────────────────────────────────────────── -->
     <section class="lp-cta-section">
-      <div class="lp-section-inner lp-section-inner--narrow lp-section-inner--center">
+      <div
+        class="lp-section-inner lp-section-inner--narrow lp-section-inner--center"
+      >
         <h2>{ctaHeading}</h2>
         <p>{ctaMessage}</p>
-        {primaryContactHref && (
-          <a href={primaryContactHref} class="lp-cta lp-cta--primary">
-            {ctaLabel}
-          </a>
-        )}
+        {
+          primaryContactHref && (
+            <a href={primaryContactHref} class="lp-cta lp-cta--primary">
+              {ctaLabel}
+            </a>
+          )
+        }
       </div>
     </section>
-
   </main>
   <Footer />
 </BaseLayout>
@@ -247,23 +263,35 @@ const personSchema = {
     background-color: var(--accent);
     color: var(--button-text-color, #fff);
   }
-  .lp-cta:hover { opacity: 0.85; }
+  .lp-cta:hover {
+    opacity: 0.85;
+  }
 
   /* ── Shared sections ───────────────────────────────────────── */
   .lp-featured,
   .lp-roles,
-  .lp-about { padding: var(--spacing-section, 5rem) 0; }
+  .lp-about {
+    padding: var(--spacing-section, 5rem) 0;
+  }
 
-  .lp-featured { background-color: var(--bg-secondary); }
-  .lp-roles { background-color: var(--bg-secondary); }
+  .lp-featured {
+    background-color: var(--bg-secondary);
+  }
+  .lp-roles {
+    background-color: var(--bg-secondary);
+  }
 
   .lp-section-inner {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--spacing-card);
   }
-  .lp-section-inner--narrow { max-width: 720px; }
-  .lp-section-inner--center { text-align: center; }
+  .lp-section-inner--narrow {
+    max-width: 720px;
+  }
+  .lp-section-inner--center {
+    text-align: center;
+  }
 
   .lp-section-heading {
     font-family: var(--font-heading, sans-serif);
@@ -337,7 +365,9 @@ const personSchema = {
     gap: 2rem;
   }
   @media (min-width: 640px) {
-    .lp-roles-grid { grid-template-columns: repeat(2, 1fr); }
+    .lp-roles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
   .lp-role-card {
     padding: 2.5rem;
@@ -350,7 +380,9 @@ const personSchema = {
     gap: 0.75rem;
     transition: var(--transition);
   }
-  .lp-role-card:hover { border-color: var(--accent); }
+  .lp-role-card:hover {
+    border-color: var(--accent);
+  }
   .lp-role-card h3 {
     font-size: 1.5rem;
     font-weight: 700;

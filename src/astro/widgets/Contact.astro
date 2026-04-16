@@ -1,6 +1,6 @@
 ---
-import ContactCentered from './contact/ContactCentered.astro';
-import ContactSplit from './contact/ContactSplit.astro';
+import ContactCentered from "./contact/ContactCentered.astro";
+import ContactSplit from "./contact/ContactSplit.astro";
 
 export interface Props {
   layout?: string;
@@ -8,8 +8,8 @@ export interface Props {
   message?: string;
 }
 
-const { layout = 'centered', message } = Astro.props;
+const { layout = "centered", message } = Astro.props;
 ---
 
-{layout === 'centered' && <ContactCentered message={message} />}
-{layout === 'split' && <ContactSplit message={message} />}
+{layout === "centered" && <ContactCentered message={message} />}
+{layout === "split" && <ContactSplit message={message} />}

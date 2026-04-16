@@ -1,7 +1,7 @@
 ---
-import ProjectsGrid3 from './projects/ProjectsGrid3.astro';
-import ProjectsGrid2 from './projects/ProjectsGrid2.astro';
-import ProjectsList from './projects/ProjectsList.astro';
+import ProjectsGrid3 from "./projects/ProjectsGrid3.astro";
+import ProjectsGrid2 from "./projects/ProjectsGrid2.astro";
+import ProjectsList from "./projects/ProjectsList.astro";
 
 export interface Props {
   layout?: string;
@@ -9,9 +9,17 @@ export interface Props {
   heading?: string;
 }
 
-const { layout = 'grid-3', filterRoles, heading } = Astro.props;
+const { layout = "grid-3", filterRoles, heading } = Astro.props;
 ---
 
-{layout === 'grid-3' && <ProjectsGrid3 filterRoles={filterRoles} heading={heading} />}
-{layout === 'grid-2' && <ProjectsGrid2 filterRoles={filterRoles} heading={heading} />}
-{layout === 'list' && <ProjectsList filterRoles={filterRoles} />}
+{
+  layout === "grid-3" && (
+    <ProjectsGrid3 filterRoles={filterRoles} heading={heading} />
+  )
+}
+{
+  layout === "grid-2" && (
+    <ProjectsGrid2 filterRoles={filterRoles} heading={heading} />
+  )
+}
+{layout === "list" && <ProjectsList filterRoles={filterRoles} />}

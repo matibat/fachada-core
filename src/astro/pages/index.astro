@@ -13,6 +13,7 @@
 import { getActiveAppConfig } from "@fachada/core";
 import type { LandingPageData } from "@fachada/core";
 import LandingPage from "../templates/LandingPage.astro";
+import SectionsPage from "../templates/SectionsPage.astro";
 
 const appConfig = getActiveAppConfig();
 const landing = appConfig.siteTree?.landing;
@@ -27,6 +28,5 @@ const template = landing?.template ?? "landing";
 const templateData = landing?.templateData as LandingPageData | undefined;
 ---
 
-{template === "landing" && (
-  <LandingPage meta={meta} data={templateData} />
-)}
+{template === "landing" && <LandingPage meta={meta} data={templateData} />}
+{template === "sections" && <SectionsPage meta={meta} />}
