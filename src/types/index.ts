@@ -29,10 +29,7 @@ export type {
 } from "./profile.types";
 
 // layout.types.ts
-export type {
-  WidgetLayoutConfig,
-  WidgetComponentMap,
-} from "./layout.types";
+export type { WidgetLayoutConfig, WidgetComponentMap } from "./layout.types";
 
 // site-tree.types.ts
 export { SITE_TREE_VERSION } from "./site-tree.types";

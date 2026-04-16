@@ -111,6 +111,31 @@ export interface AssetConfig {
   [key: string]: string | Record<string, string>;
 }
 
+// ─── Gallery Domain ───────────────────────────────────────────────────────────
+
+/**
+ * GalleryImage — a single image entry in a gallery section.
+ */
+export interface GalleryImage {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
+/**
+ * GalleryConfig — data and settings for the gallery section widget.
+ * Referenced as `AppConfig.gallery` and used by the Gallery widget.
+ */
+export interface GalleryConfig {
+  title?: string;
+  description?: string;
+  images: GalleryImage[];
+  /** Auto-rotate slides (carousel layout only). Defaults to true for carousel. */
+  autoRotate?: boolean;
+  /** Milliseconds between slide transitions. Defaults to 5000. */
+  rotationSpeed?: number;
+}
+
 // ─── AppConfig Aggregate Root ─────────────────────────────────────────────────
 
 /**
@@ -135,6 +160,8 @@ export interface AppConfig {
   themes?: AppThemes;
   /** Asset references, optionally with per-variant overrides */
   assets: AssetConfig;
+  /** Gallery section data — images and display configuration */
+  gallery?: GalleryConfig;
   /** Per-theme widget layout overrides; keys match theme names */
   themeLayouts?: Record<string, WidgetLayoutConfig>;
   /**
