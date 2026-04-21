@@ -81,6 +81,22 @@ yarn run build
 
 This ensures the dist directory is always up-to-date.
 
+### Syncing to consumer apps during development
+
+When `@fachada/core` is consumed via `"file:../fachada-core"` in a sibling app's `package.json`, Yarn copies the package at install time — it does **not** create a live symlink. After running `yarn build` in `fachada-core`, you must also copy the updated `dist/` files into the consumer app's `node_modules`:
+
+```bash
+# From fachada-core — sync dist to a sibling consumer app (e.g. unbati-app)
+cp -r dist/astro/components  ../unbati-app/node_modules/@fachada/core/dist/astro/
+cp -r dist/astro/layouts     ../unbati-app/node_modules/@fachada/core/dist/astro/
+cp -r dist/astro/templates   ../unbati-app/node_modules/@fachada/core/dist/astro/
+cp -r dist/scroll-transition ../unbati-app/node_modules/@fachada/core/dist/
+```
+
+Then restart the consumer app's dev server so Astro picks up the new files.
+
+> **Tip:** To use a true symlink instead, change the dependency to `"portal:../fachada-core"` in the consumer's `package.json` and re-run `yarn install`. Portal links update in real time without this copy step.
+
 ## Documentation
 
 ### Framework Configuration
