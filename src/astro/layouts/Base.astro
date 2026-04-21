@@ -1,0 +1,240 @@
+---
+/**
+ * Base Layout Component — Entry point for all page renders
+ *
+ * Refactored v1.x integration layer that:
+ * - Consumes Site domain object from configLoader API
+ * - Builds flattened Astro context via buildAstroContext()
+ * - Injects skin tokens as CSS custom properties
+ * - Preserves existing header/footer/nav structure
+ *
+ * Props signature:
+ * - site: Site (required for v1.x path)
+ * - pageId: string (required for v1.x path; identifies page in site registry)
+ * - language?: string (optional; page language or fallback to page default)
+ *
+ * Backward compatibility:
+ * - Accepts legacy props (title?, description?, ogImage?, noindex?)
+ * - Makes all domain-related props optional
+ * - Falls back to legacy pattern if site not provided
+ *
+ * CSS Injection:
+ * - Injects skin tokens as :root CSS custom properties
+ * - Supports light/dark mode switching
+ * - Applies before first paint (no FOUC)
+ */
+
+import type { Site } from "../../domain/Site";
+import { buildAstroContext } from "../../api";
+import { generateSkinCSS } from "../../api/skinInjector";
+import type { AstroContextProps } from "../../api";
+import "../styles/globals.css";
+import "../styles/section-backgrounds.css";
+
+/**
+ * Props interface — flexible to support both v1.x (domain-driven)
+ * and legacy patterns (event-driven)
+ */
+interface Props {
+  // v1.x: Domain-driven configuration
+  site?: Site;
+  pageId?: string;
+  language?: string;
+
+  // v0.x: Legacy props (backward compatibility)
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+/**
+ * Extract props with sensible defaults
+ */
+const {
+  // v1.x props
+  site,
+  pageId,
+  language,
+
+  // v0.x legacy props
+  title: legacyTitle,
+  description: legacyDescription,
+  ogImage: legacyOgImage,
+  noindex = false,
+} = Astro.props;
+
+/**
+ * Build context using v1.x domain API if site + pageId provided
+ * Otherwise, provide minimal props from legacy data
+ */
+let context: AstroContextProps | null = null;
+let pageTitle: string;
+let pageDescription: string;
+let skinLightCSS: string = "";
+let skinDarkCSS: string = "";
+
+if (site && pageId) {
+  // v1.x path: Build flattened context from domain
+  context = buildAstroContext({ site, pageId, language });
+
+  // Extract SEO data from flattened context
+  pageTitle = context.metadata.title;
+  pageDescription = context.metadata.description;
+
+  // Get default skin and generate CSS for both light and dark modes
+  // These will be injected in <style> tags to ensure they apply before render
+  try {
+    const defaultSkin = site.getDefaultSkin();
+    skinLightCSS = generateSkinCSS(defaultSkin, "light");
+    skinDarkCSS = generateSkinCSS(defaultSkin, "dark");
+  } catch (error) {
+    // Default skin not found — continue without skin CSS
+    // Pages will need to provide their own styling
+    console.warn(
+      "Warning: Could not load default skin for CSS injection:",
+      error instanceof Error ? error.message : String(error),
+    );
+  }
+} else {
+  // v0.x fallback: Use legacy props
+  // This preserves backward compatibility with existing pages
+  pageTitle = legacyTitle || "";
+  pageDescription = legacyDescription || "";
+}
+
+// Build canonical URL for SEO
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(legacyOgImage || "/og-default.png", Astro.site);
+---
+
+<!doctype html>
+<html lang={context?.metadata.language || language || "en"}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>{pageTitle}</title>
+    <meta name="title" content={pageTitle} />
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={ogImageURL} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={pageTitle} />
+    <meta property="twitter:description" content={pageDescription} />
+    <meta property="twitter:image" content={ogImageURL} />
+
+    <!-- Google Fonts — preload all typefaces to avoid FOUC on theme switch -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Exo+2:wght@400;700;800&family=JetBrains+Mono:wght@400;500&family=Pinyon+Script&display=swap"
+      rel="stylesheet"
+    />
+
+    <!--
+      Inject skin CSS tokens as <style> blocks to prevent FOUC (Flash of Unstyled Content).
+      Both light and dark mode CSS are injected upfront so theme switching doesn't require
+      a full page reload. CSS custom properties (:root) will be read by all child components
+      and overridden by theme switching scripts if needed.
+    -->
+    {skinLightCSS && <style is:raw set:html={skinLightCSS} />}
+    {skinDarkCSS && <style is:raw set:html={skinDarkCSS} />}
+
+    <!--
+      FOUC prevention: Read saved preferences from localStorage and apply the dark
+      class, data-theme attribute before the first paint. This script ensures
+      dark mode is applied immediately if saved, preventing a flash of light mode.
+    -->
+    <script is:inline>
+      (function () {
+        // Read saved dark mode preference
+        const savedMode = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+
+        // Determine initial mode
+        let initialMode = "light";
+        if (savedMode === "dark" || (savedMode === "auto" && prefersDark)) {
+          initialMode = "dark";
+        } else if (savedMode === "light") {
+          initialMode = "light";
+        } else if (!savedMode && prefersDark) {
+          initialMode = "dark";
+        }
+
+        // Apply dark class to html element (Tailwind darkMode: "class")
+        if (initialMode === "dark") {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+
+        // Apply data-theme attribute for CSS attribute selectors
+        const savedTheme = localStorage.getItem("themeStyle") || "default";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen">
+    <!--
+      Main content area — rendered by page components.
+      
+      When using v1.x API:
+      - Page component receives flattened AstroContextProps from buildAstroContext()
+      - Content structure (widgets + containers) is available in context.content
+      - Skin tokens are available in context.skinTokens
+      - Component can spread context props for convenience
+      
+      When using v0.x legacy:
+      - Page receives whatever props it declares
+      - Backward compatibility maintained
+    -->
+    <slot />
+  </body>
+</html>
+
+<style>
+  /**
+   * Global layout styles for entry point
+   * Base typography resets and layout scaffolding applied here
+   * Skin-specific colors come from injected CSS custom properties above
+   */
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      "Roboto",
+      "Oxygen",
+      "Ubuntu",
+      "Cantarell",
+      "Fira Sans",
+      "Droid Sans",
+      "Helvetica Neue",
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+</style>

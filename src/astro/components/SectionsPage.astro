@@ -1,0 +1,241 @@
+---
+/**
+ * SectionsPage — Page Content Renderer
+ *
+ * Renders domain Page objects with nested Widget and Container content
+ * using dynamic widget resolver. Single entry point for page content rendering.
+ *
+ * Props:
+ * - page: Page (domain aggregate with content array of Widget | Container)
+ * - site: Site (for skin cascade resolution)
+ * - widgetRenderer: WidgetRenderer (for dynamic widget component resolution)
+ * - language: string (optional, for translation resolution)
+ *
+ * Behavior:
+ * - Recursively renders page.content array
+ * - Resolves widgets via widgetRenderer at runtime (no hardcoded imports)
+ * - Renders containers as CSS layout wrappers with recursive children
+ * - Applies skin cascades: Site > Page > Widget
+ * - Passes language-specific translations as props
+ * - Gracefully handles missing widgets (warn + skip, never throw)
+ *
+ * Constraints:
+ * - Widget component signatures unchanged (visual parity with v0.x)
+ * - Containers are CSS-only (no component wrapping, just layout)
+ * - All widgets use same prop interface (type + parameters + translations)
+ * - No mutations to domain objects (immutable operations only)
+ */
+
+import type { Page } from "../domain/Page";
+import type { Site } from "../domain/Site";
+import type { Widget } from "../domain/Widget";
+import type { Container } from "../domain/Container";
+import type { WidgetRenderer } from "../api/widgetRenderer";
+
+export interface Props {
+  page: Page;
+  site: Site;
+  widgetRenderer: WidgetRenderer;
+  language?: string;
+}
+
+const { page, site, widgetRenderer, language } = Astro.props;
+
+/**
+ * Type guard: Check if content item is a Widget
+ * Widgets have .type and .parameters properties
+ */
+function isWidget(content: unknown): content is Widget {
+  return (
+    content !== null &&
+    typeof content === "object" &&
+    "type" in content &&
+    "parameters" in content
+  );
+}
+
+/**
+ * Type guard: Check if content item is a Container
+ * Containers have .layout and .children properties
+ */
+function isContainer(content: unknown): content is Container {
+  return (
+    content !== null &&
+    typeof content === "object" &&
+    "layout" in content &&
+    "children" in content
+  );
+}
+
+/**
+ * Rendered widget representation (component + props for template rendering)
+ */
+interface RenderedWidget {
+  type: "widget";
+  component: any;
+  props: Record<string, unknown>;
+  skinOverride?: string;
+}
+
+/**
+ * Rendered container representation (layout + children for template rendering)
+ */
+interface RenderedContainer {
+  type: "container";
+  layout: string;
+  children: (RenderedWidget | RenderedContainer)[];
+  props?: Record<string, unknown>;
+}
+
+/**
+ * Union type for rendered content items
+ */
+type RenderedContentItem = RenderedWidget | RenderedContainer;
+
+/**
+ * Get translations for the effective language
+ * Falls back to empty object if language not found
+ */
+function getTranslations(
+  pageTranslations: Record<string, Record<string, string>> | undefined,
+  effectiveLanguage: string,
+): Record<string, string> {
+  if (!pageTranslations || !pageTranslations[effectiveLanguage]) {
+    return {};
+  }
+  return pageTranslations[effectiveLanguage];
+}
+
+/**
+ * Resolve skin override with cascade: Widget > Page > default
+ * Returns the effective skin name to use for a widget
+ */
+function resolveSkinOverride(
+  widgetParameters: Record<string, unknown>,
+  pageSkinOverride: string | undefined,
+): string | undefined {
+  // Widget-level skin (if specified in parameters) takes priority
+  const widgetSkin = widgetParameters?.skin;
+  if (typeof widgetSkin === "string") {
+    return widgetSkin;
+  }
+
+  // Page-level skin override comes next
+  if (pageSkinOverride) {
+    return pageSkinOverride;
+  }
+
+  return undefined;
+}
+
+/**
+ * Recursively render content items (widgets and containers)
+ * Returns a tree of RenderedWidget and RenderedContainer objects
+ * ready for template rendering
+ */
+function renderContentItem(
+  content: Widget | Container,
+  translations: Record<string, string>,
+  pageSkinOverride: string | undefined,
+): RenderedContentItem | null {
+  if (isWidget(content)) {
+    // Resolve widget component via renderer
+    const component = widgetRenderer.resolve(content.type);
+
+    if (!component) {
+      // Widget not found - warn and skip
+      console.warn(
+        `[SectionsPage] Widget type "${content.type}" not found in renderer. Skipping.`,
+      );
+      return null;
+    }
+
+    // Resolve skin override (cascade: Widget > Page)
+    const skinOverride = resolveSkinOverride(
+      content.parameters,
+      pageSkinOverride,
+    );
+
+    // Build props for the widget:
+    // - Spread widget parameters (layout, etc.)
+    // - Add translations
+    // - Add resolved skin override
+    const widgetProps = {
+      ...content.parameters,
+      translations,
+      ...(skinOverride ? { skinOverride } : {}),
+    };
+
+    return {
+      type: "widget",
+      component,
+      props: widgetProps,
+      skinOverride,
+    };
+  } else if (isContainer(content)) {
+    // Recursively render container children
+    const renderedChildren = content.children
+      .map((child) => renderContentItem(child, translations, pageSkinOverride))
+      .filter((child) => child !== null) as (
+      | RenderedWidget
+      | RenderedContainer
+    )[];
+
+    return {
+      type: "container",
+      layout: content.layout,
+      children: renderedChildren,
+      props: content.props,
+    };
+  }
+
+  return null;
+}
+
+/**
+ * Helper: Recursively render a rendered content item tree in template JSX
+ * This is a template helper function that returns JSX elements
+ */
+function renderItem(item: RenderedContentItem): any {
+  if (item.type === "widget") {
+    const { component: WidgetComponent, props } = item;
+    return <WidgetComponent {...props} />;
+  } else if (item.type === "container") {
+    const { layout, children, props: containerProps } = item;
+    const containerClass = `container-${layout}`;
+    return (
+      <div class={containerClass} {...(containerProps || {})}>
+        {children.map((child) => renderItem(child))}
+      </div>
+    );
+  }
+  return null;
+}
+
+/**
+ * Determine effective language (page language or parameter or "en" default)
+ */
+const effectiveLanguage = language || page.language || "en";
+
+/**
+ * Get page-level skin override (from page.skinOverride)
+ */
+const pageSkinOverride = (page as any).skinOverride;
+
+/**
+ * Get translations for the effective language
+ */
+const pageTranslations = (page as any)._translations;
+const translations = getTranslations(pageTranslations, effectiveLanguage);
+
+/**
+ * Render all page content (widgets and containers)
+ */
+const contentItems: RenderedContentItem[] = (page.content || [])
+  .map((content) => renderContentItem(content, translations, pageSkinOverride))
+  .filter((item) => item !== null) as RenderedContentItem[];
+---
+
+<>
+  {contentItems.map((item) => renderItem(item))}
+</>
