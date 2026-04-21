@@ -10,9 +10,14 @@ export type {
   AssetConfig,
   GalleryImage,
   GalleryConfig,
+  GalleryTransition,
+  GalleryTransitionStyle,
   AppConfig,
 } from "./app.types";
 export type { SiteTreeConfig, NavbarConfig } from "./app.types";
+
+// scroll-transition.types.ts
+export type { HeroNavbarTransitionConfig } from "./scroll-transition.types";
 
 // profile.types.ts
 export type { ThemeStyle, ColorMode } from "./profile.types";

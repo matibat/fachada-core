@@ -11,6 +11,7 @@
  * - Configuration is applied at build time via appConfig
  * - Supports both desktop and mobile-first layouts
  */
+import type { HeroNavbarTransitionConfig } from "./scroll-transition.types";
 
 /**
  * NavbarConfig — per-app navbar configuration options.
@@ -128,4 +129,17 @@ export interface NavbarConfig {
    * Only applies when hasMenu=true and viewport < mobileBreakpoint.
    */
   mobileMode?: "hamburger" | "collapse" | "hide" | "inline";
+
+  /**
+   * Scroll-linked hero-to-navbar brand transition configuration.
+   *
+   * When enabled, the hero brand element fades out as the user scrolls and the
+   * navbar brand simultaneously fades in, creating a shared-element-like visual
+   * continuity between the hero section and the navigation bar.
+   *
+   * Omit or set `enabled: false` to keep the default static layout.
+   *
+   * @default undefined (transition disabled)
+   */
+  heroTransition?: HeroNavbarTransitionConfig;
 }

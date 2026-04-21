@@ -336,15 +336,15 @@ content:
 
 ### Common Widget Types
 
-| Type          | Purpose                | Typical Props                              |
-| ------------- | ---------------------- | ------------------------------------------ |
-| `hero`        | Hero banner with CTA   | title, subtitle, ctaText, ctaUrl, imageUrl |
-| `portfolio`   | Project showcase card  | title, description, imageUrl               |
-| `contact`     | Contact form and links | email, phone, address, social              |
-| `skills`      | Skill listing          | title, skills (array)                      |
-| `gallery`     | Image gallery/carousel | title, images, autoRotate                  |
-| `testimonial` | Client testimonial     | quote, author, role, imageUrl              |
-| `cta`         | Call-to-action section | title, text, buttonText, buttonUrl         |
+| Type          | Purpose                | Typical Props                                                                   |
+| ------------- | ---------------------- | ------------------------------------------------------------------------------- |
+| `hero`        | Hero banner with CTA   | title, subtitle, ctaText, ctaUrl, imageUrl                                      |
+| `portfolio`   | Project showcase card  | title, description, imageUrl                                                    |
+| `contact`     | Contact form and links | email, phone, address, social                                                   |
+| `skills`      | Skill listing          | title, skills (array)                                                           |
+| `gallery`     | Image gallery/carousel | title, images, autoScrollInterval, transition, transitionStyle, transitionSpeed |
+| `testimonial` | Client testimonial     | quote, author, role, imageUrl                                                   |
+| `cta`         | Call-to-action section | title, text, buttonText, buttonUrl                                              |
 
 ### Widget Examples
 
@@ -399,6 +399,56 @@ content:
       - "Design Systems"
       - "Prototyping"
 ```
+
+#### Gallery Widget
+
+The `gallery` top-level block holds the image data and carousel behaviour.
+Styling (colours, border-radius, shadow, font) is inherited from the active skin
+— no inline overrides are needed.
+
+```yaml
+gallery:
+  title: "My Work" # optional section heading
+  description: "A selection." # optional subtitle
+  images:
+    - src: "/images/one.jpg"
+      alt: "Descriptive label"
+      caption: "Optional caption"
+    - src: "/images/two.jpg"
+      alt: "Another image"
+
+  # Auto-scroll: enabled when set to a positive number (milliseconds).
+  # Omit or set to 0 to disable.
+  autoScrollInterval: 5000
+
+  # Easing curve for each slide transition.
+  # Values: "linear" | "exponential" | "none"
+  # Default: "linear"
+  transition: "exponential"
+
+  # Visual direction / effect.
+  # Values: "fade" | "ltr" | "rtl" | "top-to-bottom" |
+  #         "bottom-to-top" | "zoom-in" | "zoom-out"
+  # Default: "fade"
+  transitionStyle: "ltr"
+
+  # Explicit animation duration in ms.
+  # Omit to inherit the site's motion budget from the active skin
+  # (skin --transition CSS custom property).
+  transitionSpeed: 400
+```
+
+**Field reference**
+
+| Field                | Type                                                                                                    | Default      | Description                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------- | ------------ | --------------------------------------- |
+| `title`              | `string`                                                                                                | —            | Section heading                         |
+| `description`        | `string`                                                                                                | —            | Subtitle below the heading              |
+| `images`             | `GalleryImage[]`                                                                                        | required     | Image entries                           |
+| `autoScrollInterval` | `number` (ms)                                                                                           | disabled     | When > 0 enables auto-scroll            |
+| `transition`         | `"linear"` \| `"exponential"` \| `"none"`                                                               | `"linear"`   | Easing / timing curve                   |
+| `transitionStyle`    | `"fade"` \| `"ltr"` \| `"rtl"` \| `"top-to-bottom"` \| `"bottom-to-top"` \| `"zoom-in"` \| `"zoom-out"` | `"fade"`     | Direction or effect                     |
+| `transitionSpeed`    | `number` (ms)                                                                                           | skin default | Animation duration; omit to follow skin |
 
 ---
 

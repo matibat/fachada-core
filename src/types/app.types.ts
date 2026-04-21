@@ -123,17 +123,66 @@ export interface GalleryImage {
 }
 
 /**
+ * GalleryTransition — easing/curve model for slide transitions.
+ * - `linear`      — constant speed throughout
+ * - `exponential` — ease-in-out (accelerate then decelerate)
+ * - `none`        — instant cut, no animation
+ */
+export type GalleryTransition = "linear" | "exponential" | "none";
+
+/**
+ * GalleryTransitionStyle — visual direction/effect of the slide change.
+ * - `ltr`            — slides move left-to-right (next enters from left)
+ * - `rtl`            — slides move right-to-left (next enters from right)
+ * - `top-to-bottom`  — slides move top-to-bottom
+ * - `bottom-to-top`  — slides move bottom-to-top
+ * - `zoom-in`        — active slide scales up from 0.9 → 1
+ * - `zoom-out`       — active slide scales down from 1.1 → 1
+ * - `fade`           — cross-fade (opacity only, no movement)
+ */
+export type GalleryTransitionStyle =
+  | "ltr"
+  | "rtl"
+  | "top-to-bottom"
+  | "bottom-to-top"
+  | "zoom-in"
+  | "zoom-out"
+  | "fade";
+
+/**
  * GalleryConfig — data and settings for the gallery section widget.
  * Referenced as `AppConfig.gallery` and used by the Gallery widget.
+ *
+ * Styling (colors, border-radius, shadow, font) is inherited from the active
+ * skin via CSS custom properties — no inline overrides needed.
  */
 export interface GalleryConfig {
   title?: string;
   description?: string;
   images: GalleryImage[];
-  /** Auto-rotate slides (carousel layout only). Defaults to true for carousel. */
-  autoRotate?: boolean;
-  /** Milliseconds between slide transitions. Defaults to 5000. */
-  rotationSpeed?: number;
+  /**
+   * Auto-scroll interval in milliseconds.
+   * When set to a positive number, the carousel advances automatically at that
+   * interval. Omit or set to 0 to disable auto-scroll.
+   * Replaces the former `autoRotate` + `rotationSpeed` pair.
+   */
+  autoScrollInterval?: number;
+  /**
+   * Easing/curve type applied to each slide transition.
+   * Defaults to `"linear"`.
+   */
+  transition?: GalleryTransition;
+  /**
+   * Visual direction or effect of each slide change.
+   * Defaults to `"fade"`.
+   */
+  transitionStyle?: GalleryTransitionStyle;
+  /**
+   * Duration of the slide transition animation in milliseconds.
+   * When omitted the component falls back to the skin's `--transition`
+   * CSS custom property so that the gallery inherits the site's motion budget.
+   */
+  transitionSpeed?: number;
 }
 
 // ─── AppConfig Aggregate Root ─────────────────────────────────────────────────

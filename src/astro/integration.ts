@@ -1,5 +1,6 @@
 import type { AstroIntegration } from "astro";
 import { fileURLToPath } from "url";
+import { resolve } from "path";
 import { fachadaPlugin } from "../vite/fachada-plugin.js";
 
 function localPath(relativePath: string): string {
@@ -59,6 +60,14 @@ export function fachadaIntegration(): AstroIntegration {
               "import.meta.env.APP": JSON.stringify(activeApp),
             },
             resolve: {
+              alias: {
+                // The @fachada/app alias points to the generated bridge file.
+                // The file is created by generateBridgeFiles() in buildStart/configureServer.
+                "@fachada/app": resolve(
+                  process.cwd(),
+                  ".fachada/generated/app.ts",
+                ),
+              },
               // Deduplicate shared peer deps so fachada-core and the host app
               // always use the same single instance, regardless of Node module
               // resolution walking up past fachada-core's own directory.

@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from "../../config";
+import { getActiveAppConfig } from "@fachada/core";
 import Button from "../../components/ui/Button.astro";
 
 const primaryRole =
@@ -12,6 +13,9 @@ const roleLabel = isMultiRole
       .map((r) => r.title)
       .join(" & ")
   : primaryRole.title;
+
+const appConfig = getActiveAppConfig();
+const hasHeroTransition = appConfig.navbar?.heroTransition?.enabled === true;
 ---
 
 <section class="hero-section-full section-wrapper" data-testid="hero-section">
@@ -24,7 +28,11 @@ const roleLabel = isMultiRole
       >
         {roleLabel}
       </p>
-      <h1 class="font-bold" data-testid="hero-title">
+      <h1
+        class="font-bold"
+        data-testid="hero-title"
+        data-shared-hero-brand={hasHeroTransition ? "" : undefined}
+      >
         {siteConfig.name}
       </h1>
     </div>

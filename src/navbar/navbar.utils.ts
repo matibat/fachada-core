@@ -14,7 +14,7 @@ import type { NavbarConfig } from "../types";
  * Default navbar configuration.
  * All properties have sensible defaults for backward compatibility.
  */
-const DEFAULTS: Required<NavbarConfig> = {
+const DEFAULTS: Required<Omit<NavbarConfig, "heroTransition">> = {
   variant: "horizontal",
   mobileBreakpoint: "md",
   position: "sticky",
@@ -49,7 +49,7 @@ const BREAKPOINT_MAP: Record<
  */
 export function getNavbarConfig(
   userConfig?: NavbarConfig,
-): Required<NavbarConfig> {
+): Required<Omit<NavbarConfig, "heroTransition">> & Pick<NavbarConfig, "heroTransition"> {
   return {
     ...DEFAULTS,
     ...userConfig,

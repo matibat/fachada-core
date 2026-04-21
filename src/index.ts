@@ -1,6 +1,14 @@
 // Types
 export * from "./types/index";
 
+// Gallery helpers
+export type { ResolvedGalleryConfig } from "./gallery/galleryConfig";
+export {
+  resolveGalleryDefaults,
+  GALLERY_TRANSITION_EASING,
+  GALLERY_TRANSITION_STYLES,
+} from "./gallery/galleryConfig";
+
 // App loader
 export {
   AVAILABLE_APPS,

@@ -38,7 +38,36 @@ import {
   AstroPageProps,
   AstroWidgetProps,
   AstroContainerProps,
+
+  // Navbar + scroll transition
+  NavbarConfig,
+  HeroNavbarTransitionConfig,
 } from "@fachada/core";
+```
+
+### HeroNavbarTransitionConfig
+
+Configuration value object for the scroll-linked hero-to-navbar brand transition.
+See [scroll-transition.md](./scroll-transition.md) for the full guide.
+
+```typescript
+interface HeroNavbarTransitionConfig {
+  enabled: boolean;       // must be true to activate
+  startScroll?: number;   // default: 0 (px from top)
+  endScroll?: number;     // default: 300 (px from top)
+  easing?: string;        // default: "ease" (any CSS easing function)
+}
+```
+
+Added to `NavbarConfig.heroTransition`. Example `application.yaml`:
+
+```yaml
+navbar:
+  heroTransition:
+    enabled: true
+    startScroll: 0
+    endScroll: 250
+    easing: "ease-in-out"
 ```
 
 ---
@@ -984,6 +1013,86 @@ interface ContainerConfig {
   props?: Record<string, unknown>; // Layout configuration props
   skin?: string; // Optional skin override
 }
+```
+
+### GalleryConfig
+
+Top-level gallery configuration, set as `AppConfig.gallery`.
+Colors, border-radius, shadow, and font come from the active skin via CSS
+custom properties — no inline style overrides are needed.
+
+```typescript
+/** Easing/curve model for slide transitions. */
+type GalleryTransition = "linear" | "exponential" | "none";
+
+/**
+ * Visual direction or effect applied to each slide change.
+ * "fade"           — cross-fade (opacity only, default)
+ * "ltr"            — next slide enters from the right
+ * "rtl"            — next slide enters from the left
+ * "top-to-bottom"  — next slide enters from the top
+ * "bottom-to-top"  — next slide enters from the bottom
+ * "zoom-in"        — active slide scales from 0.9 → 1
+ * "zoom-out"       — active slide scales from 1.1 → 1
+ */
+type GalleryTransitionStyle =
+  | "fade"
+  | "ltr"
+  | "rtl"
+  | "top-to-bottom"
+  | "bottom-to-top"
+  | "zoom-in"
+  | "zoom-out";
+
+interface GalleryImage {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
+interface GalleryConfig {
+  title?: string;
+  description?: string;
+  images: GalleryImage[];
+  /**
+   * Auto-scroll interval in ms. Enabled when set to a positive number.
+   * Omit or set to 0 to disable auto-scroll.
+   */
+  autoScrollInterval?: number;
+  /** Easing/curve type. Defaults to "linear". */
+  transition?: GalleryTransition;
+  /** Visual direction or effect. Defaults to "fade". */
+  transitionStyle?: GalleryTransitionStyle;
+  /**
+   * Animation duration in ms. When omitted the carousel uses the skin's
+   * `--transition` CSS custom property so the gallery inherits the site's
+   * motion budget automatically.
+   */
+  transitionSpeed?: number;
+}
+```
+
+**Helper functions** (importable from `@fachada/core`):
+
+```typescript
+import {
+  resolveGalleryDefaults,
+  GALLERY_TRANSITION_EASING,
+  GALLERY_TRANSITION_STYLES,
+} from "@fachada/core";
+
+// Fill in defaults
+const resolved = resolveGalleryDefaults(config);
+// resolved.autoScrollEnabled — boolean
+// resolved.transition        — GalleryTransition (never undefined)
+// resolved.transitionStyle   — GalleryTransitionStyle (never undefined)
+
+// CSS timing function for a transition value
+GALLERY_TRANSITION_EASING["exponential"]; // → "ease-in-out"
+GALLERY_TRANSITION_EASING["none"]; // → "step-start"
+
+// CSS class name for a transition style value
+GALLERY_TRANSITION_STYLES["ltr"]; // → "carousel--ltr"
 ```
 
 ---

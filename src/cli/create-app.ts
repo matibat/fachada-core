@@ -326,6 +326,9 @@ yarn-error.log*
 # Agent workspace
 .agent-workspace/
 
+# Generated artifacts
+.fachada/generated/
+
 # Astro
 .astro/
 `;

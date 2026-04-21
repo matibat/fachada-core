@@ -1,0 +1,117 @@
+/**
+ * Scroll-linked shared element transition — hero brand to navbar brand.
+ *
+ * Implementation strategy:
+ *   1. CSS scroll-driven animations (animation-timeline: scroll()) — primary path.
+ *      Zero JS per frame; GPU-accelerated via opacity + transform only.
+ *   2. JS requestAnimationFrame fallback — activated via @supports feature query.
+ *   3. prefers-reduced-motion — disables all animation; renders static final state.
+ *
+ * Required HTML attributes (set by Header.astro and HeroCentered.astro when enabled):
+ *   [data-shared-hero-brand]   — the h1 in the hero section
+ *   [data-shared-navbar-brand] — the brand <a> in the navbar
+ *
+ * CSS custom properties (set on :root by SharedElementTransition.astro):
+ *   --st-start   scroll position (px) where transition begins
+ *   --st-end     scroll position (px) where transition completes
+ *   --st-easing  CSS easing function for the animation-timing-function
+ */
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
+
+@keyframes shared-hero-brand-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+@keyframes shared-navbar-brand-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ─── CSS scroll-driven animations (primary path) ────────────────────────────── */
+
+@supports (animation-timeline: scroll()) {
+  [data-shared-hero-brand] {
+    animation-name: shared-hero-brand-out;
+    animation-timing-function: var(--st-easing, ease);
+    animation-fill-mode: both;
+    animation-timeline: scroll(root block);
+    animation-range: var(--st-start, 0px) var(--st-end, 300px);
+    will-change: opacity, transform;
+    transform-origin: center center;
+  }
+
+  [data-shared-navbar-brand] {
+    animation-name: shared-navbar-brand-in;
+    animation-timing-function: var(--st-easing, ease);
+    animation-fill-mode: both;
+    animation-timeline: scroll(root block);
+    animation-range: var(--st-start, 0px) var(--st-end, 300px);
+    will-change: opacity, transform;
+    transform-origin: left center;
+  }
+}
+
+/* ─── JS fallback (activated when CSS scroll timeline is unavailable) ─────────── */
+/*     The SharedElementTransition component adds the .has-scroll-timeline class  */
+/*     to <html> when supported, so these rules only apply in the fallback path.   */
+
+html:not(.has-scroll-timeline) [data-shared-hero-brand] {
+  transition: opacity var(--st-transition-duration, 0.2s) var(--st-easing, ease),
+    transform var(--st-transition-duration, 0.2s) var(--st-easing, ease);
+  will-change: opacity, transform;
+  transform-origin: center center;
+}
+
+html:not(.has-scroll-timeline) [data-shared-navbar-brand] {
+  transition: opacity var(--st-transition-duration, 0.2s) var(--st-easing, ease),
+    transform var(--st-transition-duration, 0.2s) var(--st-easing, ease);
+  will-change: opacity, transform;
+  transform-origin: left center;
+}
+
+html:not(.has-scroll-timeline) [data-shared-navbar-brand].shared-brand-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+html:not(.has-scroll-timeline) [data-shared-hero-brand].shared-brand-hidden {
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+/* ─── Reduced motion override ─────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-shared-hero-brand],
+  [data-shared-navbar-brand] {
+    animation: none !important;
+    transition: none !important;
+    will-change: auto;
+  }
+
+  /* At the top of the page: show hero brand, hide navbar brand */
+  [data-shared-hero-brand] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Navbar brand is always visible in reduced-motion mode to ensure nav usability */
+  [data-shared-navbar-brand] {
+    opacity: 1;
+    transform: none;
+  }
+}

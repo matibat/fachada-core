@@ -1,18 +1,30 @@
 ---
 import type { GalleryConfig } from "@fachada/core";
+import {
+  resolveGalleryDefaults,
+  GALLERY_TRANSITION_EASING,
+  GALLERY_TRANSITION_STYLES,
+} from "../../../gallery/galleryConfig";
 
 export interface Props {
   gallery: GalleryConfig;
 }
 
 const { gallery } = Astro.props;
+const resolved = resolveGalleryDefaults(gallery);
 const {
   title,
   description,
   images,
-  autoRotate = true,
-  rotationSpeed = 5000,
-} = gallery;
+  autoScrollEnabled,
+  autoScrollInterval,
+  transition,
+  transitionStyle,
+  transitionSpeed,
+} = resolved;
+
+const transitionClass = GALLERY_TRANSITION_STYLES[transitionStyle];
+const transitionEasing = GALLERY_TRANSITION_EASING[transition];
 ---
 
 <section id="gallery" class="gallery-section section-wrapper">
@@ -27,9 +39,12 @@ const {
     {description && <p class="gallery-description">{description}</p>}
 
     <div
-      class="carousel-root"
-      data-auto-rotate={autoRotate ? "true" : "false"}
-      data-rotation-speed={rotationSpeed}
+      class={`carousel-root ${transitionClass}`}
+      data-auto-scroll={autoScrollEnabled ? "true" : "false"}
+      data-scroll-interval={autoScrollInterval ?? 0}
+      data-transition-style={transitionStyle}
+      data-transition-easing={transitionEasing}
+      data-transition-speed={transitionSpeed ?? ""}
       data-testid="gallery-carousel"
     >
       <div class="carousel-track" aria-live="polite">
@@ -124,13 +139,68 @@ const {
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    /* Duration and easing are set via JS from data attributes;
+       skin's --transition is the fallback so the gallery always
+       inherits the site's motion budget when no explicit speed is given. */
+    transition-property: opacity, transform;
+    transition-duration: var(--gallery-speed, var(--transition-duration, 0.5s));
+    transition-timing-function: var(--gallery-easing, ease);
+    will-change: transform, opacity;
+    transform: none;
     margin: 0;
+    z-index: 0;
   }
 
   .carousel-slide.is-active {
     opacity: 1;
-    position: relative;
+    z-index: 1;
+    position: absolute;
+  }
+
+  /* ── Transition style: fade (default) ──────────────────────────── */
+  /* No transform change needed — opacity handles everything.        */
+
+  /* ── Transition style: ltr ─────────────────────────────────────── */
+  /* Inactive slides rest to the right; active slides in place.      */
+  .carousel--ltr .carousel-slide:not(.is-active):not(.is-leaving) {
+    transform: translateX(100%);
+  }
+  .carousel--ltr .carousel-slide.is-leaving {
+    transform: translateX(-100%);
+  }
+
+  /* ── Transition style: rtl ─────────────────────────────────────── */
+  .carousel--rtl .carousel-slide:not(.is-active):not(.is-leaving) {
+    transform: translateX(-100%);
+  }
+  .carousel--rtl .carousel-slide.is-leaving {
+    transform: translateX(100%);
+  }
+
+  /* ── Transition style: top-to-bottom ───────────────────────────── */
+  .carousel--ttb .carousel-slide:not(.is-active):not(.is-leaving) {
+    transform: translateY(-100%);
+  }
+  .carousel--ttb .carousel-slide.is-leaving {
+    transform: translateY(100%);
+  }
+
+  /* ── Transition style: bottom-to-top ───────────────────────────── */
+  .carousel--btt .carousel-slide:not(.is-active):not(.is-leaving) {
+    transform: translateY(100%);
+  }
+  .carousel--btt .carousel-slide.is-leaving {
+    transform: translateY(-100%);
+  }
+
+  /* ── Transition style: zoom-in ─────────────────────────────────── */
+  .carousel--zoom-in .carousel-slide:not(.is-active) {
+    transform: scale(0.9);
+  }
+
+  /* ── Transition style: zoom-out ────────────────────────────────── */
+  .carousel--zoom-out .carousel-slide:not(.is-active) {
+    transform: scale(1.1);
   }
 
   .carousel-image {
@@ -222,21 +292,60 @@ const {
 
     let current = 0;
     let timer: ReturnType<typeof setInterval> | null = null;
-    const autoRotate = root.dataset.autoRotate === "true";
-    const speed = parseInt(root.dataset.rotationSpeed ?? "5000", 10);
+    let transitioning = false;
 
+    // ── Read config from data attributes ──────────────────────────────
+    const autoScroll = root.dataset.autoScroll === "true";
+    const scrollInterval = parseInt(root.dataset.scrollInterval ?? "0", 10);
+    const easing = root.dataset.transitionEasing ?? "ease";
+    const speedRaw = root.dataset.transitionSpeed;
+    // Speed: use explicit ms value, or fall back to skin var injected below
+    const speed = speedRaw ? `${speedRaw}ms` : null;
+
+    // ── Apply CSS vars for speed / easing onto the root ───────────────
+    // This lets CSS transitions pick them up without hardcoding values.
+    if (speed) root.style.setProperty("--gallery-speed", speed);
+    root.style.setProperty("--gallery-easing", easing);
+
+    // ── Slide transition ───────────────────────────────────────────────
     function goTo(index: number) {
-      slides[current].classList.remove("is-active");
-      slides[current].setAttribute("aria-hidden", "true");
-      dots[current]?.classList.remove("is-active");
-      dots[current]?.setAttribute("aria-selected", "false");
+      if (transitioning) return;
+      const outgoing = current;
+      const incoming = (index + slides.length) % slides.length;
+      if (incoming === outgoing) return;
 
-      current = (index + slides.length) % slides.length;
+      transitioning = true;
+      const outEl = slides[outgoing];
+      const inEl = slides[incoming];
 
-      slides[current].classList.add("is-active");
-      slides[current].removeAttribute("aria-hidden");
-      dots[current]?.classList.add("is-active");
-      dots[current]?.setAttribute("aria-selected", "true");
+      // Mark outgoing as leaving so directional CSS can apply exit transform
+      outEl.classList.add("is-leaving");
+      // Prepare incoming: reset transform so it starts from its CSS-defined
+      // offset position, then make it active
+      inEl.classList.add("is-active");
+      inEl.setAttribute("aria-hidden", "false");
+
+      dots[outgoing]?.classList.remove("is-active");
+      dots[outgoing]?.setAttribute("aria-selected", "false");
+      dots[incoming]?.classList.add("is-active");
+      dots[incoming]?.setAttribute("aria-selected", "true");
+
+      // After transition completes, clean up
+      const cleanup = () => {
+        outEl.classList.remove("is-active", "is-leaving");
+        outEl.setAttribute("aria-hidden", "true");
+        current = incoming;
+        transitioning = false;
+      };
+
+      // Use transitionend on the incoming slide to know when done
+      inEl.addEventListener("transitionend", cleanup, { once: true });
+      // Safety fallback: if transitionend never fires (e.g. 'none' easing)
+      // resolve after double the configured speed or 600 ms
+      const fallbackMs = speedRaw ? parseInt(speedRaw, 10) * 2 : 600;
+      setTimeout(() => {
+        if (transitioning) cleanup();
+      }, fallbackMs);
     }
 
     prevBtn?.addEventListener("click", () => {
@@ -257,8 +366,8 @@ const {
     });
 
     function startTimer() {
-      if (!autoRotate) return;
-      timer = setInterval(() => goTo(current + 1), speed);
+      if (!autoScroll || scrollInterval <= 0) return;
+      timer = setInterval(() => goTo(current + 1), scrollInterval);
     }
 
     function resetTimer() {
@@ -266,7 +375,7 @@ const {
       startTimer();
     }
 
-    // Pause on hover / focus
+    // Pause on hover / focus for accessibility
     root.addEventListener("mouseenter", () => {
       if (timer) clearInterval(timer);
     });

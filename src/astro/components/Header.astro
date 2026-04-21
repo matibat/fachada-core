@@ -31,6 +31,9 @@ const { currentPath = "/" } = Astro.props;
 const appConfig = getActiveAppConfig();
 const siteConfig = appConfig.seo;
 
+const heroTransition = appConfig.navbar?.heroTransition;
+const hasHeroTransition = heroTransition?.enabled === true;
+
 // Load navbar configuration with defaults
 const navbarConfig = getNavbarConfig(appConfig.navbar);
 const navbarClasses = getNavbarClasses(navbarConfig);
@@ -62,7 +65,10 @@ const isLanding = currentPath === "/";
     <a
       href={getBaseUrl("/")}
       class="navbar-brand font-pinyon-script"
-      style="color: var(--text-primary);"
+      style={hasHeroTransition
+        ? "color: var(--text-primary); opacity: 0;"
+        : "color: var(--text-primary);"}
+      data-shared-navbar-brand={hasHeroTransition ? "" : undefined}
     >
       {siteConfig.name}
     </a>
