@@ -49,7 +49,8 @@ const BREAKPOINT_MAP: Record<
  */
 export function getNavbarConfig(
   userConfig?: NavbarConfig,
-): Required<Omit<NavbarConfig, "heroTransition">> & Pick<NavbarConfig, "heroTransition"> {
+): Required<Omit<NavbarConfig, "heroTransition">> &
+  Pick<NavbarConfig, "heroTransition"> {
   return {
     ...DEFAULTS,
     ...userConfig,

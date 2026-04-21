@@ -33,25 +33,37 @@ const FALLBACK_TRANSITION_MS = 150;
 // Sanitize easing: only allow valid CSS easing keywords and cubic-bezier().
 // This value is injected via set:html into a <style> block; restrict to known-safe
 // CSS easing syntax to prevent CSS injection from a manipulated config file.
-const EASING_ALLOWLIST = /^(linear|ease|ease-in|ease-out|ease-in-out|step-start|step-end|cubic-bezier\([\d.,\s-]+\))$/;
+const EASING_ALLOWLIST =
+  /^(linear|ease|ease-in|ease-out|ease-in-out|step-start|step-end|cubic-bezier\([\d.,\s-]+\))$/;
 const safeEasing = EASING_ALLOWLIST.test(easing) ? easing : "ease";
-
-// Build the :root block as a literal CSS string to avoid define:vars overhead.
-const rootVarsCSS = `:root {
-  --st-start: ${startScroll}px;
-  --st-end: ${endScroll}px;
-  --st-easing: ${safeEasing};
-  --st-transition-duration: ${FALLBACK_TRANSITION_MS}ms;
-}`;
 ---
 
 <!--
   Inject CSS custom properties that parameterise the scroll animation range and
   easing. Written to :root so the stylesheet can consume them without JS.
-  set:html is used intentionally here — rootVarsCSS contains only server-side
-  computed numeric/string literals and is not derived from user input.
+  Using a script (not a style tag) because Astro processes <style> blocks
+  at build time; script is:inline runs before the first paint.
 -->
-<style set:html={rootVarsCSS}></style>
+<script
+  is:inline
+  define:vars={{
+    startScroll,
+    endScroll,
+    safeEasing,
+    FALLBACK_TRANSITION_MS,
+  }}
+>
+  (function () {
+    var root = document.documentElement;
+    root.style.setProperty("--st-start", startScroll + "px");
+    root.style.setProperty("--st-end", endScroll + "px");
+    root.style.setProperty("--st-easing", safeEasing);
+    root.style.setProperty(
+      "--st-transition-duration",
+      FALLBACK_TRANSITION_MS + "ms",
+    );
+  })();
+</script>
 
 <script
   is:inline

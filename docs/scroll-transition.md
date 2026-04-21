@@ -30,19 +30,19 @@ Add a `navbar.heroTransition` block to your `application.yaml`:
 navbar:
   heroTransition:
     enabled: true
-    startScroll: 0      # pixel offset where transition begins
-    endScroll: 250      # pixel offset where transition completes
+    startScroll: 0 # pixel offset where transition begins
+    endScroll: 250 # pixel offset where transition completes
     easing: "ease-in-out"
 ```
 
 All fields except `enabled` are optional and have sensible defaults.
 
-| Field | Type | Default | Description |
-|---|---|---|---|
-| `enabled` | `boolean` | — | Must be `true` to activate the transition |
-| `startScroll` | `number` | `0` | Scroll position (px) where the animation begins |
-| `endScroll` | `number` | `300` | Scroll position (px) where the animation completes |
-| `easing` | `string` | `"ease"` | CSS easing function (keyword or `cubic-bezier(...)`) |
+| Field         | Type      | Default  | Description                                          |
+| ------------- | --------- | -------- | ---------------------------------------------------- |
+| `enabled`     | `boolean` | —        | Must be `true` to activate the transition            |
+| `startScroll` | `number`  | `0`      | Scroll position (px) where the animation begins      |
+| `endScroll`   | `number`  | `300`    | Scroll position (px) where the animation completes   |
+| `easing`      | `string`  | `"ease"` | CSS easing function (keyword or `cubic-bezier(...)`) |
 
 ---
 
@@ -124,29 +124,29 @@ always accessible.
 
 ## Files
 
-| File | Role |
-|---|---|
-| `src/types/scroll-transition.types.ts` | `HeroNavbarTransitionConfig` value object |
-| `src/types/navbar.types.ts` | `NavbarConfig.heroTransition` field |
-| `src/scroll-transition/shared-element-transition.css` | CSS animation rules |
-| `src/astro/components/SharedElementTransition.astro` | Orchestration component (CSS vars + fallback JS) |
-| `src/astro/components/Header.astro` | Applies `data-shared-navbar-brand` |
-| `src/astro/widgets/hero/HeroCentered.astro` | Applies `data-shared-hero-brand` |
-| `src/astro/widgets/hero/HeroSplit.astro` | Applies `data-shared-hero-brand` |
-| `src/astro/layouts/BaseLayout.astro` | Mounts `SharedElementTransition` when enabled |
+| File                                                  | Role                                             |
+| ----------------------------------------------------- | ------------------------------------------------ |
+| `src/types/scroll-transition.types.ts`                | `HeroNavbarTransitionConfig` value object        |
+| `src/types/navbar.types.ts`                           | `NavbarConfig.heroTransition` field              |
+| `src/scroll-transition/shared-element-transition.css` | CSS animation rules                              |
+| `src/astro/components/SharedElementTransition.astro`  | Orchestration component (CSS vars + fallback JS) |
+| `src/astro/components/Header.astro`                   | Applies `data-shared-navbar-brand`               |
+| `src/astro/widgets/hero/HeroCentered.astro`           | Applies `data-shared-hero-brand`                 |
+| `src/astro/widgets/hero/HeroSplit.astro`              | Applies `data-shared-hero-brand`                 |
+| `src/astro/layouts/BaseLayout.astro`                  | Mounts `SharedElementTransition` when enabled    |
 
 ---
 
 ## Compatibility
 
-| Browser | Path |
-|---|---|
-| Chrome 115+ | CSS scroll-driven animations |
-| Firefox 110+ | CSS scroll-driven animations |
-| Safari 18+ | CSS scroll-driven animations |
-| Older browsers | rAF-based JS fallback |
-| `prefers-reduced-motion` | Static layout, both elements visible |
-| JS disabled | Static layout (both default to visible) |
+| Browser                  | Path                                    |
+| ------------------------ | --------------------------------------- |
+| Chrome 115+              | CSS scroll-driven animations            |
+| Firefox 110+             | CSS scroll-driven animations            |
+| Safari 18+               | CSS scroll-driven animations            |
+| Older browsers           | rAF-based JS fallback                   |
+| `prefers-reduced-motion` | Static layout, both elements visible    |
+| JS disabled              | Static layout (both default to visible) |
 
 ---
 

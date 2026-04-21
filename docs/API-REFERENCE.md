@@ -52,10 +52,10 @@ See [scroll-transition.md](./scroll-transition.md) for the full guide.
 
 ```typescript
 interface HeroNavbarTransitionConfig {
-  enabled: boolean;       // must be true to activate
-  startScroll?: number;   // default: 0 (px from top)
-  endScroll?: number;     // default: 300 (px from top)
-  easing?: string;        // default: "ease" (any CSS easing function)
+  enabled: boolean; // must be true to activate
+  startScroll?: number; // default: 0 (px from top)
+  endScroll?: number; // default: 300 (px from top)
+  easing?: string; // default: "ease" (any CSS easing function)
 }
 ```
 

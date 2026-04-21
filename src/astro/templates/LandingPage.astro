@@ -17,6 +17,7 @@ import Footer from "../components/Footer.astro";
 import StructuredData from "../components/StructuredData.astro";
 import Contact from "../widgets/Contact.astro";
 import { siteConfig } from "../config";
+import { getActiveAppConfig } from "@fachada/core";
 import { getCollection } from "astro:content";
 
 interface Props {
@@ -25,6 +26,9 @@ interface Props {
 }
 
 const { meta, data } = Astro.props;
+
+const appConfig = getActiveAppConfig();
+const hasHeroTransition = appConfig.navbar?.heroTransition?.enabled === true;
 
 const isMultiRole = siteConfig.roles.length > 1;
 const primaryRole =
@@ -79,7 +83,11 @@ const personSchema = {
     <!-- ── HOOK: Hero ──────────────────────────────────────────── -->
     <section class="lp-hero">
       <div class="lp-hero-inner">
-        <h1 class="lp-hook" set:html={hook.replace(/\./g, ".<br />")} />
+        <h1
+          class="lp-hook"
+          data-shared-hero-brand={hasHeroTransition ? "" : undefined}
+          set:html={hook.replace(/\./g, ".\u003cbr /\u003e")}
+        />
         <p class="lp-subheading">{subheading}</p>
 
         <!-- CTAs: fork buttons for multi-role, single CTA for single-role -->

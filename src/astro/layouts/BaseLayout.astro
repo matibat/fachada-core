@@ -212,8 +212,10 @@ const { resolvedThemes, defaultTheme: effectiveDefaultTheme } =
       <slot />
     </LayoutWrapper>
 
-    {appConfig.navbar?.heroTransition?.enabled && (
-      <SharedElementTransition config={appConfig.navbar.heroTransition} />
-    )}
+    {
+      appConfig.navbar?.heroTransition?.enabled && (
+        <SharedElementTransition config={appConfig.navbar.heroTransition} />
+      )
+    }
   </body>
 </html>
