@@ -168,11 +168,13 @@ const stagesJson = config.stages ? JSON.stringify(config.stages) : null;
       if (targetAnchorMode === 'fixed') {
         // Target is sticky/fixed to viewport — use viewport coords directly
         targetAbsTop = targetRect.top;
-        targetAbsLeft = targetRect.left;
+        // Center the hero element horizontally within the target
+        targetAbsLeft = targetRect.left + (targetRect.width - heroWidth) / 2;
       } else {
         // Target scrolls with page — add scrollY to viewport coords
         targetAbsTop = targetRect.top + scrollY;
-        targetAbsLeft = targetRect.left;
+        // Center the hero element horizontally within the target
+        targetAbsLeft = targetRect.left + (targetRect.width - heroWidth) / 2;
       }
 
       const targetScale = targetRect.height > 0 ? targetRect.height / heroHeight : 1;
