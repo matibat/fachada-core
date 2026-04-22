@@ -42,6 +42,17 @@ const contactIsExternal = !!social.whatsapp;
 ---
 
 <footer class="footer-wrapper">
+  {appConfig.footer?.layout === "minimal" ? (
+    <div class="footer-minimal">
+      <span class="footer-brand" style="color: var(--text-primary);">{siteConfig.name}</span>
+      {appConfig.footer.handle && (
+        <span class="footer-handle" style="color: var(--text-secondary);">{appConfig.footer.handle}</span>
+      )}
+      <span class="footer-copy" style="color: var(--text-secondary);">
+        © {currentYear} {siteConfig.name}
+      </span>
+    </div>
+  ) : (
   <div class="footer-inner">
     <div class="footer-grid mb-8">
       <!-- Navigation sections (only if there are subsections) -->
@@ -124,9 +135,18 @@ const contactIsExternal = !!social.whatsapp;
       </p>
     </div>
   </div>
+  )}
 </footer>
 
 <style>
+  .footer-minimal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1.5rem 0;
+  }
   .footer-grid {
     display: grid;
     grid-template-columns: 1fr;
