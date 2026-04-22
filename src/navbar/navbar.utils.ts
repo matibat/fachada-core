@@ -92,6 +92,9 @@ export function getNavbarClasses(config: Required<NavbarConfig>): string {
     // Layout variant (semantic, defined in navbar.css)
     `navbar-${config.variant}`,
 
+    // Flex direction utility class derived from variant
+    config.variant === "horizontal" ? "flex-row" : config.variant === "vertical" ? "flex-col" : "",
+
     // Positioning (semantic, defined in navbar.css)
     `navbar-${config.position}`,
 
