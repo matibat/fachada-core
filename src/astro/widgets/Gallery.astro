@@ -1,6 +1,7 @@
 ---
 import type { GalleryConfig } from "@fachada/core";
 import GalleryCarousel from "./gallery/GalleryCarousel.astro";
+import GalleryCardBadge from "./gallery/GalleryCardBadge.astro";
 import GalleryGrid from "./gallery/GalleryGrid.astro";
 import GalleryList from "./gallery/GalleryList.astro";
 import { appConfig } from "virtual:fachada/active-app";
@@ -23,3 +24,4 @@ if (!gallery || gallery.images.length === 0) {
 {layout === "grid-3" && <GalleryGrid gallery={gallery} columns={3} />}
 {layout === "grid-2" && <GalleryGrid gallery={gallery} columns={2} />}
 {layout === "list" && <GalleryList gallery={gallery} />}
+{layout === "card-badge" && <GalleryCardBadge gallery={gallery} />}

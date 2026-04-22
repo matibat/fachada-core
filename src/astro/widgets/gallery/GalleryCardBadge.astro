@@ -1,0 +1,129 @@
+---
+import type { GalleryConfig } from "@fachada/core";
+
+export interface Props {
+  gallery: GalleryConfig;
+}
+
+const { gallery } = Astro.props;
+const { title, description, images } = gallery;
+---
+
+<section id="gallery" class="gallery-section section-wrapper">
+  <div class="section-inner-md">
+    {title && <h2 class="gallery-title" data-testid="gallery-title">{title}</h2>}
+    {description && <p class="gallery-description">{description}</p>}
+
+    <div class="gallery-badge-grid" data-testid="gallery-badge-grid">
+      {
+        images.map((img) => (
+          <figure class="gallery-card-badge">
+            <img
+              src={img.src}
+              alt={img.alt}
+              class="gallery-card-badge-image"
+              loading="lazy"
+            />
+            <figcaption class="gallery-card-badge-caption">
+              {img.technique && (
+                <p class="card-technique">{img.technique}</p>
+              )}
+              {img.availability === "disponible" && (
+                <span class="badge-disponible">Disponible</span>
+              )}
+              {img.availability === "vendido" && (
+                <span class="badge-vendido">Vendido</span>
+              )}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery-section {
+    padding: var(--spacing-section) 1.5rem;
+  }
+
+  .gallery-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--accent);
+  }
+
+  .gallery-description {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .gallery-badge-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .gallery-badge-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .gallery-badge-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .gallery-card-badge {
+    position: relative;
+    margin: 0;
+    border-radius: var(--radius-card, 0.75rem);
+    overflow: hidden;
+    background: var(--surface-secondary, #1a1a1a);
+  }
+
+  .gallery-card-badge-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gallery-card-badge-caption {
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .card-technique {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .badge-disponible,
+  .badge-vendido {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge-disponible {
+    background: var(--badge-disponible-bg, #d1fae5);
+    color: var(--badge-disponible-text, #065f46);
+  }
+
+  .badge-vendido {
+    background: var(--badge-vendido-bg, #fee2e2);
+    color: var(--badge-vendido-text, #991b1b);
+  }
+</style>
