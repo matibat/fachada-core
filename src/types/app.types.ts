@@ -120,6 +120,10 @@ export interface GalleryImage {
   src: string;
   alt: string;
   caption?: string;
+  /** Painting or artwork technique, e.g. "Óleo", "Acuarela". Only relevant for pinturas sections. */
+  technique?: string;
+  /** Availability status for artwork. @values "disponible" | "vendido" */
+  availability?: "disponible" | "vendido";
 }
 
 /**
