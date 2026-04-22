@@ -1,117 +1,74 @@
 /**
- * Scroll-linked shared element transition — hero brand to navbar brand.
+ * Scroll-linked shared element transition — FLIP approach.
+ *
+ * One element travels from the hero to the navbar — no two-element fade illusion.
  *
  * Implementation strategy:
- *   1. CSS scroll-driven animations (animation-timeline: scroll()) — primary path.
- *      Zero JS per frame; GPU-accelerated via opacity + transform only.
- *   2. JS requestAnimationFrame fallback — activated via @supports feature query.
- *   3. prefers-reduced-motion — disables all animation; renders static final state.
+ *   - The hero brand [data-shared-hero-brand] is the ONLY visible element.
+ *   - JS computes the hero rect and the navbar slot rect on mount, then
+ *     continuously interpolates a CSS transform (translate + scale) as the
+ *     user scrolls, so the element physically moves from its hero position
+ *     to the navbar position.
+ *   - The navbar brand [data-shared-navbar-brand] is the invisible target anchor;
+ *     it defines the destination coordinates but is never shown.
+ *   - GPU-accelerated: only transform and opacity are animated (no layout props).
+ *   - prefers-reduced-motion: skips animation; element snaps to final position.
  *
- * Required HTML attributes (set by Header.astro and HeroCentered.astro when enabled):
- *   [data-shared-hero-brand]   — the h1 in the hero section
- *   [data-shared-navbar-brand] — the brand <a> in the navbar
+ * Required HTML attributes:
+ *   [data-shared-hero-brand]   — the h1 / heading in the hero section (the traveler)
+ *   [data-shared-navbar-brand] — the brand <a> in the navbar (invisible position anchor)
  *
  * CSS custom properties (set on :root by SharedElementTransition.astro):
- *   --st-start   scroll position (px) where transition begins
- *   --st-end     scroll position (px) where transition completes
- *   --st-easing  CSS easing function for the animation-timing-function
+ *   --st-start    scroll position (px) where transition begins
+ *   --st-end      scroll position (px) where transition completes
  */
 
-/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
+/* ─── Navbar slot: invisible anchor — never shown when transition is enabled ── */
 
-@keyframes shared-hero-brand-out {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.85);
-  }
+[data-shared-navbar-brand] {
+  opacity: 0 !important;
+  pointer-events: none;
+  /* Reserve space so the navbar retains its layout height */
+  visibility: hidden;
 }
 
-@keyframes shared-navbar-brand-in {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+/* ─── Hero brand: the traveling element ─────────────────────────────────────── */
+
+/* When JS is active, the component injects transform via inline style.         */
+/* will-change hints the compositor to promote this element to its own layer.   */
+[data-shared-hero-brand].st-flying {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  will-change: transform, opacity;
+  /* Remove normal flow so nothing reflows while traveling */
+  margin: 0;
+  z-index: 1000;
+  pointer-events: none;
 }
 
-/* ─── CSS scroll-driven animations (primary path) ────────────────────────────── */
-
-@supports (animation-timeline: scroll()) {
-  [data-shared-hero-brand] {
-    animation-name: shared-hero-brand-out;
-    animation-timing-function: var(--st-easing, ease);
-    animation-fill-mode: both;
-    animation-timeline: scroll(root block);
-    animation-range: var(--st-start, 0px) var(--st-end, 300px);
-    will-change: opacity, transform;
-    transform-origin: center center;
-  }
-
-  [data-shared-navbar-brand] {
-    animation-name: shared-navbar-brand-in;
-    animation-timing-function: var(--st-easing, ease);
-    animation-fill-mode: both;
-    animation-timeline: scroll(root block);
-    animation-range: var(--st-start, 0px) var(--st-end, 300px);
-    will-change: opacity, transform;
-    transform-origin: left center;
-  }
-}
-
-/* ─── JS fallback (activated when CSS scroll timeline is unavailable) ─────────── */
-/*     The SharedElementTransition component adds the .has-scroll-timeline class  */
-/*     to <html> when supported, so these rules only apply in the fallback path.   */
-
-html:not(.has-scroll-timeline) [data-shared-hero-brand] {
-  transition: opacity var(--st-transition-duration, 0.2s) var(--st-easing, ease),
-    transform var(--st-transition-duration, 0.2s) var(--st-easing, ease);
-  will-change: opacity, transform;
-  transform-origin: center center;
-}
-
-html:not(.has-scroll-timeline) [data-shared-navbar-brand] {
-  transition: opacity var(--st-transition-duration, 0.2s) var(--st-easing, ease),
-    transform var(--st-transition-duration, 0.2s) var(--st-easing, ease);
-  will-change: opacity, transform;
-  transform-origin: left center;
-}
-
-html:not(.has-scroll-timeline) [data-shared-navbar-brand].shared-brand-visible {
-  opacity: 1;
-  transform: scale(1);
-}
-
-html:not(.has-scroll-timeline) [data-shared-hero-brand].shared-brand-hidden {
-  opacity: 0;
-  transform: scale(0.85);
+/* Placeholder: keeps the hero section height stable while the element is fixed */
+[data-shared-hero-brand-placeholder] {
+  display: block;
+  pointer-events: none;
+  visibility: hidden;
 }
 
 /* ─── Reduced motion override ─────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-  [data-shared-hero-brand],
-  [data-shared-navbar-brand] {
-    animation: none !important;
-    transition: none !important;
+  /* Show hero brand in its static position; show navbar brand normally */
+  [data-shared-hero-brand].st-flying {
+    position: static !important;
+    transform: none !important;
+    opacity: 1 !important;
     will-change: auto;
   }
 
-  /* At the top of the page: show hero brand, hide navbar brand */
-  [data-shared-hero-brand] {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* Navbar brand is always visible in reduced-motion mode to ensure nav usability */
   [data-shared-navbar-brand] {
-    opacity: 1;
-    transform: none;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto;
   }
 }

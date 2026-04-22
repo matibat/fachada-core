@@ -65,9 +65,7 @@ const isLanding = currentPath === "/";
     <a
       href={getBaseUrl("/")}
       class="navbar-brand font-pinyon-script"
-      style={hasHeroTransition
-        ? "color: var(--text-primary); opacity: 0;"
-        : "color: var(--text-primary);"}
+      style="color: var(--text-primary);"
       data-shared-navbar-brand={hasHeroTransition ? "" : undefined}
     >
       {siteConfig.name}

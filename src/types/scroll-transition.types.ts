@@ -9,19 +9,21 @@
 
 /**
  * HeroNavbarTransitionConfig — configuration for the scroll-linked hero-to-navbar
- * brand transition.
+ * brand transition using FLIP (First, Last, Invert, Play) animation.
  *
- * When enabled, the hero brand (h1 in the hero section) fades out and shrinks
- * while the navbar brand simultaneously fades in, creating the visual illusion
- * of the element moving seamlessly from the hero into the navbar.
+ * When enabled, the hero brand element physically repositions itself from the hero
+ * section to the navbar as the user scrolls. The target anchor (navbar element)
+ * is configurable via `targetAnchorSelector`, allowing apps to specify which element
+ * receives the animation target coordinates.
  *
- * The animation is implemented via CSS scroll-driven animations
- * (`animation-timeline: scroll()`) for 60fps GPU-accelerated performance with
- * no JS per frame. A requestAnimationFrame-based fallback activates automatically
- * on browsers that do not support CSS scroll-driven animations.
+ * The animation implementation:
+ * - FLIP JS handler measures hero and target positions before transition
+ * - Hero element is promoted to `position: fixed` and interpolates transform
+ * - Transform includes translate (x, y) and scale based on scroll progress
+ * - A placeholder holds layout space while hero element is fixed
  *
  * Respects `prefers-reduced-motion`: when the user has requested reduced motion,
- * the transition is disabled and both elements use their static final states.
+ * no animation occurs — both elements display in their static final positions.
  *
  * @example
  * ```yaml
@@ -32,6 +34,8 @@
  *     startScroll: 0
  *     endScroll: 300
  *     easing: "ease-in-out"
+ *     targetAnchorSelector: ".navbar-brand"    # CSS selector for target
+ *     targetAnchorMode: "fixed"                # how target is positioned
  * ```
  */
 export interface HeroNavbarTransitionConfig {
@@ -82,4 +86,36 @@ export interface HeroNavbarTransitionConfig {
    * @default "ease"
    */
   easing?: string;
+
+  /**
+   * CSS selector for the target anchor element — the element whose position
+   * the hero brand animates toward.
+   *
+   * By default, core uses `[data-shared-navbar-brand]` (the navbar brand element).
+   * Apps can override this to place the target anchor anywhere in the page.
+   *
+   * The target element's position is queried on each animation frame to support:
+   * - Sticky/fixed navbars (where position doesn't scroll with page)
+   * - Responsive layout changes
+   * - Custom positioning
+   *
+   * @default "[data-shared-navbar-brand]"
+   */
+  targetAnchorSelector?: string;
+
+  /**
+   * How the target anchor element is positioned relative to the viewport.
+   *
+   * - `"fixed"` (default): Target is sticky to the viewport (e.g. sticky navbar).
+   *   Uses viewport coordinates directly as the animation destination.
+   * - `"scroll"`: Target scrolls with the page.
+   *   Converts viewport coordinates to absolute page coordinates.
+   *
+   * Choosing the correct mode is critical for accurate animation targeting:
+   * - Sticky navbar → use `"fixed"`
+   * - Scrollable content → use `"scroll"`
+   *
+   * @default "fixed"
+   */
+  targetAnchorMode?: "fixed" | "scroll";
 }

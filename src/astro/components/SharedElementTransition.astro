@@ -1,18 +1,24 @@
 ---
 /**
- * SharedElementTransition — orchestrates the scroll-linked hero-to-navbar brand
- * transition.
+ * SharedElementTransition — FLIP-based scroll-linked hero-to-navbar brand transition.
  *
- * Responsibilities:
- *   1. Injects the scroll-transition CSS stylesheet.
- *   2. Publishes --st-start, --st-end, --st-easing CSS custom properties to :root
- *      so the stylesheet can read app configuration without runtime JS.
- *   3. Detects CSS scroll-driven animation support and marks <html> accordingly.
- *   4. Provides a requestAnimationFrame-based fallback for unsupported browsers.
+ * Architecture (FLIP):
+ *   The hero brand element [data-shared-hero-brand] is the ONLY visible element.
+ *   It is promoted to `position: fixed` by JS and physically moves from its hero
+ *   coordinates to its target anchor coordinates as the user scrolls.
  *
- * This component renders nothing visible — it is a pure infrastructure concern.
- * It is included by BaseLayout.astro only when appConfig.navbar.heroTransition
- * is enabled.
+ *   The target anchor element (configurable via targetAnchorSelector, typically
+ *   [data-shared-navbar-brand]) is invisible. It serves only as a coordinate anchor.
+ *   The JS reads its getBoundingClientRect() to know the destination position.
+ *
+ *   On each animation frame: progress = clamp((scrollY - start) / range, 0, 1)
+ *   is used to interpolate the transform (translate + scale) on the hero element.
+ *
+ *   When fully scrolled (progress === 1), the hero element sits exactly over the
+ *   target anchor, achieving the illusion of a single element repositioning itself.
+ *
+ * This component renders nothing visible — it is pure infrastructure.
+ * It is included by BaseLayout.astro only when appConfig.navbar.heroTransition.enabled.
  */
 import type { HeroNavbarTransitionConfig } from "../../types/scroll-transition.types";
 import "../../scroll-transition/shared-element-transition.css";
@@ -25,100 +31,108 @@ const { config } = Astro.props;
 
 const startScroll = config.startScroll ?? 0;
 const endScroll = config.endScroll ?? 300;
-const easing = config.easing ?? "ease";
-
-// Transition duration used by the JS fallback (not the CSS scroll-driven path).
-const FALLBACK_TRANSITION_MS = 150;
-
-// Sanitize easing: only allow valid CSS easing keywords and cubic-bezier().
-// This value is injected via set:html into a <style> block; restrict to known-safe
-// CSS easing syntax to prevent CSS injection from a manipulated config file.
-const EASING_ALLOWLIST =
-  /^(linear|ease|ease-in|ease-out|ease-in-out|step-start|step-end|cubic-bezier\([\d.,\s-]+\))$/;
-const safeEasing = EASING_ALLOWLIST.test(easing) ? easing : "ease";
+const targetAnchorSelector =
+  config.targetAnchorSelector ?? "[data-shared-navbar-brand]";
+const targetAnchorMode = config.targetAnchorMode ?? "fixed";
 ---
 
-<!--
-  Inject CSS custom properties that parameterise the scroll animation range and
-  easing. Written to :root so the stylesheet can consume them without JS.
-  Using a script (not a style tag) because Astro processes <style> blocks
-  at build time; script is:inline runs before the first paint.
--->
 <script
   is:inline
   define:vars={{
     startScroll,
     endScroll,
-    safeEasing,
-    FALLBACK_TRANSITION_MS,
+    targetAnchorSelector,
+    targetAnchorMode,
   }}
 >
   (function () {
-    var root = document.documentElement;
-    root.style.setProperty("--st-start", startScroll + "px");
-    root.style.setProperty("--st-end", endScroll + "px");
-    root.style.setProperty("--st-easing", safeEasing);
-    root.style.setProperty(
-      "--st-transition-duration",
-      FALLBACK_TRANSITION_MS + "ms",
-    );
-  })();
-</script>
-
-<script
-  is:inline
-  define:vars={{
-    startScroll,
-    endScroll,
-  }}
->
-  (function () {
-    // Feature-detect CSS scroll-driven animations.
-    // CSS.supports is available on all modern browsers; older ones fall through.
-    var supportsScrollTimeline =
-      typeof CSS !== "undefined" &&
-      CSS.supports("animation-timeline", "scroll()");
-
-    if (supportsScrollTimeline) {
-      // Mark the document so CSS fallback rules are suppressed.
-      document.documentElement.classList.add("has-scroll-timeline");
-      // The CSS scroll-driven animation handles everything — no JS needed per frame.
-      return;
-    }
-
-    // ── JS fallback path ───────────────────────────────────────────────────────
-    // Applies opacity + transform via class toggling on a rAF-throttled scroll
-    // listener. No inline style mutations per frame — class additions only.
+    // Respect reduced motion: skip the FLIP entirely.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     var heroBrand = document.querySelector("[data-shared-hero-brand]");
-    var navbarBrand = document.querySelector("[data-shared-navbar-brand]");
+    var targetAnchor = document.querySelector(targetAnchorSelector);
 
-    if (!heroBrand || !navbarBrand) return;
+    if (!heroBrand || !targetAnchor) return;
 
-    // Respect reduced motion at the JS level too (belt-and-suspenders with CSS).
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      navbarBrand.classList.add("shared-brand-visible");
-      return;
-    }
+    // ── FLIP setup ────────────────────────────────────────────────────────────
+    // Capture hero dimensions and page-relative origin BEFORE pulling into fixed.
+    var heroRect = heroBrand.getBoundingClientRect();
+    var scrollAtMount = window.scrollY;
 
+    // Absolute page position of the hero element's top-left corner.
+    var heroOriginTop = heroRect.top + scrollAtMount;
+    var heroOriginLeft = heroRect.left;
+    var heroWidth = heroRect.width;
+    var heroHeight = heroRect.height;
+
+    // Insert a placeholder that holds the hero section's height/layout while
+    // the real element is fixed-positioned (pulled out of normal flow).
+    var placeholder = document.createElement("span");
+    placeholder.setAttribute("data-shared-hero-brand-placeholder", "");
+    placeholder.style.display = "inline-block";
+    placeholder.style.width = heroWidth + "px";
+    placeholder.style.height = heroHeight + "px";
+    placeholder.style.visibility = "hidden";
+    placeholder.style.pointerEvents = "none";
+    heroBrand.parentNode.insertBefore(placeholder, heroBrand);
+
+    // Pull the hero brand out of normal flow.
+    heroBrand.classList.add("st-flying");
+    heroBrand.style.width = heroWidth + "px";
+    heroBrand.style.textAlign = "left"; // Remove parent center-alignment context
+    // Position it at its original page coordinates.
+    heroBrand.style.transform =
+      "translate(" + heroOriginLeft + "px, " + heroOriginTop + "px)";
+
+    // ── Animation loop ────────────────────────────────────────────────────────
     var rafPending = false;
 
     function update() {
       rafPending = false;
       var scrollY = window.scrollY;
       var range = endScroll - startScroll;
+      // progress: 0 = hero position, 1 = target anchor position
       var progress =
         range <= 0
           ? 1
           : Math.min(1, Math.max(0, (scrollY - startScroll) / range));
 
-      if (progress >= 0.5) {
-        navbarBrand.classList.add("shared-brand-visible");
-        heroBrand.classList.add("shared-brand-hidden");
+      // Destination: measure target anchor dimensions every frame.
+      var targetRect = targetAnchor.getBoundingClientRect();
+
+      // ─ Determine target position based on anchor mode ────────────────────────
+      var targetAbsTop;
+      var targetAbsLeft;
+
+      if (targetAnchorMode === "fixed") {
+        // Target is sticky/fixed to viewport — use viewport coords directly
+        targetAbsTop = targetRect.top;
+        targetAbsLeft = targetRect.left;
       } else {
-        navbarBrand.classList.remove("shared-brand-visible");
-        heroBrand.classList.remove("shared-brand-hidden");
+        // Target scrolls with page — add scrollY to viewport coords
+        targetAbsTop = targetRect.top + scrollY;
+        targetAbsLeft = targetRect.left;
       }
+
+      // ─ Compute scale based on height ratio ─────────────────────────────────
+      var targetScale =
+        targetRect.height > 0 ? targetRect.height / heroHeight : 1;
+
+      // ─ Interpolate position and scale ──────────────────────────────────────
+      var interpolatedScale = 1 + (targetScale - 1) * progress;
+      var interpolatedLeft =
+        heroOriginLeft + (targetAbsLeft - heroOriginLeft) * progress;
+      var interpolatedTop =
+        heroOriginTop + (targetAbsTop - heroOriginTop) * progress;
+
+      heroBrand.style.transform =
+        "translate(" +
+        interpolatedLeft +
+        "px, " +
+        interpolatedTop +
+        "px) scale(" +
+        interpolatedScale +
+        ")";
     }
 
     function onScroll() {
@@ -130,7 +144,22 @@ const safeEasing = EASING_ALLOWLIST.test(easing) ? easing : "ease";
 
     window.addEventListener("scroll", onScroll, { passive: true });
 
-    // Run once on load in case the page is already scrolled.
+    // Recompute on resize (viewport changes shift element positions).
+    window.addEventListener("resize", function () {
+      // Re-read hero rect from the placeholder position since hero is now fixed.
+      var ph = document.querySelector("[data-shared-hero-brand-placeholder]");
+      if (ph) {
+        var phRect = ph.getBoundingClientRect();
+        heroOriginTop = phRect.top + window.scrollY;
+        heroOriginLeft = phRect.left;
+        heroWidth = phRect.width;
+        heroHeight = phRect.height;
+        heroBrand.style.width = heroWidth + "px";
+      }
+      requestAnimationFrame(update);
+    });
+
+    // Initial paint.
     update();
   })();
 </script>
