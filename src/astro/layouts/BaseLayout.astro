@@ -6,6 +6,7 @@ import { validateThemeConfigOrThrow } from "@fachada/core";
 import "../styles/globals.css";
 import "../styles/section-backgrounds.css";
 import SharedElementTransition from "../components/SharedElementTransition.astro";
+import FloatingWhatsApp from "../components/FloatingWhatsApp.astro";
 
 export interface Props {
   title?: string;
@@ -29,6 +30,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
 
 const theme = appConfig.theme;
 const appThemeVariants = appConfig.themeVariants || {};
+const whatsappUrl = appConfig.seo?.social?.whatsapp ?? "";
 
 // Validate theme configuration and get resolved theme pool for this app
 const { resolvedThemes, defaultTheme: effectiveDefaultTheme } =
@@ -217,5 +219,6 @@ const { resolvedThemes, defaultTheme: effectiveDefaultTheme } =
         <SharedElementTransition config={appConfig.navbar.heroTransition} />
       )
     }
+    {whatsappUrl && <FloatingWhatsApp href={whatsappUrl} />}
   </body>
 </html>
