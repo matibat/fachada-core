@@ -52,6 +52,11 @@ const navItems = subsections
       currentPath === s.meta.path || currentPath.startsWith(s.meta.path + "/"),
   }));
 
+const anchorItems = (navbarConfig.anchorLinks ?? []).map((link) => ({
+  href: link.href,
+  label: link.label,
+}));
+
 const isLanding = currentPath === "/";
 ---
 
@@ -92,6 +97,17 @@ const isLanding = currentPath === "/";
             style={{
               color: item.active ? "var(--accent)" : "var(--text-secondary)",
             }}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      {
+        anchorItems.map((item) => (
+          <a
+            href={item.href}
+            class="transition-colors"
+            style="color: var(--text-secondary);"
           >
             {item.label}
           </a>
@@ -160,6 +176,16 @@ const isLanding = currentPath === "/";
             style={{
               color: item.active ? "var(--accent)" : "var(--text-secondary)",
             }}
+            onclick="this.closest('.navbar-mobile-menu').classList.remove('active')"
+          >
+            {item.label}
+          </a>
+        ))}
+        {anchorItems.map((item) => (
+          <a
+            href={item.href}
+            class="transition-colors"
+            style="color: var(--text-secondary);"
             onclick="this.closest('.navbar-mobile-menu').classList.remove('active')"
           >
             {item.label}
