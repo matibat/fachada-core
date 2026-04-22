@@ -1,6 +1,7 @@
 ---
 import AboutCard from "./about/AboutCard.astro";
 import AboutPlain from "./about/AboutPlain.astro";
+import AboutSplitLayout from "./about/AboutSplitLayout.astro";
 
 export interface Props {
   layout?: string;
@@ -11,3 +12,4 @@ const { layout = "card" } = Astro.props;
 
 {layout === "card" && <AboutCard />}
 {layout === "plain" && <AboutPlain />}
+{layout === "split" && <AboutSplitLayout />}

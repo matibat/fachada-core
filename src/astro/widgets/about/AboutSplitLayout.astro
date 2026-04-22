@@ -1,0 +1,69 @@
+---
+import { profileConfig } from "../../profile.config";
+import AboutPlain from "./AboutPlain.astro";
+
+const { paragraphs, image } = profileConfig.about;
+---
+
+{
+  image ? (
+    <section id="sobre-bati" class="section-wrapper about-split-section">
+      <div class="about-split-grid">
+        <div class="about-image-col">
+          <img src={image} alt="Profile" class="about-image" loading="lazy" />
+        </div>
+        <div class="about-text">
+          {paragraphs.map((paragraph) => (
+            <p class="about-split-paragraph" style="color: var(--text-secondary);">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : (
+    <AboutPlain />
+  )
+}
+
+<style>
+  .about-split-section {
+    padding: var(--spacing-section) 1.5rem;
+  }
+
+  .about-split-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-element);
+  }
+
+  @media (min-width: 768px) {
+    .about-split-grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .about-image-col {
+    display: flex;
+    justify-content: center;
+  }
+
+  .about-image {
+    width: 100%;
+    max-width: 420px;
+    border-radius: var(--radius-card, 0.75rem);
+    object-fit: cover;
+  }
+
+  .about-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-element);
+  }
+
+  .about-split-paragraph {
+    font-size: 1.1rem;
+    line-height: var(--body-line-height);
+  }
+</style>
