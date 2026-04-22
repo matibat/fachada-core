@@ -142,4 +142,15 @@ export interface NavbarConfig {
    * @default undefined (transition disabled)
    */
   heroTransition?: HeroNavbarTransitionConfig;
+
+  /**
+   * Anchor link items rendered in the navbar for single-page in-page navigation.
+   *
+   * @default undefined (no anchor links rendered)
+   * @values Array of `{ label: string; href: string }` objects
+   *
+   * Each entry produces a navigation link pointing to an in-page anchor (`#section`).
+   * Example: `[{ label: "Tatuajes", href: "#tatuajes" }, { label: "Contacto", href: "#contacto" }]`
+   */
+  anchorLinks?: { label: string; href: string }[];
 }
