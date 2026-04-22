@@ -34,6 +34,8 @@ export interface LandingPageData {
   ctaMessage?: string;
   /** Label for the bottom CTA button when single-role. Falls back to "Get in touch". */
   ctaLabel?: string;
+  /** Optional array of CTA buttons to render in the hero or CTA section. */
+  ctas?: { label: string; href: string }[];
 }
 
 /**
