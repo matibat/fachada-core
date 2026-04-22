@@ -33,6 +33,8 @@ export interface Role {
 export interface AboutContent {
   /** Exactly 3 paragraphs of bio text shown in the About section */
   paragraphs: [string, string, string];
+  /** Public path to profile/about image. Resolved by app asset pipeline. Example: "/images/bati-pintando.jpeg" */
+  image?: string;
 }
 
 export interface SkillCategory {

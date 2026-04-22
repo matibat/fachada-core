@@ -7,9 +7,13 @@
  * Behavior covered:
  *   B1: PageSectionConfig accepts `background?: string` — field is optional
  *   B2: PageSectionConfig with background value exposes the value as a string
+ *
+ * Behavior covered (T04):
+ *   B1: AboutContent accepts optional `image` string field
+ *   B2: AboutContent without `image` is still valid (backward compat)
  */
 import { describe, it, expect } from "vitest";
-import type { PageSectionConfig } from "./index";
+import type { PageSectionConfig, AboutContent } from "./index";
 
 // ─── B1: background field is optional ────────────────────────────────────────
 
@@ -74,5 +78,48 @@ describe("B2: PageSectionConfig.background value is accessible as a string", () 
 
     // When / Then
     expect(section.background).toBe("#1A1410");
+  });
+});
+
+// ─── T04 — B1: AboutContent accepts image field ───────────────────────────────
+
+describe("T04 B1: AboutContent accepts optional image string field", () => {
+  it("Given an AboutContent with paragraphs and image, When TypeScript compiles, Then both fields are accessible", () => {
+    // Given
+    const about: AboutContent = {
+      paragraphs: ["p1", "p2", "p3"],
+      image: "/images/bati.jpg",
+    };
+
+    // When
+    const result = about.image;
+
+    // Then
+    expect(result).toBe("/images/bati.jpg");
+  });
+
+  it("Given an AboutContent with image: /images/bati-pintando.jpeg, When image is read, Then it equals the configured path", () => {
+    // Given
+    const about: AboutContent = {
+      paragraphs: ["Para 1", "Para 2", "Para 3"],
+      image: "/images/bati-pintando.jpeg",
+    };
+
+    // When / Then
+    expect(about.image).toBe("/images/bati-pintando.jpeg");
+  });
+});
+
+// ─── T04 — B2: AboutContent without image is still valid ─────────────────────
+
+describe("T04 B2: AboutContent without image is still valid (backward compatibility)", () => {
+  it("Given an AboutContent without image, When TypeScript compiles, Then no type error occurs and image is undefined", () => {
+    // Given / When
+    const about: AboutContent = {
+      paragraphs: ["p1", "p2", "p3"],
+    };
+
+    // Then
+    expect(about.image).toBeUndefined();
   });
 });
