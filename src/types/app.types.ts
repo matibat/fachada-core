@@ -233,6 +233,12 @@ export interface AppConfig {
    * If omitted, navbar uses default horizontal layout with sticky positioning.
    */
   navbar?: NavbarConfig;
+  /**
+   * Optional footer configuration.
+   * - `layout: "minimal"` renders brand + handle only (no full nav).
+   * - `handle`: social handle string, e.g. "@unbati".
+   */
+  footer?: { layout?: "default" | "minimal"; handle?: string };
   /** Page composition hierarchy */
   page: PageConfig;
 }
