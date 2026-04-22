@@ -19,6 +19,7 @@ import Contact from "../widgets/Contact.astro";
 import { siteConfig } from "../config";
 import { getActiveAppConfig } from "@fachada/core";
 import { getCollection } from "astro:content";
+import { profileConfig } from "../profile.config";
 
 interface Props {
   meta: PageMeta;
@@ -29,6 +30,9 @@ const { meta, data } = Astro.props;
 
 const appConfig = getActiveAppConfig();
 const hasHeroTransition = appConfig.navbar?.heroTransition?.enabled === true;
+
+const heroSection = profileConfig.sections?.find((s: any) => s.id === "hero");
+const heroBg = heroSection?.background ?? "";
 
 const isMultiRole = siteConfig.roles.length > 1;
 const primaryRole =
@@ -81,7 +85,7 @@ const personSchema = {
   <Header currentPath="/" />
   <main>
     <!-- ── HOOK: Hero ──────────────────────────────────────────── -->
-    <section class="lp-hero">
+    <section class="lp-hero" style={heroBg ? `background: ${heroBg}; background-size: cover; background-position: center;` : undefined}>
       <div class="lp-hero-inner">
         <h1
           class="lp-hook"
@@ -109,11 +113,17 @@ const personSchema = {
                     → {role.title}
                   </a>
                 ))
-              : primaryContactHref && (
-                  <a href={primaryContactHref} class="lp-cta lp-cta--primary">
-                    {ctaLabel}
-                  </a>
-                )
+              : data?.ctas?.length
+                ? data.ctas.map((cta) => (
+                    <a href={cta.href} class="lp-cta lp-cta--primary">
+                      {cta.label}
+                    </a>
+                  ))
+                : primaryContactHref && (
+                    <a href={primaryContactHref} class="lp-cta lp-cta--primary">
+                      {ctaLabel}
+                    </a>
+                  )
           }
         </div>
       </div>
@@ -186,7 +196,7 @@ const personSchema = {
     <!-- ── Single-role hero sections ───────────────────────────── -->
     {
       !isMultiRole && primaryRole.about && (
-        <section class="lp-about">
+        <section id="sobre-bati" class="lp-about">
           <div class="lp-section-inner lp-section-inner--narrow">
             <div class="lp-about-body">
               {primaryRole.about.paragraphs.map((p) => (
