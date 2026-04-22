@@ -53,7 +53,7 @@ export function typeGeneratorPlugin(cwd: string = process.cwd()) {
     /**
      * Hook into configResolved to trigger generation early in the build process
      */
-    configResolved(config) {
+    configResolved(config: { command: string }) {
       // Always generate types at the start of build, even if virtual module isn't imported
       if (config.command === "build" && !typesGenerated) {
         generateAppTypes(cwd);

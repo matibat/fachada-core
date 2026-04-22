@@ -17,6 +17,12 @@
  *   When fully scrolled (progress === 1), the hero element sits exactly over the
  *   target anchor, achieving the illusion of a single element repositioning itself.
  *
+ * Two-script pattern:
+ *   1. A slim <script is:inline> puts all config on window.__heroConfig.
+ *   2. A non-inline <script> (Astro-bundled, can import TS modules) does the work.
+ *      Inline scripts run synchronously; non-inline scripts are deferred — ordering
+ *      is guaranteed so window.__heroConfig is always set before the module runs.
+ *
  * This component renders nothing visible — it is pure infrastructure.
  * It is included by BaseLayout.astro only when appConfig.navbar.heroTransition.enabled.
  */
@@ -34,6 +40,14 @@ const endScroll = config.endScroll ?? 300;
 const targetAnchorSelector =
   config.targetAnchorSelector ?? "[data-shared-navbar-brand]";
 const targetAnchorMode = config.targetAnchorMode ?? "fixed";
+
+// Snap-to-position config
+const snapEnabled = config.snapToPosition?.enabled ?? false;
+const snapDurationMs = config.snapToPosition?.durationMs ?? 350;
+const snapEasing = config.snapToPosition?.easing ?? 'ease-out';
+
+// Multi-stage config — serialized to JSON (null when not configured)
+const stagesJson = config.stages ? JSON.stringify(config.stages) : null;
 ---
 
 <script
@@ -43,68 +57,115 @@ const targetAnchorMode = config.targetAnchorMode ?? "fixed";
     endScroll,
     targetAnchorSelector,
     targetAnchorMode,
+    snapEnabled,
+    snapDurationMs,
+    snapEasing,
+    stagesJson,
   }}
 >
-  (function () {
+  window.__heroConfig = {
+    startScroll: startScroll,
+    endScroll: endScroll,
+    targetAnchorSelector: targetAnchorSelector,
+    targetAnchorMode: targetAnchorMode,
+    snapEnabled: snapEnabled,
+    snapDurationMs: snapDurationMs,
+    snapEasing: snapEasing,
+    stagesJson: stagesJson,
+  };
+</script>
+
+<script>
+  import { SnapAnimator, snapDirection } from '../../scroll-transition/snap-animator';
+  import { createScrollStopDetector } from '../../scroll-transition/scroll-stop-detector';
+  import { validateStages, stageInterpolate } from '../../scroll-transition/stage-interpolator';
+  import type { AnimationStage } from '../../types/scroll-transition.types';
+
+  function init(): void {
+    const cfg = (window as any).__heroConfig;
+    if (!cfg) return;
+
+    const {
+      startScroll,
+      endScroll,
+      targetAnchorSelector,
+      targetAnchorMode,
+      snapEnabled,
+      snapDurationMs,
+      stagesJson,
+    } = cfg as {
+      startScroll: number;
+      endScroll: number;
+      targetAnchorSelector: string;
+      targetAnchorMode: string;
+      snapEnabled: boolean;
+      snapDurationMs: number;
+      stagesJson: string | null;
+    };
+
     // Respect reduced motion: skip the FLIP entirely.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    var heroBrand = document.querySelector("[data-shared-hero-brand]");
-    var targetAnchor = document.querySelector(targetAnchorSelector);
-
+    const heroBrand = document.querySelector<HTMLElement>('[data-shared-hero-brand]');
+    const targetAnchor = document.querySelector<HTMLElement>(targetAnchorSelector);
     if (!heroBrand || !targetAnchor) return;
+
+    // ── Parse stages ──────────────────────────────────────────────────────────
+    let stages: AnimationStage[] | undefined;
+    if (stagesJson) {
+      try {
+        const parsed = JSON.parse(stagesJson) as AnimationStage[];
+        validateStages(parsed);
+        stages = parsed;
+      } catch (e) {
+        console.warn('[SharedElementTransition] Invalid stages config, falling back to linear:', e);
+        stages = undefined;
+      }
+    }
 
     // ── FLIP setup ────────────────────────────────────────────────────────────
     // Capture hero dimensions and page-relative origin BEFORE pulling into fixed.
-    var heroRect = heroBrand.getBoundingClientRect();
-    var scrollAtMount = window.scrollY;
+    const heroRect = heroBrand.getBoundingClientRect();
+    const scrollAtMount = window.scrollY;
 
     // Absolute page position of the hero element's top-left corner.
-    var heroOriginTop = heroRect.top + scrollAtMount;
-    var heroOriginLeft = heroRect.left;
-    var heroWidth = heroRect.width;
-    var heroHeight = heroRect.height;
+    let heroOriginTop = heroRect.top + scrollAtMount;
+    let heroOriginLeft = heroRect.left;
+    let heroWidth = heroRect.width;
+    let heroHeight = heroRect.height;
 
     // Insert a placeholder that holds the hero section's height/layout while
     // the real element is fixed-positioned (pulled out of normal flow).
-    var placeholder = document.createElement("span");
-    placeholder.setAttribute("data-shared-hero-brand-placeholder", "");
-    placeholder.style.display = "inline-block";
-    placeholder.style.width = heroWidth + "px";
-    placeholder.style.height = heroHeight + "px";
-    placeholder.style.visibility = "hidden";
-    placeholder.style.pointerEvents = "none";
-    heroBrand.parentNode.insertBefore(placeholder, heroBrand);
+    const placeholder = document.createElement('span');
+    placeholder.setAttribute('data-shared-hero-brand-placeholder', '');
+    placeholder.style.display = 'inline-block';
+    placeholder.style.width = heroWidth + 'px';
+    placeholder.style.height = heroHeight + 'px';
+    placeholder.style.visibility = 'hidden';
+    placeholder.style.pointerEvents = 'none';
+    heroBrand.parentNode!.insertBefore(placeholder, heroBrand);
 
     // Pull the hero brand out of normal flow.
-    heroBrand.classList.add("st-flying");
-    heroBrand.style.width = heroWidth + "px";
-    heroBrand.style.textAlign = "left"; // Remove parent center-alignment context
-    // Position it at its original page coordinates.
-    heroBrand.style.transform =
-      "translate(" + heroOriginLeft + "px, " + heroOriginTop + "px)";
+    heroBrand.classList.add('st-flying');
+    heroBrand.style.width = heroWidth + 'px';
+    heroBrand.style.textAlign = 'left'; // Remove parent center-alignment context
+    heroBrand.style.transform = `translate(${heroOriginLeft}px, ${heroOriginTop}px)`;
 
     // ── Animation loop ────────────────────────────────────────────────────────
-    var rafPending = false;
+    let currentProgress = 0;
+    let rafPending = false;
 
-    function update() {
-      rafPending = false;
-      var scrollY = window.scrollY;
-      var range = endScroll - startScroll;
-      // progress: 0 = hero position, 1 = target anchor position
-      var progress =
-        range <= 0
-          ? 1
-          : Math.min(1, Math.max(0, (scrollY - startScroll) / range));
+    // Snap animator (enabled/disabled based on config)
+    const animator = new SnapAnimator({ enabled: snapEnabled });
 
-      // Destination: measure target anchor dimensions every frame.
-      var targetRect = targetAnchor.getBoundingClientRect();
+    function applyProgress(progress: number): void {
+      currentProgress = progress;
+      const targetRect = targetAnchor.getBoundingClientRect();
+      const scrollY = window.scrollY;
 
-      // ─ Determine target position based on anchor mode ────────────────────────
-      var targetAbsTop;
-      var targetAbsLeft;
-
-      if (targetAnchorMode === "fixed") {
+      let targetAbsTop: number;
+      let targetAbsLeft: number;
+      if (targetAnchorMode === 'fixed') {
         // Target is sticky/fixed to viewport — use viewport coords directly
         targetAbsTop = targetRect.top;
         targetAbsLeft = targetRect.left;
@@ -114,52 +175,75 @@ const targetAnchorMode = config.targetAnchorMode ?? "fixed";
         targetAbsLeft = targetRect.left;
       }
 
-      // ─ Compute scale based on height ratio ─────────────────────────────────
-      var targetScale =
-        targetRect.height > 0 ? targetRect.height / heroHeight : 1;
+      const targetScale = targetRect.height > 0 ? targetRect.height / heroHeight : 1;
 
-      // ─ Interpolate position and scale ──────────────────────────────────────
-      var interpolatedScale = 1 + (targetScale - 1) * progress;
-      var interpolatedLeft =
-        heroOriginLeft + (targetAbsLeft - heroOriginLeft) * progress;
-      var interpolatedTop =
-        heroOriginTop + (targetAbsTop - heroOriginTop) * progress;
+      // Stage interpolation — falls back to linear when stages is undefined
+      const stage = stageInterpolate(stages, progress);
 
-      heroBrand.style.transform =
-        "translate(" +
-        interpolatedLeft +
-        "px, " +
-        interpolatedTop +
-        "px) scale(" +
-        interpolatedScale +
-        ")";
+      // translateFraction: 0 = hero origin, 1 = target anchor
+      const interpolatedLeft = heroOriginLeft + (targetAbsLeft - heroOriginLeft) * stage.translateFraction;
+      const interpolatedTop = heroOriginTop + (targetAbsTop - heroOriginTop) * stage.translateFraction;
+
+      // scale: stage.scale maps [0,1] → [1, targetScale]
+      const interpolatedScale = 1 + (targetScale - 1) * stage.scale;
+
+      heroBrand.style.transform = `translate(${interpolatedLeft}px, ${interpolatedTop}px) scale(${interpolatedScale})`;
+      heroBrand.style.opacity = String(stage.opacity);
     }
 
-    function onScroll() {
+    function update(): void {
+      rafPending = false;
+      const scrollY = window.scrollY;
+      const range = endScroll - startScroll;
+      const progress = range <= 0 ? 1 : Math.min(1, Math.max(0, (scrollY - startScroll) / range));
+      applyProgress(progress);
+    }
+
+    function onScroll(): void {
+      // User is scrolling — cancel any in-flight snap animation
+      animator.cancel();
       if (!rafPending) {
         rafPending = true;
-        requestAnimationFrame(update);
+        requestAnimationFrame(() => {
+          update();
+          rafPending = false;
+        });
       }
     }
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Snap-to-position: once scroll stops, animate to nearest snap point
+    if (snapEnabled) {
+      createScrollStopDetector(() => {
+        const target = snapDirection(currentProgress);
+        animator.start(currentProgress, target, snapDurationMs, applyProgress, () => {
+          currentProgress = target;
+        });
+      });
+    }
 
     // Recompute on resize (viewport changes shift element positions).
-    window.addEventListener("resize", function () {
-      // Re-read hero rect from the placeholder position since hero is now fixed.
-      var ph = document.querySelector("[data-shared-hero-brand-placeholder]");
+    window.addEventListener('resize', () => {
+      const ph = document.querySelector<HTMLElement>('[data-shared-hero-brand-placeholder]');
       if (ph) {
-        var phRect = ph.getBoundingClientRect();
+        const phRect = ph.getBoundingClientRect();
         heroOriginTop = phRect.top + window.scrollY;
         heroOriginLeft = phRect.left;
         heroWidth = phRect.width;
         heroHeight = phRect.height;
-        heroBrand.style.width = heroWidth + "px";
+        heroBrand.style.width = heroWidth + 'px';
       }
       requestAnimationFrame(update);
     });
 
-    // Initial paint.
+    // Initial paint
     update();
-  })();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 </script>

@@ -8,6 +8,90 @@
  */
 
 /**
+ * Configuration for snap-to-position behavior.
+ *
+ * When enabled, after the user stops scrolling, the hero brand element
+ * automatically animates to the nearest extreme (fully hidden at endScroll
+ * OR fully visible at startScroll), preventing it from resting mid-animation.
+ *
+ * The snap direction threshold is at progress=0.5: below snaps to origin (0),
+ * at or above snaps to target (1).
+ */
+export interface SnapToPositionConfig {
+  /**
+   * Enable snap-to-position behavior.
+   * @default false
+   */
+  enabled: boolean;
+
+  /**
+   * Duration in milliseconds for the snap animation.
+   * @default 350
+   */
+  durationMs?: number;
+
+  /**
+   * CSS easing for the snap animation.
+   * Common values: 'ease-out', 'ease-in-out', 'linear'.
+   * @default "ease-out"
+   */
+  easing?: string;
+}
+
+/**
+ * A from/to interpolation range for a single animated property within a stage.
+ */
+export interface StagePropertyRange {
+  /** Start value of the property at the beginning of this stage. */
+  from: number;
+  /** End value of the property at the end of this stage. */
+  to: number;
+}
+
+/**
+ * A single animation stage defining how properties animate over a portion of scroll progress.
+ *
+ * Stages must be contiguous (no gaps) and collectively span [0, 1].
+ * Use validateStages() to enforce this at runtime.
+ *
+ * @example
+ * ```yaml
+ * stages:
+ *   - range: [0, 0.6]
+ *     scale: { from: 1, to: 0.8 }
+ *   - range: [0.6, 1]
+ *     translateFraction: { from: 0, to: 1 }
+ * ```
+ */
+export interface AnimationStage {
+  /**
+   * The [start, end] scroll progress range for this stage.
+   * Both values must be in [0, 1]. Start must equal previous stage end.
+   * First stage must start at 0; last stage must end at 1.
+   */
+  range: [number, number];
+
+  /**
+   * Scale animation for this stage.
+   * If omitted, scale interpolates linearly from 1 to the component's computed target scale.
+   */
+  scale?: StagePropertyRange;
+
+  /**
+   * Opacity animation for this stage.
+   * If omitted, opacity stays at 1 (fully visible) throughout this stage.
+   */
+  opacity?: StagePropertyRange;
+
+  /**
+   * translateFraction controls how far along the path from origin to target the element has moved.
+   * 0 = at origin (hero position), 1 = fully at target (navbar position).
+   * If omitted, translateFraction uses a linear pass-through equal to stage-normalized progress.
+   */
+  translateFraction?: StagePropertyRange;
+}
+
+/**
  * HeroNavbarTransitionConfig — configuration for the scroll-linked hero-to-navbar
  * brand transition using FLIP (First, Last, Invert, Play) animation.
  *
@@ -118,4 +202,34 @@ export interface HeroNavbarTransitionConfig {
    * @default "fixed"
    */
   targetAnchorMode?: "fixed" | "scroll";
+
+  /**
+   * Snap-to-position behavior configuration.
+   *
+   * When enabled, after the user stops scrolling, the hero brand element
+   * animates to the nearest extreme position (fully at origin or fully at target).
+   *
+   * @default { enabled: false }
+   */
+  snapToPosition?: SnapToPositionConfig;
+
+  /**
+   * Multi-stage animation configuration.
+   *
+   * When provided, the animation is divided into stages, each controlling
+   * different properties (scale, opacity, translateFraction) over a portion
+   * of the scroll range. Stages must be contiguous and span [0, 1].
+   *
+   * When omitted, all properties animate linearly across the full scroll range.
+   *
+   * @example
+   * ```yaml
+   * stages:
+   *   - range: [0, 0.6]
+   *     scale: { from: 1, to: 0.8 }
+   *   - range: [0.6, 1]
+   *     translateFraction: { from: 0, to: 1 }
+   * ```
+   */
+  stages?: AnimationStage[];
 }

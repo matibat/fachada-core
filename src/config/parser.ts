@@ -8,7 +8,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import YAML from "yaml";
-import Ajv, { ValidateFunction, ErrorObject } from "ajv";
+import Ajv from "ajv";
+import type { ValidateFunction, ErrorObject } from "ajv";
 import schema from "./schema/application-v1.json" assert { type: "json" };
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -101,10 +102,7 @@ const ajv = new Ajv({
 /**
  * Compiles schema once for performance
  */
-let validator: ValidateFunction;
-if (!validator) {
-  validator = ajv.compile(schema);
-}
+const validator: ValidateFunction = ajv.compile(schema);
 
 /**
  * Parse YAML file and validate against schema.

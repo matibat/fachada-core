@@ -290,7 +290,7 @@ function normalizeTokens(tokens: Partial<ThemeTokens>): ThemeTokens {
     }
   }
 
-  return normalized as ThemeTokens;
+  return normalized as unknown as ThemeTokens;
 }
 
 /**
@@ -323,7 +323,7 @@ function mergeTokensDeferred(
       }
     }
 
-    return merged as ThemeTokens;
+    return merged as unknown as ThemeTokens;
   } catch (err) {
     if (err instanceof Error && err.message.includes("not found")) {
       throw new Error(

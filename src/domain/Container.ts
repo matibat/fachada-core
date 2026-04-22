@@ -20,7 +20,7 @@ export type ContainerChild = Widget | Container;
 /**
  * Configuration for creating a Container
  */
-export interface ContainerCreateConfig extends Omit<ContainerConfig, "type"> {
+export interface ContainerCreateConfig extends Omit<ContainerConfig, "type" | "children"> {
   layout: string; // Required for creation
   children: ContainerChild[] | readonly ContainerChild[]; // Required for creation
 }
