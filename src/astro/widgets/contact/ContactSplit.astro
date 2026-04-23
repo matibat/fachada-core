@@ -7,9 +7,11 @@ import { resolveContactMessage } from "@fachada/core";
 
 export interface Props {
   message?: string;
+  /** Section heading. Defaults to "Contact" when not provided. */
+  heading?: string;
 }
 
-const { message: messageProp } = Astro.props;
+const { message: messageProp, heading = "Contact" } = Astro.props;
 const contactMessage = resolveContactMessage(
   messageProp,
   profileConfig.contactMessage,
@@ -43,7 +45,7 @@ const socialLinks = [
     <div class="contact-split-grid">
       <!-- Left: heading + message + social links -->
       <div class="contact-split-info">
-        <h2 class="text-4xl font-bold mb-6" data-index="04">Contacto</h2>
+        <h2 class="text-4xl font-bold mb-6" data-index="04">{heading}</h2>
         <p class="text-lg mb-8" style="color: var(--text-secondary);">
           {contactMessage}
         </p>
