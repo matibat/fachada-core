@@ -19,6 +19,9 @@ const navItems = subsections
 
 const { social } = siteConfig;
 
+const sectionsLabel = appConfig.footer?.sectionsLabel ?? "Sections";
+const socialsLabel = appConfig.footer?.socialsLabel ?? "Social";
+
 // Build a unified social links list from whatever is configured
 const socialLinks = [
   social.instagram && { href: social.instagram, label: "Instagram" },
@@ -60,7 +63,7 @@ const contactIsExternal = !!social.whatsapp;
         navItems.length > 0 && (
           <div>
             <p class="font-semibold mb-4" style="color: var(--text-primary);">
-              Secciones
+              {sectionsLabel}
             </p>
             <nav class="footer-links-col">
               {navItems.map((item) => (
@@ -82,7 +85,7 @@ const contactIsExternal = !!social.whatsapp;
         socialLinks.length > 0 && (
           <div>
             <p class="font-semibold mb-4" style="color: var(--text-primary);">
-              Redes
+              {socialsLabel}
             </p>
             <div class="footer-links-col">
               {socialLinks.map((link) => (
