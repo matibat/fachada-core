@@ -7,31 +7,38 @@ export interface Props {
   intro?: string;
   ctaLabel?: string;
   ctaHref?: string;
+  sectionId?: string;
+  images?: GalleryImage[];
 }
 
-const { title, intro, ctaLabel, ctaHref } = Astro.props;
+const {
+  title,
+  intro,
+  ctaLabel,
+  ctaHref,
+  sectionId = "image-section",
+  images: imagesProp,
+} = Astro.props;
 
-const images: GalleryImage[] = appConfig.gallery?.images ?? [];
+const images: GalleryImage[] = imagesProp ?? appConfig.gallery?.images ?? [];
 ---
 
-<section id="tatuajes" class="tatuajes-section section-wrapper">
-  <h2>{title || "Tatuajes."}</h2>
-  {intro && <p class="tatuajes-intro">{intro}</p>}
-  <div class="tatuajes-gallery">
+<section id={sectionId} class="image-section section-wrapper">
+  {title && <h2>{title}</h2>}
+  {intro && <p class="image-section-intro">{intro}</p>}
+  <div class="image-section-gallery">
     {
       images.map((image) => (
-        <div class="tatuajes-gallery-item">
+        <div class="image-section-gallery-item">
           <img src={image.src} alt={image.alt} loading="lazy" />
-          {image.caption && (
-            <p class="tatuajes-caption">{image.caption}</p>
-          )}
+          {image.caption && <p class="image-section-caption">{image.caption}</p>}
         </div>
       ))
     }
   </div>
   {
     ctaLabel && ctaHref && (
-      <a href={ctaHref} class="tatuajes-cta">
+      <a href={ctaHref} class="image-section-cta">
         {ctaLabel}
       </a>
     )
@@ -39,37 +46,37 @@ const images: GalleryImage[] = appConfig.gallery?.images ?? [];
 </section>
 
 <style>
-  .tatuajes-section {
+  .image-section {
     padding: 4rem 1rem;
   }
 
-  .tatuajes-section h2 {
+  .image-section h2 {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
     color: var(--text-primary);
   }
 
-  .tatuajes-intro {
+  .image-section-intro {
     font-size: 1.125rem;
     color: var(--text-secondary);
     margin-bottom: 2rem;
     max-width: 60ch;
   }
 
-  .tatuajes-gallery {
+  .image-section-gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
     margin: 2rem 0;
   }
 
-  .tatuajes-gallery-item {
+  .image-section-gallery-item {
     overflow: hidden;
     border-radius: 0.5rem;
   }
 
-  .tatuajes-gallery-item img {
+  .image-section-gallery-item img {
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
@@ -77,18 +84,18 @@ const images: GalleryImage[] = appConfig.gallery?.images ?? [];
     transition: transform 0.3s ease;
   }
 
-  .tatuajes-gallery-item img:hover {
+  .image-section-gallery-item img:hover {
     transform: scale(1.03);
   }
 
-  .tatuajes-caption {
+  .image-section-caption {
     font-size: 0.875rem;
     color: var(--text-secondary);
     padding: 0.5rem;
     margin: 0;
   }
 
-  .tatuajes-cta {
+  .image-section-cta {
     display: inline-block;
     margin-top: 2rem;
     padding: 0.75rem 2rem;
@@ -100,7 +107,7 @@ const images: GalleryImage[] = appConfig.gallery?.images ?? [];
     transition: opacity 0.2s ease;
   }
 
-  .tatuajes-cta:hover {
+  .image-section-cta:hover {
     opacity: 0.85;
   }
 </style>
