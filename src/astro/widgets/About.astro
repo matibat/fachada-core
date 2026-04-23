@@ -2,14 +2,17 @@
 import AboutCard from "./about/AboutCard.astro";
 import AboutPlain from "./about/AboutPlain.astro";
 import AboutSplitLayout from "./about/AboutSplitLayout.astro";
+import { profileConfig } from "../profile.config";
 
 export interface Props {
   layout?: string;
+  [key: string]: unknown;
 }
 
-const { layout = "card" } = Astro.props;
+const { layout = "card", ...rest } = Astro.props;
+const { paragraphs, image } = profileConfig.about;
 ---
 
 {layout === "card" && <AboutCard />}
 {layout === "plain" && <AboutPlain />}
-{layout === "split" && <AboutSplitLayout />}
+{layout === "split" && <AboutSplitLayout paragraphs={paragraphs} image={image} {...rest} />}

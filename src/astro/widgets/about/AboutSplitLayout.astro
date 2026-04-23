@@ -1,20 +1,29 @@
 ---
-import { profileConfig } from "../../profile.config";
 import AboutPlain from "./AboutPlain.astro";
 
-const { paragraphs, image } = profileConfig.about;
+export interface Props {
+  paragraphs: string[];
+  image?: string;
+  imageAlt?: string;
+  sectionId?: string;
+}
+
+const { paragraphs, image, imageAlt = "Profile", sectionId = "about" } = Astro.props;
 ---
 
 {
   image ? (
-    <section id="sobre-bati" class="section-wrapper about-split-section">
+    <section id={sectionId} class="section-wrapper about-split-section">
       <div class="about-split-grid">
         <div class="about-image-col">
-          <img src={image} alt="Profile" class="about-image" loading="lazy" />
+          <img src={image} alt={imageAlt} class="about-image" loading="lazy" />
         </div>
         <div class="about-text">
           {paragraphs.map((paragraph) => (
-            <p class="about-split-paragraph" style="color: var(--text-secondary);">
+            <p
+              class="about-split-paragraph"
+              style="color: var(--text-secondary);"
+            >
               {paragraph}
             </p>
           ))}
