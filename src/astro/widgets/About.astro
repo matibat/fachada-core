@@ -3,6 +3,7 @@ import AboutCard from "./about/AboutCard.astro";
 import AboutPlain from "./about/AboutPlain.astro";
 import AboutSplitLayout from "./about/AboutSplitLayout.astro";
 import { profileConfig } from "../profile.config";
+import { siteConfig } from "../config";
 
 export interface Props {
   layout?: string;
@@ -11,8 +12,10 @@ export interface Props {
 
 const { layout = "card", ...rest } = Astro.props;
 const { paragraphs, image } = profileConfig.about;
+const isFramework = siteConfig.roles.some((r) => r.id === "framework");
+const heading = isFramework ? "How It Works" : "About Me";
 ---
 
-{layout === "card" && <AboutCard />}
-{layout === "plain" && <AboutPlain />}
-{layout === "split" && <AboutSplitLayout paragraphs={paragraphs} image={image} {...rest} />}
+{layout === "card" && <AboutCard paragraphs={paragraphs} heading={heading} />}
+{layout === "plain" && <AboutPlain paragraphs={paragraphs} heading={heading} />}
+{layout === "split" && <AboutSplitLayout paragraphs={paragraphs} image={image} heading={heading} {...rest} />}

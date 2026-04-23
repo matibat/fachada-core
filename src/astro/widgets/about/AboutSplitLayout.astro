@@ -6,9 +6,10 @@ export interface Props {
   image?: string;
   imageAlt?: string;
   sectionId?: string;
+  heading?: string;
 }
 
-const { paragraphs, image, imageAlt = "Profile", sectionId = "about" } = Astro.props;
+const { paragraphs, image, imageAlt = "Profile", sectionId = "about", heading } = Astro.props;
 ---
 
 {
@@ -31,7 +32,7 @@ const { paragraphs, image, imageAlt = "Profile", sectionId = "about" } = Astro.p
       </div>
     </section>
   ) : (
-    <AboutPlain />
+    <AboutPlain paragraphs={paragraphs} heading={heading} />
   )
 }
 
