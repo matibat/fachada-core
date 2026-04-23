@@ -85,7 +85,7 @@ const isLanding = currentPath === "/";
             class="transition-colors"
             style="color: var(--text-secondary);"
           >
-            ← Inicio
+            {navbarConfig.backLabel ?? "← Home"}
           </a>
         )
       }
@@ -166,7 +166,7 @@ const isLanding = currentPath === "/";
             style="color: var(--text-secondary);"
             onclick="this.closest('.navbar-mobile-menu').classList.remove('active')"
           >
-            ← Inicio
+            {navbarConfig.backLabel ?? "← Home"}
           </a>
         )}
         {navItems.map((item) => (
