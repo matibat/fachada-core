@@ -14,16 +14,17 @@ import type { NavbarConfig } from "../types";
  * Default navbar configuration.
  * All properties have sensible defaults for backward compatibility.
  */
-const DEFAULTS: Required<Omit<NavbarConfig, "heroTransition" | "anchorLinks" | "backLabel">> =
-  {
-    variant: "horizontal",
-    mobileBreakpoint: "md",
-    position: "sticky",
-    hasMenu: true,
-    menuTriggerLabel: "Menu",
-    customClass: "",
-    mobileMode: "hamburger",
-  };
+const DEFAULTS: Required<
+  Omit<NavbarConfig, "heroTransition" | "anchorLinks" | "backLabel">
+> = {
+  variant: "horizontal",
+  mobileBreakpoint: "md",
+  position: "sticky",
+  hasMenu: true,
+  menuTriggerLabel: "Menu",
+  customClass: "",
+  mobileMode: "hamburger",
+};
 
 /**
  * Tailwind breakpoint to pixel value mapping
@@ -50,7 +51,9 @@ const BREAKPOINT_MAP: Record<
  */
 export function getNavbarConfig(
   userConfig?: NavbarConfig,
-): Required<Omit<NavbarConfig, "heroTransition" | "anchorLinks" | "backLabel">> &
+): Required<
+  Omit<NavbarConfig, "heroTransition" | "anchorLinks" | "backLabel">
+> &
   Pick<NavbarConfig, "heroTransition" | "anchorLinks" | "backLabel"> {
   return {
     ...DEFAULTS,

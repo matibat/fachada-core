@@ -20,7 +20,7 @@ export class SnapAnimator {
     toTarget: 0 | 1,
     durationMs: number,
     onTick: (progress: number) => void,
-    onComplete: () => void
+    onComplete: () => void,
   ): void {
     if (!this.config.enabled) return;
 

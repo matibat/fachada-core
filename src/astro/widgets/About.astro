@@ -18,4 +18,13 @@ const heading = isFramework ? "How It Works" : "About Me";
 
 {layout === "card" && <AboutCard paragraphs={paragraphs} heading={heading} />}
 {layout === "plain" && <AboutPlain paragraphs={paragraphs} heading={heading} />}
-{layout === "split" && <AboutSplitLayout paragraphs={paragraphs} image={image} heading={heading} {...rest} />}
+{
+  layout === "split" && (
+    <AboutSplitLayout
+      paragraphs={paragraphs}
+      image={image}
+      heading={heading}
+      {...rest}
+    />
+  )
+}

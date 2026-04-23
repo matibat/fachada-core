@@ -9,7 +9,13 @@ export interface Props {
   heading?: string;
 }
 
-const { paragraphs, image, imageAlt = "Profile", sectionId = "about", heading } = Astro.props;
+const {
+  paragraphs,
+  image,
+  imageAlt = "Profile",
+  sectionId = "about",
+  heading,
+} = Astro.props;
 ---
 
 {

@@ -1,14 +1,42 @@
 ---
-// ContactForm — static HTML form with WhatsApp fallback note.
-// No external data props needed; styling is fully scoped.
+// ContactForm — generic contact form with optional WhatsApp fallback note.
+// All visible strings and configuration are driven by props.
+
+export interface Props {
+  namePlaceholder?: string;
+  emailPlaceholder?: string;
+  messagePlaceholder?: string;
+  submitLabel?: string;
+  whatsappNote?: string;
+  whatsappHref?: string;
+  serviceOptions?: { value: string; label: string }[];
+  servicePlaceholder?: string;
+  formAction?: string;
+}
+
+const {
+  namePlaceholder = "Name",
+  emailPlaceholder = "email@example.com",
+  messagePlaceholder = "Your message...",
+  submitLabel = "Send",
+  whatsappNote,
+  whatsappHref,
+  serviceOptions,
+  servicePlaceholder = "Select a service",
+  formAction = "#",
+} = Astro.props;
+
+const hasServiceOptions =
+  Array.isArray(serviceOptions) && serviceOptions.length > 0;
+const showWhatsapp = Boolean(whatsappNote && whatsappHref);
 ---
 
-<form class="contact-form" method="GET" action="#">
+<form class="contact-form" method="GET" action={formAction}>
   <div class="form-group">
     <input
       type="text"
-      name="nombre"
-      placeholder="Tu nombre"
+      name="name"
+      placeholder={namePlaceholder}
       required
       class="form-input"
     />
@@ -17,32 +45,39 @@
     <input
       type="email"
       name="email"
-      placeholder="tu@email.com"
+      placeholder={emailPlaceholder}
       required
       class="form-input"
     />
   </div>
-  <div class="form-group">
-    <select name="servicio" class="form-select">
-      <option value="">Seleccioná un servicio</option>
-      <option value="tatuaje">Tatuaje</option>
-      <option value="pintura">Pintura</option>
-      <option value="otro">Otro</option>
-    </select>
-  </div>
+  {
+    hasServiceOptions && (
+      <div class="form-group">
+        <select name="service" class="form-select">
+          <option value="">{servicePlaceholder}</option>
+          {serviceOptions!.map((opt) => (
+            <option value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+      </div>
+    )
+  }
   <div class="form-group">
     <textarea
-      name="mensaje"
+      name="message"
       rows="5"
-      placeholder="Tu mensaje..."
-      class="form-textarea"
-    ></textarea>
+      placeholder={messagePlaceholder}
+      class="form-textarea"></textarea>
   </div>
-  <button type="submit" class="form-submit">Enviar</button>
+  <button type="submit" class="form-submit">{submitLabel}</button>
 </form>
-<p class="contact-whatsapp-note">
-  O escribinos directo por <a href="#">WhatsApp</a>.
-</p>
+{
+  showWhatsapp && (
+    <p class="contact-whatsapp-note">
+      {whatsappNote} <a href={whatsappHref}>WhatsApp</a>.
+    </p>
+  )
+}
 
 <style>
   .contact-form {

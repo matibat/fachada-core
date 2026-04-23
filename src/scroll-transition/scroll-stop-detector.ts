@@ -1,15 +1,15 @@
 export function createScrollStopDetector(
   callback: () => void,
-  debounceMs: number = 200
+  debounceMs: number = 200,
 ): { detach(): void } {
   // Use a boolean variable to avoid TypeScript control-flow narrowing window to 'never'
-  const supportsScrollEnd: boolean = 'onscrollend' in window;
+  const supportsScrollEnd: boolean = "onscrollend" in window;
 
   if (supportsScrollEnd) {
-    window.addEventListener('scrollend', callback);
+    window.addEventListener("scrollend", callback);
     return {
       detach() {
-        window.removeEventListener('scrollend', callback);
+        window.removeEventListener("scrollend", callback);
       },
     };
   }
@@ -21,11 +21,11 @@ export function createScrollStopDetector(
     timer = setTimeout(callback, debounceMs);
   };
 
-  window.addEventListener('scroll', onScroll);
+  window.addEventListener("scroll", onScroll);
 
   return {
     detach() {
-      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener("scroll", onScroll);
       clearTimeout(timer);
     },
   };

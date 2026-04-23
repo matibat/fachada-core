@@ -1,20 +1,20 @@
-import type { AnimationStage } from '../types/scroll-transition.types.js';
+import type { AnimationStage } from "../types/scroll-transition.types.js";
 
 export function validateStages(stages: AnimationStage[]): void {
   if (stages[0].range[0] !== 0) {
     throw new RangeError(
-      `First stage must start at 0, but got ${stages[0].range[0]}`
+      `First stage must start at 0, but got ${stages[0].range[0]}`,
     );
   }
   if (stages[stages.length - 1].range[1] !== 1) {
     throw new RangeError(
-      `Last stage must end at 1, but got ${stages[stages.length - 1].range[1]}`
+      `Last stage must end at 1, but got ${stages[stages.length - 1].range[1]}`,
     );
   }
   for (let i = 0; i < stages.length - 1; i++) {
     if (stages[i].range[1] !== stages[i + 1].range[0]) {
       throw new RangeError(
-        `Gap between stage ${i} end (${stages[i].range[1]}) and stage ${i + 1} start (${stages[i + 1].range[0]})`
+        `Gap between stage ${i} end (${stages[i].range[1]}) and stage ${i + 1} start (${stages[i + 1].range[0]})`,
       );
     }
   }
@@ -22,7 +22,7 @@ export function validateStages(stages: AnimationStage[]): void {
 
 export function stageInterpolate(
   stages: AnimationStage[] | undefined,
-  progress: number
+  progress: number,
 ): { scale: number; opacity: number; translateFraction: number } {
   if (stages === undefined) {
     return { scale: progress, opacity: 1, translateFraction: progress };
@@ -41,7 +41,10 @@ export function stageInterpolate(
   const [rangeStart, rangeEnd] = activeStage.range;
   const localProgress = (progress - rangeStart) / (rangeEnd - rangeStart);
 
-  const interpolate = (prop: { from: number; to: number } | undefined, defaultValue: number): number => {
+  const interpolate = (
+    prop: { from: number; to: number } | undefined,
+    defaultValue: number,
+  ): number => {
     if (prop !== undefined) {
       return prop.from + (prop.to - prop.from) * localProgress;
     }

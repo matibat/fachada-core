@@ -33,7 +33,13 @@ const { title, description, images } = gallery;
             <figcaption class="gallery-card-badge-caption">
               {img.technique && <p class="card-technique">{img.technique}</p>}
               {img.badgeLabel && (
-                <span class={img.availability === "vendido" ? "badge-sold" : "badge-available"}>
+                <span
+                  class={
+                    img.availability === "vendido"
+                      ? "badge-sold"
+                      : "badge-available"
+                  }
+                >
                   {img.badgeLabel}
                 </span>
               )}

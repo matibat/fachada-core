@@ -240,7 +240,12 @@ export interface AppConfig {
    * - `layout: "minimal"` renders brand + handle only (no full nav).
    * - `handle`: social handle string, e.g. "@unbati".
    */
-  footer?: { layout?: "default" | "minimal"; handle?: string; sectionsLabel?: string; socialsLabel?: string };
+  footer?: {
+    layout?: "default" | "minimal";
+    handle?: string;
+    sectionsLabel?: string;
+    socialsLabel?: string;
+  };
   /** Page composition hierarchy */
   page: PageConfig;
 }

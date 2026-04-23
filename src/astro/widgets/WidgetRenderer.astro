@@ -84,7 +84,10 @@ function getUniqueVariants(sectionId: string): string[] {
 const sectionVariantsMap = new Map(
   enabledIds
     .filter((id) => widgetComponents[id] !== undefined)
-    .map((sectionId) => [sectionId, getUniqueVariants(sectionId)] as [string, string[]])
+    .map(
+      (sectionId) =>
+        [sectionId, getUniqueVariants(sectionId)] as [string, string[]],
+    ),
 );
 
 // Generate per-section-per-variant FOUC activation rules (ADR SB-2).
@@ -92,55 +95,60 @@ const sectionVariantsMap = new Map(
 const foucCss = generateFoucCss(sectionVariantsMap);
 ---
 
-{foucCss && <style is:global set:html={foucCss}></style>}
+{foucCss && <style is:global set:html={foucCss} />}
 
-{enabledIds.map((sectionId) => {
-  // RoleExplorer is rendered separately below — skip it in the generic loop.
-  if (sectionId === "role-explorer") return null;
+{
+  enabledIds.map((sectionId) => {
+    // RoleExplorer is rendered separately below — skip it in the generic loop.
+    if (sectionId === "role-explorer") return null;
 
-  const Component = widgetComponents[sectionId];
-  if (!Component) {
-    console.warn(
-      `[WidgetRenderer] No component registered for section: ${sectionId} — section will be skipped`
+    const Component = widgetComponents[sectionId];
+    if (!Component) {
+      console.warn(
+        `[WidgetRenderer] No component registered for section: ${sectionId} — section will be skipped`,
+      );
+      return null;
+    }
+
+    const section = sectionMap.get(sectionId);
+    const variants = getUniqueVariants(sectionId);
+    const resolvedLayout = resolveWidgetLayout(
+      sectionId,
+      section?.layout,
+      themeLayouts,
+      activeStyleTheme,
     );
-    return null;
-  }
+    const bgStyle = section?.background
+      ? `background: ${section.background}`
+      : undefined;
 
-  const section = sectionMap.get(sectionId);
-  const variants = getUniqueVariants(sectionId);
-  const resolvedLayout = resolveWidgetLayout(
-    sectionId,
-    section?.layout,
-    themeLayouts,
-    activeStyleTheme,
-  );
-  const bgStyle = section?.background ? `background: ${section.background}` : undefined;
+    if (variants.length > 0) {
+      return (
+        <div id={sectionId}>
+          {variants.map((variant) => (
+            <div
+              data-layout-section={sectionId}
+              data-layout-variant={variant}
+              style={bgStyle}
+              aria-hidden="true"
+            >
+              <Component layout={variant} />
+            </div>
+          ))}
+        </div>
+      );
+    }
 
-  if (variants.length > 0) {
     return (
-      <div id={sectionId}>
-        {variants.map((variant) => (
-          <div
-            data-layout-section={sectionId}
-            data-layout-variant={variant}
-            style={bgStyle}
-            aria-hidden="true"
-          >
-            <Component layout={variant} />
-          </div>
-        ))}
+      <div id={sectionId} style={bgStyle}>
+        <Component layout={resolvedLayout} />
       </div>
     );
-  }
+  })
+}
 
-  return (
-    <div id={sectionId} style={bgStyle}>
-      <Component layout={resolvedLayout} />
-    </div>
-  );
-})}
-
-{/*
+{
+  /*
   RoleExplorer — named exception.
 
   RoleExplorer is a React island that requires `client:load`. Astro client
@@ -155,11 +163,14 @@ const foucCss = generateFoucCss(sectionVariantsMap);
   Planned: move this block to SectionsPage.astro in the next refactor task,
   eliminating the last hardcoded section reference from WidgetRenderer.
   See: analysis.md ID-3, ADR SB-1 Consequences.
-*/}
-{enabledIds.includes("role-explorer") && (
-  <RoleExplorer
-    client:load
-    roles={appConfig.seo.roles}
-    primaryRole={appConfig.seo.primaryRole}
-  />
-)}
+*/
+}
+{
+  enabledIds.includes("role-explorer") && (
+    <RoleExplorer
+      client:load
+      roles={appConfig.seo.roles}
+      primaryRole={appConfig.seo.primaryRole}
+    />
+  )
+}

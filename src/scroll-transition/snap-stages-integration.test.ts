@@ -125,11 +125,11 @@ describe("Snap + Stages Integration", () => {
     // At rest position 0.3
     const at03 = stageInterpolate(stages, 0.3);
     expect(at03.scale).toBeCloseTo(0.85, 1);
-    
+
     // Snap fires: direction=0
     const dir = snapDirection(0.3);
     expect(dir).toBe(0);
-    
+
     // At snap target (0)
     const at00 = stageInterpolate(stages, 0);
     expect(at00.scale).toBeCloseTo(1.0);
@@ -142,11 +142,11 @@ describe("Snap + Stages Integration", () => {
     // Stage 2: localProgress = (0.7 - 0.6) / 0.4 = 0.25
     // translateFraction = 0 + (1 - 0) * 0.25 = 0.25
     expect(at07.translateFraction).toBeCloseTo(0.25, 1);
-    
+
     // Snap fires: direction=1
     const dir = snapDirection(0.7);
     expect(dir).toBe(1);
-    
+
     // At snap target (1)
     const at10 = stageInterpolate(stages, 1);
     expect(at10.translateFraction).toBeCloseTo(1.0);

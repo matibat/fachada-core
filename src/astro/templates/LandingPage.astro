@@ -85,7 +85,12 @@ const personSchema = {
   <Header currentPath="/" />
   <main>
     <!-- ── HOOK: Hero ──────────────────────────────────────────── -->
-    <section class="lp-hero" style={heroBg ? `background: ${heroBg}; background-size: cover; background-position: center;` : undefined}>
+    <section
+      class="lp-hero"
+      style={heroBg
+        ? `background: ${heroBg}; background-size: cover; background-position: center;`
+        : undefined}
+    >
       <div class="lp-hero-inner">
         <h1
           class="lp-hook"

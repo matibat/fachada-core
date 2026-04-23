@@ -31,7 +31,9 @@ const images: GalleryImage[] = imagesProp ?? appConfig.gallery?.images ?? [];
       images.map((image) => (
         <div class="image-section-gallery-item">
           <img src={image.src} alt={image.alt} loading="lazy" />
-          {image.caption && <p class="image-section-caption">{image.caption}</p>}
+          {image.caption && (
+            <p class="image-section-caption">{image.caption}</p>
+          )}
         </div>
       ))
     }
