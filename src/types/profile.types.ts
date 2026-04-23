@@ -123,6 +123,8 @@ export interface SiteConfig {
   author: string;
   url: string;
   ogImage: string;
+  /** BCP 47 language tag for the site, e.g. "es", "en". Defaults to browser/runtime default when absent. */
+  lang?: string;
   social: {
     github?: string;
     linkedin?: string;

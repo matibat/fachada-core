@@ -13,7 +13,7 @@
  *   B2: AboutContent without `image` is still valid (backward compat)
  */
 import { describe, it, expect } from "vitest";
-import type { PageSectionConfig, AboutContent } from "./index";
+import type { PageSectionConfig, AboutContent, SiteConfig } from "./index";
 
 // ─── B1: background field is optional ────────────────────────────────────────
 
@@ -121,5 +121,63 @@ describe("T04 B2: AboutContent without image is still valid (backward compatibil
 
     // Then
     expect(about.image).toBeUndefined();
+  });
+});
+
+// ─── T02 — B1: SiteConfig accepts optional lang field ────────────────────────
+
+describe("T02 B1: SiteConfig accepts optional lang field", () => {
+  const baseSiteConfig: SiteConfig = {
+    name: "Test Site",
+    title: "Test Title",
+    description: "Test description",
+    author: "Test Author",
+    url: "https://example.com",
+    ogImage: "/og.jpg",
+    social: {},
+    location: { city: "Buenos Aires", country: "Argentina" },
+    roles: [],
+    primaryRole: "engineer",
+    analytics: { plausibleDomain: "example.com" },
+  };
+
+  it("Given a SiteConfig with lang: 'es', When TypeScript compiles, Then lang is accessible at runtime", () => {
+    // Given / When
+    const config: SiteConfig = { ...baseSiteConfig, lang: "es" };
+
+    // Then
+    expect(config.lang).toBe("es");
+  });
+
+  it("Given a SiteConfig with lang: 'en', When lang is read, Then it equals 'en'", () => {
+    // Given
+    const config: SiteConfig = { ...baseSiteConfig, lang: "en" };
+
+    // When / Then
+    expect(config.lang).toBe("en");
+  });
+});
+
+// ─── T02 — B2: SiteConfig without lang is still valid ────────────────────────
+
+describe("T02 B2: SiteConfig without lang is still valid (backward compatibility)", () => {
+  it("Given a SiteConfig without lang, When TypeScript compiles, Then no type error occurs and lang is undefined", () => {
+    // Given / When
+    const config: SiteConfig = {
+      name: "Test Site",
+      title: "Test Title",
+      description: "Test description",
+      author: "Test Author",
+      url: "https://example.com",
+      ogImage: "/og.jpg",
+      social: {},
+      location: { city: "Buenos Aires", country: "Argentina" },
+      roles: [],
+      primaryRole: "engineer",
+      analytics: { plausibleDomain: "example.com" },
+    };
+
+    // Then
+    expect(config.lang).toBeUndefined();
   });
 });
