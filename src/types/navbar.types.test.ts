@@ -55,6 +55,37 @@ describe("B1: NavbarConfig accepts anchorLinks as an optional array field", () =
   });
 });
 
+// ─── B3: backLabel is accepted ───────────────────────────────────────────────
+
+describe("B3: NavbarConfig accepts backLabel as an optional string field", () => {
+  it("Given a NavbarConfig with backLabel, When TypeScript compiles, Then the value is preserved", () => {
+    // Given
+    const config = acceptsNavbarConfig({
+      backLabel: "← Inicio",
+    });
+
+    // When
+    const result = config.backLabel;
+
+    // Then
+    expect(result).toBe("← Inicio");
+  });
+});
+
+// ─── B4: backLabel is optional ───────────────────────────────────────────────
+
+describe("B4: NavbarConfig without backLabel is still valid (backward compatibility)", () => {
+  it("Given a NavbarConfig without backLabel, When TypeScript compiles, Then backLabel is undefined", () => {
+    // Given / When
+    const config = acceptsNavbarConfig({
+      variant: "horizontal",
+    });
+
+    // Then
+    expect(config.backLabel).toBeUndefined();
+  });
+});
+
 // ─── B2: anchorLinks is optional ─────────────────────────────────────────────
 
 describe("B2: NavbarConfig without anchorLinks is still valid (backward compatibility)", () => {

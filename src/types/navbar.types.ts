@@ -153,4 +153,15 @@ export interface NavbarConfig {
    * Example: `[{ label: "Tatuajes", href: "#tatuajes" }, { label: "Contacto", href: "#contacto" }]`
    */
   anchorLinks?: { label: string; href: string }[];
+
+  /**
+   * Label for a back navigation link (e.g. "← Inicio").
+   *
+   * @default undefined (no back link rendered)
+   * @values string
+   *
+   * When provided, a back navigation element is rendered in the navbar using this label.
+   * Example: "← Inicio", "← Back", "← Home"
+   */
+  backLabel?: string;
 }
