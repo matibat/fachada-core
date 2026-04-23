@@ -13,7 +13,13 @@ export interface Props {
 const { layout = "card", ...rest } = Astro.props;
 const { paragraphs, image } = profileConfig.about;
 const isFramework = siteConfig.roles.some((r) => r.id === "framework");
-const heading = isFramework ? "How It Works" : "About Me";
+const isSpanish = siteConfig.lang === "es";
+const defaultHeading = isFramework
+  ? "How It Works"
+  : isSpanish
+    ? "Sobre mí"
+    : "About Me";
+const heading = (rest.heading as string | undefined) ?? defaultHeading;
 ---
 
 {layout === "card" && <AboutCard paragraphs={paragraphs} heading={heading} />}

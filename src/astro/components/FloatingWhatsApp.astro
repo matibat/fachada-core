@@ -39,7 +39,8 @@ const { href, ariaLabel = "Contact via WhatsApp" } = Astro.props;
     text-decoration: none;
     transition:
       transform 0.2s ease,
-      box-shadow 0.2s ease;
+      box-shadow 0.2s ease,
+      bottom 0.2s ease;
   }
 
   .floating-whatsapp:hover {
@@ -47,3 +48,33 @@ const { href, ariaLabel = "Contact via WhatsApp" } = Astro.props;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   }
 </style>
+
+<script>
+  (function () {
+    const btn = document.querySelector(
+      ".floating-whatsapp",
+    ) as HTMLElement | null;
+    const footer = document.querySelector("footer") as HTMLElement | null;
+    if (!btn || !footer) return;
+
+    const GAP = 32; // 2rem in pixels
+    const BTN_HEIGHT = 56; // 3.5rem in pixels
+
+    function update() {
+      const footerRect = footer!.getBoundingClientRect();
+      const viewportH = window.innerHeight;
+
+      if (footerRect.top < viewportH) {
+        // Footer is (partially) visible — push button above it
+        const overlap = viewportH - footerRect.top;
+        btn!.style.bottom = overlap + GAP + "px";
+      } else {
+        btn!.style.bottom = GAP + "px";
+      }
+    }
+
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update, { passive: true });
+    update();
+  })();
+</script>

@@ -188,6 +188,7 @@ const SEO_KEYS = new Set([
   "author",
   "url",
   "ogImage",
+  "lang",
   "social",
   "location",
   "roles",

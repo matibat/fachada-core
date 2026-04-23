@@ -121,10 +121,11 @@ const foucCss = generateFoucCss(sectionVariantsMap);
     const bgStyle = section?.background
       ? `background: ${section.background}`
       : undefined;
+    const fullBleedClass = section?.background ? "section-fullbleed" : undefined;
 
     if (variants.length > 0) {
       return (
-        <div id={sectionId}>
+        <div id={sectionId} class={fullBleedClass}>
           {variants.map((variant) => (
             <div
               data-layout-section={sectionId}
@@ -140,7 +141,7 @@ const foucCss = generateFoucCss(sectionVariantsMap);
     }
 
     return (
-      <div id={sectionId} style={bgStyle}>
+      <div id={sectionId} class={fullBleedClass} style={bgStyle}>
         <Component layout={resolvedLayout} />
       </div>
     );

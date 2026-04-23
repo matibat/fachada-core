@@ -1,0 +1,179 @@
+---
+/**
+ * ProcessSteps — generic sequential process / how-it-works widget.
+ *
+ * Renders a numbered list of steps with a title, optional description,
+ * and an optional CTA that can accompany the section.
+ *
+ * Each step has: number, title, description.
+ * Steps are rendered in a flexible row that wraps on mobile.
+ */
+
+export interface Step {
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+export interface Props {
+  heading?: string;
+  subheading?: string;
+  steps: Step[];
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+const {
+  heading,
+  subheading,
+  steps = [],
+  ctaLabel,
+  ctaHref,
+} = Astro.props;
+---
+
+<section class="process-steps-section section-wrapper" data-testid="process-steps">
+  <div class="section-inner-md">
+    {heading && <h2 class="process-steps-heading">{heading}</h2>}
+    {subheading && <p class="process-steps-subheading">{subheading}</p>}
+
+    <ol class="process-steps-list">
+      {
+        steps.map((step, idx) => (
+          <li class="process-step">
+            <div class="process-step-number" aria-hidden="true">
+              {step.icon ? (
+                <span class="process-step-icon">{step.icon}</span>
+              ) : (
+                <span>{idx + 1}</span>
+              )}
+            </div>
+            <div class="process-step-content">
+              <h3 class="process-step-title">{step.title}</h3>
+              <p class="process-step-description">{step.description}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    {
+      ctaLabel && ctaHref && (
+        <div class="process-steps-cta">
+          <a href={ctaHref} class="theme-btn-primary process-steps-btn">
+            {ctaLabel}
+          </a>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .process-steps-section {
+    text-align: center;
+  }
+
+  .process-steps-heading {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-family: var(--font-heading);
+    font-weight: var(--heading-weight, 600);
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+  }
+
+  .process-steps-subheading {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+    max-width: 50ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .process-steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .process-steps-list {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  }
+
+  .process-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+  }
+
+  /* Connector line between steps on wider screens */
+  @media (min-width: 640px) {
+    .process-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 1.75rem;
+      right: calc(-0.5rem - 1px);
+      width: calc(1rem + 2px);
+      height: 2px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
+  }
+
+  .process-step-number {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background-color: var(--accent);
+    color: var(--button-text-color, var(--bg-primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    flex-shrink: 0;
+  }
+
+  .process-step-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .process-step-content {
+    text-align: center;
+  }
+
+  .process-step-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-family: var(--font-heading);
+  }
+
+  .process-step-description {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .process-steps-cta {
+    margin-top: 2rem;
+  }
+
+  .process-steps-btn {
+    display: inline-flex;
+  }
+</style>
