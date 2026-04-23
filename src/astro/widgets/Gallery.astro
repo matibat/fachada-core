@@ -8,11 +8,12 @@ import { appConfig } from "virtual:fachada/active-app";
 
 export interface Props {
   layout?: string;
+  gallery?: GalleryConfig;
 }
 
-const { layout = "carousel" } = Astro.props;
+const { layout = "carousel", gallery: galleryProp } = Astro.props;
 
-const gallery: GalleryConfig | undefined = appConfig.gallery;
+const gallery: GalleryConfig | undefined = galleryProp ?? appConfig.gallery;
 
 if (!gallery || gallery.images.length === 0) {
   // Nothing to render when gallery data is absent
