@@ -21,7 +21,7 @@ import Skills from "../widgets/Skills.astro";
 import Projects from "../widgets/Projects.astro";
 import Contact from "../widgets/Contact.astro";
 import Gallery from "../widgets/Gallery.astro";
-import TatuajesSection from "../widgets/TatuajesSection.astro";
+import ImageSection from "../widgets/ImageSection.astro";
 
 interface Props {
   meta: PageMeta;
@@ -50,14 +50,12 @@ try {
 const widgetComponents: WidgetComponentMap = {
   hero: Hero,
   about: About,
-  "sobre-bati": About,
   skills: Skills,
   projects: Projects,
   contact: Contact,
   contacto: Contact,
   gallery: Gallery,
-  pinturas: Gallery,
-  tatuajes: TatuajesSection,
+  "image-section": ImageSection,
 };
 ---
 
