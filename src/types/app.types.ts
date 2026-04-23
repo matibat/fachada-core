@@ -122,8 +122,10 @@ export interface GalleryImage {
   caption?: string;
   /** Painting or artwork technique, e.g. "Óleo", "Acuarela". Only relevant for pinturas sections. */
   technique?: string;
-  /** Availability status for artwork. @values "disponible" | "vendido" */
-  availability?: "disponible" | "vendido";
+  /** Availability status for artwork. @values "disponible" | "vendido" | any string */
+  availability?: string;
+  /** Optional display label for a badge overlay, e.g. "Disponible", "Vendido". */
+  badgeLabel?: string;
 }
 
 /**
@@ -238,7 +240,7 @@ export interface AppConfig {
    * - `layout: "minimal"` renders brand + handle only (no full nav).
    * - `handle`: social handle string, e.g. "@unbati".
    */
-  footer?: { layout?: "default" | "minimal"; handle?: string };
+  footer?: { layout?: "default" | "minimal"; handle?: string; sectionsLabel?: string; socialsLabel?: string };
   /** Page composition hierarchy */
   page: PageConfig;
 }

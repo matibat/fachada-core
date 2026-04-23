@@ -144,3 +144,80 @@ describe("T05 B2: AppConfig without footer is still valid (backward compatibilit
     expect(config.footer).toBeUndefined();
   });
 });
+
+// ─── T01 — B1: GalleryImage accepts string availability and badgeLabel ────────
+
+describe("T01 B1: GalleryImage accepts string availability and badgeLabel", () => {
+  it("Given a GalleryImage with availability: in-stock and badgeLabel: Available, When TypeScript compiles, Then both fields are accessible at runtime", () => {
+    // Given
+    const img = acceptsGalleryImage({
+      src: "/painting.jpg",
+      alt: "Painting",
+      availability: "in-stock",
+      badgeLabel: "Available",
+    });
+
+    // When
+    const availability = img.availability;
+    const badgeLabel = img.badgeLabel;
+
+    // Then
+    expect(availability).toBe("in-stock");
+    expect(badgeLabel).toBe("Available");
+  });
+
+  it("Given a GalleryImage with only badgeLabel, When badgeLabel is read, Then it equals the assigned value", () => {
+    // Given
+    const img = acceptsGalleryImage({
+      src: "/obra.jpg",
+      alt: "Obra",
+      badgeLabel: "Sold",
+    });
+
+    // When / Then
+    expect(img.badgeLabel).toBe("Sold");
+  });
+
+  it("Given a GalleryImage without badgeLabel, When badgeLabel is read, Then it is undefined", () => {
+    // Given
+    const img = acceptsGalleryImage({ src: "/obra.jpg", alt: "Obra" });
+
+    // When / Then
+    expect(img.badgeLabel).toBeUndefined();
+  });
+});
+
+// ─── T01 — B2: AppConfig.footer accepts sectionsLabel and socialsLabel ────────
+
+describe("T01 B2: AppConfig.footer accepts sectionsLabel and socialsLabel", () => {
+  it("Given an AppConfig footer with sectionsLabel: Sections and socialsLabel: Social, When footer is read, Then both labels are accessible", () => {
+    // Given
+    const config = {
+      footer: {
+        layout: "default" as const,
+        handle: "@example",
+        sectionsLabel: "Sections",
+        socialsLabel: "Social",
+      },
+    } as Pick<AppConfig, "footer">;
+
+    // When
+    const sectionsLabel = config.footer?.sectionsLabel;
+    const socialsLabel = config.footer?.socialsLabel;
+
+    // Then
+    expect(sectionsLabel).toBe("Sections");
+    expect(socialsLabel).toBe("Social");
+  });
+
+  it("Given an AppConfig footer without sectionsLabel or socialsLabel, When labels are read, Then they are undefined", () => {
+    // Given
+    const config = {
+      footer: { layout: "minimal" as const },
+    } as Pick<AppConfig, "footer">;
+
+    // When / Then
+    expect(config.footer?.sectionsLabel).toBeUndefined();
+    expect(config.footer?.socialsLabel).toBeUndefined();
+  });
+});
