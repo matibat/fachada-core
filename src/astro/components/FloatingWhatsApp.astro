@@ -1,9 +1,10 @@
 ---
 export interface Props {
   href: string;
+  ariaLabel?: string;
 }
 
-const { href } = Astro.props;
+const { href, ariaLabel = "Contact via WhatsApp" } = Astro.props;
 ---
 
 <a
@@ -11,7 +12,7 @@ const { href } = Astro.props;
   class="floating-whatsapp"
   target="_blank"
   rel="noopener noreferrer"
-  aria-label="Contactar por WhatsApp"
+  aria-label={ariaLabel}
 >
   <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
     <path
@@ -36,7 +37,9 @@ const { href } = Astro.props;
     justify-content: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     text-decoration: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .floating-whatsapp:hover {
