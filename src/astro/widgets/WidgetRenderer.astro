@@ -117,20 +117,24 @@ const foucCss = generateFoucCss(sectionVariantsMap);
   const bgStyle = section?.background ? `background: ${section.background}` : undefined;
 
   if (variants.length > 0) {
-    return variants.map((variant) => (
-      <div
-        data-layout-section={sectionId}
-        data-layout-variant={variant}
-        style={bgStyle}
-        aria-hidden="true"
-      >
-        <Component layout={variant} />
+    return (
+      <div id={sectionId}>
+        {variants.map((variant) => (
+          <div
+            data-layout-section={sectionId}
+            data-layout-variant={variant}
+            style={bgStyle}
+            aria-hidden="true"
+          >
+            <Component layout={variant} />
+          </div>
+        ))}
       </div>
-    ));
+    );
   }
 
   return (
-    <div style={bgStyle}>
+    <div id={sectionId} style={bgStyle}>
       <Component layout={resolvedLayout} />
     </div>
   );

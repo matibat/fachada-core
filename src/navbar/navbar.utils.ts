@@ -14,7 +14,7 @@ import type { NavbarConfig } from "../types";
  * Default navbar configuration.
  * All properties have sensible defaults for backward compatibility.
  */
-const DEFAULTS: Required<Omit<NavbarConfig, "heroTransition">> = {
+const DEFAULTS: Required<Omit<NavbarConfig, "heroTransition" | "anchorLinks">> = {
   variant: "horizontal",
   mobileBreakpoint: "md",
   position: "sticky",
@@ -49,8 +49,8 @@ const BREAKPOINT_MAP: Record<
  */
 export function getNavbarConfig(
   userConfig?: NavbarConfig,
-): Required<Omit<NavbarConfig, "heroTransition">> &
-  Pick<NavbarConfig, "heroTransition"> {
+): Required<Omit<NavbarConfig, "heroTransition" | "anchorLinks">> &
+  Pick<NavbarConfig, "heroTransition" | "anchorLinks"> {
   return {
     ...DEFAULTS,
     ...userConfig,
