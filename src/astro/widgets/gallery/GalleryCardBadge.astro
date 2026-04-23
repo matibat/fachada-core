@@ -11,7 +11,13 @@ const { title, description, images } = gallery;
 
 <section id="gallery" class="gallery-section section-wrapper">
   <div class="section-inner-md">
-    {title && <h2 class="gallery-title" data-testid="gallery-title">{title}</h2>}
+    {
+      title && (
+        <h2 class="gallery-title" data-testid="gallery-title">
+          {title}
+        </h2>
+      )
+    }
     {description && <p class="gallery-description">{description}</p>}
 
     <div class="gallery-badge-grid" data-testid="gallery-badge-grid">
@@ -25,14 +31,11 @@ const { title, description, images } = gallery;
               loading="lazy"
             />
             <figcaption class="gallery-card-badge-caption">
-              {img.technique && (
-                <p class="card-technique">{img.technique}</p>
-              )}
-              {img.availability === "disponible" && (
-                <span class="badge-disponible">Disponible</span>
-              )}
-              {img.availability === "vendido" && (
-                <span class="badge-vendido">Vendido</span>
+              {img.technique && <p class="card-technique">{img.technique}</p>}
+              {img.badgeLabel && (
+                <span class={img.availability === "vendido" ? "badge-sold" : "badge-available"}>
+                  {img.badgeLabel}
+                </span>
               )}
             </figcaption>
           </figure>
@@ -107,8 +110,8 @@ const { title, description, images } = gallery;
     margin: 0;
   }
 
-  .badge-disponible,
-  .badge-vendido {
+  .badge-available,
+  .badge-sold {
     display: inline-block;
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
@@ -117,13 +120,13 @@ const { title, description, images } = gallery;
     white-space: nowrap;
   }
 
-  .badge-disponible {
-    background: var(--badge-disponible-bg, #d1fae5);
-    color: var(--badge-disponible-text, #065f46);
+  .badge-available {
+    background: var(--badge-available-bg, #d1fae5);
+    color: var(--badge-available-text, #065f46);
   }
 
-  .badge-vendido {
-    background: var(--badge-vendido-bg, #fee2e2);
-    color: var(--badge-vendido-text, #991b1b);
+  .badge-sold {
+    background: var(--badge-sold-bg, #fee2e2);
+    color: var(--badge-sold-text, #991b1b);
   }
 </style>
