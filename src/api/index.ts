@@ -1,22 +1,7 @@
 /**
- * API module - orchestration layer for application initialization
+ * API module - orchestration layer for Astro integration
  */
-
-export {
-  loadSiteFromFile,
-  loadSiteFromString,
-  ConfigLoaderError,
-} from "./configLoader";
 
 export { buildAstroContext } from "./astroContext";
 
-export type {
-  AstroContextProps,
-  AstroPageProps,
-  AstroPageContentProps,
-  AstroWidgetProps,
-  AstroContainerProps,
-  AstroSkinTokensProps,
-  AstroTranslationsProps,
-  AstroMetadataProps,
-} from "./types";
+

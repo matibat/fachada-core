@@ -110,16 +110,18 @@ export interface AnimationStage {
  * no animation occurs — both elements display in their static final positions.
  *
  * @example
- * ```yaml
- * # application.yaml
- * navbar:
- *   heroTransition:
- *     enabled: true
- *     startScroll: 0
- *     endScroll: 300
- *     easing: "ease-in-out"
- *     targetAnchorSelector: ".navbar-brand"    # CSS selector for target
- *     targetAnchorMode: "fixed"                # how target is positioned
+ * ```ts
+ * // app/app.config.ts
+ * navbar: {
+ *   heroTransition: {
+ *     enabled: true,
+ *     startScroll: 0,
+ *     endScroll: 300,
+ *     easing: "ease-in-out",
+ *     targetAnchorSelector: ".navbar-brand",
+ *     targetAnchorMode: "fixed",
+ *   }
+ * }
  * ```
  */
 export interface HeroNavbarTransitionConfig {
@@ -223,12 +225,11 @@ export interface HeroNavbarTransitionConfig {
    * When omitted, all properties animate linearly across the full scroll range.
    *
    * @example
-   * ```yaml
-   * stages:
-   *   - range: [0, 0.6]
-   *     scale: { from: 1, to: 0.8 }
-   *   - range: [0.6, 1]
-   *     translateFraction: { from: 0, to: 1 }
+   * ```ts
+   * stages: [
+   *   { range: [0, 0.6], scale: { from: 1, to: 0.8 } },
+   *   { range: [0.6, 1], translateFraction: { from: 0, to: 1 } },
+   * ]
    * ```
    */
   stages?: AnimationStage[];

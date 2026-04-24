@@ -1,6 +1,6 @@
 /**
  * AUTO-GENERATED. Do NOT edit manually.
- * Generated from YAML theme files in src/skin/themes/ by yarn build.
+ * Generated from skin theme source files in src/skin/themes/ by yarn build.
  */
 import type { ThemeDefinition } from "../../utils/theme.config";
 

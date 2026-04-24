@@ -3,7 +3,7 @@
  *
  * All theme-specific structural overrides previously defined here as
  * [data-theme="xxx"] selectors have been replaced by CSS custom properties
- * in globals.css. Skin tokens (defined in src/skin/themes/*.yaml) drive all
+ * in globals.css. Skin tokens (defined in src/skin/defaults/index.ts) drive all
  * visual differences via var(--token) references.
  *
  * This file is preserved as a placeholder to avoid breaking any external
