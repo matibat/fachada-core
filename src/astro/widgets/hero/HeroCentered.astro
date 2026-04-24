@@ -3,78 +3,107 @@ import { siteConfig } from "../../config";
 import { getActiveAppConfig } from "@fachada/core";
 import Button from "../../components/ui/Button.astro";
 
-const primaryRole =
-  siteConfig.roles.find((r) => r.id === siteConfig.primaryRole) ??
-  siteConfig.roles[0];
-const isMultiRole = siteConfig.roles.length > 1;
-
 const appConfig = getActiveAppConfig();
 const hasHeroTransition = appConfig.navbar?.heroTransition?.enabled === true;
 
 const isSpanish = siteConfig.lang === "es";
-const primaryCtaLabel = isSpanish ? "Ver trabajo" : "View Work";
-const secondaryCtaLabel = isSpanish ? "Contactar" : "Get in Touch";
+const primaryCtaLabel = isSpanish ? "Tatuajes" : "Tattoos";
+const secondaryCtaLabel = isSpanish ? "Escribime" : "Get in Touch";
+
+// Extract the emoji character from the site name (last non-space token)
+const nameTokens = siteConfig.name.trim().split(/\s+/);
+const heroEmoji = nameTokens[nameTokens.length - 1];
 ---
 
 <section
   class="hero-section-centered section-wrapper"
   data-testid="hero-section"
 >
-  <div class="section-inner-md text-center">
-    <p
-      class="hero-overline text-sm uppercase tracking-widest mb-6"
-      style="color: var(--text-secondary); font-family: var(--font-mono);"
-    >
-      {
-        isMultiRole
-          ? siteConfig.roles
-              .filter((r) => r.featured)
-              .map((r) => r.title)
-              .join(" & ")
-          : primaryRole.title
-      }
-    </p>
-
-    <h1
-      class="font-bold mb-6 hero-title"
+  <div class="hero-inner text-center">
+    <div
+      class="hero-emoji"
       data-testid="hero-title"
       data-shared-hero-brand={hasHeroTransition ? "" : undefined}
-      style="font-family: 'Pinyon Script', serif; font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 400; color: #ffffff;"
+      aria-hidden="true"
     >
-      {siteConfig.name}
-    </h1>
+      {heroEmoji}
+    </div>
 
-    <p
-      class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto"
-      data-testid="hero-description"
-      style="color: var(--text-secondary);"
-    >
+    <p class="hero-description" data-testid="hero-description">
       {siteConfig.description}
     </p>
 
-    <div class="flex-col-sm-row-centered">
+    <div class="hero-cta-row">
       <Button
-        href="#projects"
+        href="#tatuajes"
         variant="primary"
         size="lg"
         class="hero-primary-cta"
       >
         {primaryCtaLabel}
       </Button>
-      <Button href="#contact" variant="outline" size="lg">
+      <Button
+        href="#contacto"
+        variant="outline"
+        size="lg"
+        class="hero-secondary-cta"
+      >
         {secondaryCtaLabel}
       </Button>
     </div>
   </div>
 </section>
 
-<style is:global>
-  .hero-primary-cta {
-    box-shadow: 0 8px 18px var(--shadow);
+<style>
+  .hero-section-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .hero-title {
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    line-height: 1.1;
+  .hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 1rem;
+    max-width: 40rem;
+    margin: 0 auto;
+  }
+
+  .hero-emoji {
+    font-size: clamp(5rem, 18vw, 10rem);
+    line-height: 1;
+    filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.35));
+  }
+
+  .hero-description {
+    font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    max-width: 28ch;
+    margin: 0;
+  }
+
+  .hero-cta-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+</style>
+
+<style is:global>
+  .hero-primary-cta {
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-secondary-cta {
+    border-color: rgba(255, 255, 255, 0.7) !important;
+    color: #ffffff !important;
   }
 </style>

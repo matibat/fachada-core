@@ -71,6 +71,7 @@ function profileDerivationSnippet(sourceApp = "__appConfig"): string {
     `      ...(section.requiresContent !== undefined ? { requiresContent: section.requiresContent } : {}),`,
     `      ...(section.layout !== undefined ? { layout: section.layout } : {}),`,
     `      ...(section.background !== undefined ? { background: section.background } : {}),`,
+    `      ...(section.backgroundColor !== undefined ? { backgroundColor: section.backgroundColor } : {}),`,
     `      ...(section.fullWidth !== undefined ? { fullWidth: section.fullWidth } : {}),`,
     `    }))`,
     `  : [];`,

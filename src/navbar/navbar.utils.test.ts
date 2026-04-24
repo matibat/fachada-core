@@ -59,6 +59,11 @@ describe("Scenario 1: getNavbarConfig provides sensible defaults", () => {
         menuTriggerLabel: "Nav",
         customClass: "my-navbar",
         mobileMode: "collapse" as const,
+        appearance: {
+          transparent: true,
+          alpha: 0.01,
+          removeBorder: true,
+        },
       };
       const config = getNavbarConfig(input);
       expect(config).toEqual(input);

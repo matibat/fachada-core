@@ -24,6 +24,7 @@ import Gallery from "../widgets/Gallery.astro";
 import ImageSection from "../widgets/ImageSection.astro";
 import ProcessSteps from "../widgets/ProcessSteps.astro";
 import TatuajesSection from "../widgets/TatuajesSection.astro";
+import PinturasSection from "../widgets/PinturasSection.astro";
 
 interface Props {
   meta: PageMeta;
@@ -58,8 +59,8 @@ const widgetComponents: WidgetComponentMap = {
   contact: Contact,
   contacto: Contact,
   gallery: Gallery,
-  pinturas: Gallery,
   tatuajes: TatuajesSection,
+  pinturas: PinturasSection,
   "image-section": ImageSection,
   "process-steps": ProcessSteps,
 };

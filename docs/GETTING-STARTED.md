@@ -7,6 +7,7 @@ Welcome to **Fachada** — a TypeScript-first portfolio framework that renders y
 Fachada is a config-driven portfolio framework built on Astro. You define your identity, content, and presentation in TypeScript. The framework compiles it into a static site—no templates, no component HTML, just pure data transformed into pages.
 
 **Use Fachada if you want:**
+
 - A portfolio that is **authentically configured, not componentized**
 - **Type-safe** content and theme management
 - **Multiple skins** (themes) without rebuilding
@@ -114,19 +115,23 @@ import { appConfig, profileConfig } from "../app/app.config";
 You've created a minimal, type-safe config. From here:
 
 ### Learn Core Patterns
+
 - **[API Reference](./API-REFERENCE.md)** — Complete type signatures, composition, and advanced features
 - **Sections & Widgets** — Extend your portfolio with projects, gallery, multi-role display
 - **[Navbar Configuration](./navbar-configuration.md)** — Customize header behavior per-app
 - **[Skin System](./skin-system.md)** — Create custom themes or modify token colors
 
 ### Customize Your Site
+
 1. **Assets**: Add social links, analytics, favicon to `site`
 2. **Content**: Add more paragraphs, skills, and projects to `profileConfig`
 3. **Structure**: Enable/disable sections, reorder them, add subsections via `composition.siteTree`
 4. **Theming**: Define custom token colors with `theming.themeVariants`
 
 ### Deploy
+
 When you're ready to ship:
+
 ```bash
 npm run build
 # Deploy the dist/ folder to Vercel, Netlify, Cloudflare Pages, or Firebase Hosting
@@ -135,6 +140,7 @@ npm run build
 ## Validation
 
 Before deploying, your app config will validate:
+
 - ✓ `identity.site.title` is required
 - ✓ `assets.ogImage` is required
 - ✓ At least one section in `presentation.sections`

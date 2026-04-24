@@ -74,10 +74,16 @@ export interface PageSectionConfig {
    */
   background?: string;
   /**
+   * CSS color value applied as `background-color` on the section wrapper.
+   * Useful for alternating full-width section bands without needing a full
+   * `background` shorthand string.
+   */
+  backgroundColor?: string;
+  /**
    * When true, the section wrapper breaks out of the `main` max-width container and
    * spans the full viewport width via the `.section-fullbleed` CSS utility class.
    * Defaults to false. Sections with a `background` also get this class automatically
-   * unless explicitly set to false.
+   * unless explicitly set to false. `backgroundColor` follows the same rule.
    */
   fullWidth?: boolean;
 }

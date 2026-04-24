@@ -159,6 +159,10 @@
     border-top: 1px solid var(--border, #e5e7eb);
   }
 
+  .footer-wrapper.footer-borderless {
+    border-top: none;
+  }
+
   /**
    * .footer-inner — the max-width container inside footer.
    * Replaces Tailwind utilities: max-w-6xl mx-auto
@@ -186,6 +190,10 @@
   .footer-copyright {
     border-top: 1px solid var(--border, #e5e7eb);
     padding-top: 1.5rem;
+  }
+
+  .footer-wrapper.footer-borderless .footer-copyright {
+    border-top: none;
   }
 
   /* ── Section wrapper patterns ─────────────────────────────────────────── */

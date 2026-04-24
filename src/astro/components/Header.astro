@@ -38,6 +38,22 @@ const hasHeroTransition = heroTransition?.enabled === true;
 const navbarConfig = getNavbarConfig(appConfig.navbar);
 const navbarClasses = getNavbarClasses(navbarConfig);
 const menuAttrs = getMobileMenuAttrs(navbarConfig);
+const appearance = navbarConfig.appearance;
+
+const alphaValue =
+  typeof appearance?.alpha === "number" ? appearance.alpha : 0.01;
+const gradientLight = appearance?.gradientOverlay?.light ?? "none";
+const gradientDark =
+  appearance?.gradientOverlay?.dark ?? appearance?.gradientOverlay?.light ?? "none";
+
+const brandStyle = [
+  appearance?.brandTextColor ? `color: ${appearance.brandTextColor}` : undefined,
+  "white-space: nowrap",
+  "overflow: visible",
+  "text-overflow: clip",
+]
+  .filter(Boolean)
+  .join("; ");
 
 const subsections = appConfig.siteTree?.landing.subsections ?? [];
 const navItems = subsections
@@ -61,23 +77,32 @@ const isLanding = currentPath === "/";
 ---
 
 <header
-  class="navbar border-b backdrop-blur"
-  style="border-color: var(--border);"
-  class:list={[navbarClasses]}
+  class="navbar backdrop-blur"
+  class:list={[
+    navbarClasses,
+    {
+      "navbar-transparent-bg": appearance?.transparent === true,
+      "navbar-no-border": appearance?.removeBorder === true,
+      "navbar-has-gradient": Boolean(appearance?.gradientOverlay?.light),
+    },
+  ]}
 >
   <div class="navbar-inner">
     <!-- Left: Logo / Name -->
     <a
       href={getBaseUrl("/")}
-      class="navbar-brand font-pinyon-script navbar-brand-glass"
-      style="color: #f5f1ed; background-color: #111d2e; padding: 0.2rem 0.6rem; border-radius: 999px;"
+      class="navbar-brand font-pinyon-script"
+      style={brandStyle}
       data-shared-navbar-brand={hasHeroTransition ? "" : undefined}
     >
       {siteConfig.name}
     </a>
 
     <!-- Center: Desktop Navigation (hidden on mobile, shown via .navbar-desktop-nav CSS) -->
-    <nav class="navbar-desktop-nav">
+    <nav
+      class="navbar-desktop-nav"
+      style={appearance?.centerDesktopNav ? "flex: 1; justify-content: center;" : undefined}
+    >
       {
         !isLanding && (
           <a
@@ -216,32 +241,34 @@ const isLanding = currentPath === "/";
 <style
   define:vars={{
     "--navbar-mobile-breakpoint": `${navbarConfig.mobileBreakpoint === "md" ? "768px" : navbarConfig.mobileBreakpoint === "sm" ? "640px" : navbarConfig.mobileBreakpoint === "lg" ? "1024px" : navbarConfig.mobileBreakpoint === "xl" ? "1280px" : `${navbarConfig.mobileBreakpoint}px`}`,
+    "--navbar-transparent-alpha": `${alphaValue}`,
+    "--navbar-gradient-light": gradientLight,
+    "--navbar-gradient-dark": gradientDark,
   }}
 >
-  header {
-    background-color: rgba(253, 251, 248, 0.92);
+  header.navbar.navbar-transparent-bg {
+    background-color: rgba(255, 255, 255, var(--navbar-transparent-alpha));
+  }
+
+  header.navbar.navbar-no-border {
+    border-bottom: none !important;
+    box-shadow: none;
+  }
+
+  header.navbar.navbar-has-gradient {
+    background-image: var(--navbar-gradient-light);
   }
 
   @media (prefers-color-scheme: dark) {
-    header {
-      background-color: rgba(10, 22, 40, 0.9);
+    header.navbar.navbar-has-gradient {
+      background-image: var(--navbar-gradient-dark);
     }
   }
 
   @media (max-width: 767px) {
-    header {
+    header.navbar {
       position: relative;
       backdrop-filter: blur(4px);
     }
-  }
-
-  .navbar-brand-glass {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    background-color: #111d2e;
-    color: #f5f1ed !important;
-    box-shadow: 0 2px 6px rgba(26, 20, 16, 0.12);
   }
 </style>

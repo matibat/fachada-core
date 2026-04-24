@@ -15,7 +15,10 @@ import type { NavbarConfig } from "../types";
  * All properties have sensible defaults for backward compatibility.
  */
 const DEFAULTS: Required<
-  Omit<NavbarConfig, "heroTransition" | "anchorLinks" | "backLabel">
+  Omit<
+    NavbarConfig,
+    "heroTransition" | "anchorLinks" | "backLabel" | "appearance"
+  >
 > = {
   variant: "horizontal",
   mobileBreakpoint: "md",
@@ -25,6 +28,17 @@ const DEFAULTS: Required<
   customClass: "",
   mobileMode: "hamburger",
 };
+
+type ResolvedNavbarConfig = Required<
+  Omit<
+    NavbarConfig,
+    "heroTransition" | "anchorLinks" | "backLabel" | "appearance"
+  >
+> &
+  Pick<
+    NavbarConfig,
+    "heroTransition" | "anchorLinks" | "backLabel" | "appearance"
+  >;
 
 /**
  * Tailwind breakpoint to pixel value mapping
@@ -51,10 +65,7 @@ const BREAKPOINT_MAP: Record<
  */
 export function getNavbarConfig(
   userConfig?: NavbarConfig,
-): Required<
-  Omit<NavbarConfig, "heroTransition" | "anchorLinks" | "backLabel">
-> &
-  Pick<NavbarConfig, "heroTransition" | "anchorLinks" | "backLabel"> {
+): ResolvedNavbarConfig {
   return {
     ...DEFAULTS,
     ...userConfig,
@@ -91,7 +102,7 @@ export function resolveMobileBreakpoint(
  * @param config - Navbar configuration (must be complete with defaults)
  * @returns Space-separated string of CSS classes
  */
-export function getNavbarClasses(config: Required<NavbarConfig>): string {
+export function getNavbarClasses(config: ResolvedNavbarConfig): string {
   const classes: string[] = [
     // Layout variant (semantic, defined in navbar.css)
     `navbar-${config.variant}`,
@@ -127,7 +138,7 @@ export function getNavbarClasses(config: Required<NavbarConfig>): string {
  * @returns Object with ARIA attributes
  */
 export function getMobileMenuAttrs(
-  config: Required<NavbarConfig>,
+  config: ResolvedNavbarConfig,
 ): Record<string, string | boolean> {
   if (!config.hasMenu) {
     return {};

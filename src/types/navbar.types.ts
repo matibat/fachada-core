@@ -13,6 +13,33 @@
  */
 import type { HeroNavbarTransitionConfig } from "./scroll-transition.types";
 
+export interface NavbarGradientConfig {
+  /** Light mode gradient CSS value. */
+  light: string;
+  /** Dark mode gradient CSS value. Falls back to `light` when omitted. */
+  dark?: string;
+}
+
+export interface NavbarAppearanceConfig {
+  /**
+   * When true, applies a semi-transparent background color to the navbar.
+   */
+  transparent?: boolean;
+  /**
+   * Alpha channel used when `transparent` is true.
+   * Range is expected between 0 and 1. Defaults to 0.01.
+   */
+  alpha?: number;
+  /** Remove the navbar bottom border for minimal overlays. */
+  removeBorder?: boolean;
+  /** Optional gradient overlay values for light/dark modes. */
+  gradientOverlay?: NavbarGradientConfig;
+  /** Optional brand text color override for the navbar title. */
+  brandTextColor?: string;
+  /** Center desktop navigation links inside available horizontal space. */
+  centerDesktopNav?: boolean;
+}
+
 /**
  * NavbarConfig — per-app navbar configuration options.
  *
@@ -164,4 +191,10 @@ export interface NavbarConfig {
    * Example: "← Inicio", "← Back", "← Home"
    */
   backLabel?: string;
+
+  /**
+   * Optional appearance controls for app-specific header styling.
+   * Keeps visual behavior configurable per app instead of hardcoding in core.
+   */
+  appearance?: NavbarAppearanceConfig;
 }

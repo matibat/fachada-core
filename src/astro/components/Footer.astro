@@ -44,7 +44,12 @@ const contactDisplay = social.whatsapp ? "WhatsApp" : (social.email ?? "");
 const contactIsExternal = !!social.whatsapp;
 ---
 
-<footer class="footer-wrapper">
+<footer
+  class:list={[
+    "footer-wrapper",
+    { "footer-borderless": appConfig.footer?.borderless === true },
+  ]}
+>
   {appConfig.footer?.layout === "minimal" ? (
     <div class="footer-minimal">
       <span class="footer-brand" style="color: var(--text-primary);">{siteConfig.name}</span>

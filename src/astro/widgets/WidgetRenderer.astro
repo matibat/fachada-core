@@ -31,13 +31,13 @@
  *   (planned for the next task).
  */
 
-import type { PageSectionConfig } from "@fachada/core";
 import type { WidgetComponentMap } from "@fachada/core";
 import { filterSections } from "@fachada/core";
 import { resolveWidgetLayout } from "@fachada/core";
 import { appConfig } from "virtual:fachada/active-app";
 import { RoleExplorer } from "@fachada/core";
 import { generateFoucCss } from "../../widgets/generateFoucCss.js";
+import type { PageSectionConfig } from "../../types/profile.types";
 
 export interface Props {
   /** Section configs from appConfig.page.sections. */
@@ -59,7 +59,7 @@ const { sections, projectsCount, blogCount, widgetComponents } = Astro.props;
 const enabledIds = filterSections(sections, {
   projectsCount,
   blogCount,
-  availableRoles: appConfig.seo.roles.map((r) => r.id),
+  availableRoles: appConfig.seo.roles.map((role: { id: string }) => role.id),
 });
 
 const activeStyleTheme = appConfig.themes?.default;
@@ -118,13 +118,17 @@ const foucCss = generateFoucCss(sectionVariantsMap);
       themeLayouts,
       activeStyleTheme,
     );
-    const bgStyle = section?.background
-      ? `background: ${section.background}`
-      : undefined;
-    const sectionStyle = `${bgStyle ? `${bgStyle}; ` : ""}min-height: 100dvh;`;
+    const backgroundStyles = [
+      section?.backgroundColor
+        ? `background-color: ${section.backgroundColor}`
+        : undefined,
+      section?.background ? `background: ${section.background}` : undefined,
+    ].filter(Boolean);
+    const sectionStyle = `${backgroundStyles.length > 0 ? `${backgroundStyles.join("; ")}; ` : ""}min-height: 100dvh;`;
     const isFullWidth =
       section?.fullWidth === true ||
-      (section?.fullWidth !== false && Boolean(section?.background));
+      (section?.fullWidth !== false &&
+        Boolean(section?.background || section?.backgroundColor));
     const fullBleedClass = isFullWidth ? "section-fullbleed" : undefined;
 
     if (variants.length > 0) {

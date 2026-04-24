@@ -221,3 +221,16 @@ describe("T01 B2: AppConfig.footer accepts sectionsLabel and socialsLabel", () =
     expect(config.footer?.socialsLabel).toBeUndefined();
   });
 });
+
+describe("T01 B3: AppConfig.footer accepts borderless", () => {
+  it("Given an AppConfig footer with borderless: true, When footer is read, Then the flag is accessible", () => {
+    const config = {
+      footer: {
+        layout: "minimal" as const,
+        borderless: true,
+      },
+    } as Pick<AppConfig, "footer">;
+
+    expect(config.footer?.borderless).toBe(true);
+  });
+});

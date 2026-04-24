@@ -7,40 +7,24 @@ import { resolveContactMessage } from "@fachada/core";
 
 export interface Props {
   message?: string;
-  /** Section heading. Defaults to "Contact" when not provided. */
+  /** Section heading. Defaults to a language-aware label when not provided. */
   heading?: string;
 }
 
-const { message: messageProp, heading = "Contact" } = Astro.props;
+const isSpanish = siteConfig.lang === "es";
+const { message: messageProp, heading = isSpanish ? "Contacto" : "Contact" } =
+  Astro.props;
 const contactMessage = resolveContactMessage(
   messageProp,
   profileConfig.contactMessage,
 );
 
 const { social } = siteConfig;
-
-// Primary CTA: prefer WhatsApp, then email
-const primaryHref =
-  social.whatsapp ?? (social.email ? `mailto:${social.email}` : undefined);
-const primaryLabel = social.whatsapp ? "WhatsApp" : "Send Email";
-
-// Secondary social links (all optional)
-const socialLinks = [
-  social.instagram && { href: social.instagram, label: "Instagram" },
-  social.github && { href: social.github, label: "GitHub" },
-  social.linkedin && { href: social.linkedin, label: "LinkedIn" },
-  social.twitter && { href: social.twitter, label: "Twitter" },
-  social.whatsapp &&
-    social.email && { href: `mailto:${social.email}`, label: "Email" },
-].filter(Boolean) as { href: string; label: string }[];
+const primaryHref = social.whatsapp;
+const secondaryHref = social.instagram;
 ---
 
-<section
-  id="contact"
-  class="section-wrapper"
-  data-testid="contact-section"
-  style="background-color: var(--bg-secondary);"
->
+<section id="contact" class="section-wrapper" data-testid="contact-section">
   <div class="section-inner-lg">
     <div class="contact-split-grid">
       <!-- Left: heading + message + social links -->
@@ -50,19 +34,17 @@ const socialLinks = [
           {contactMessage}
         </p>
         {
-          socialLinks.length > 0 && (
+          secondaryHref && (
             <div class="contact-split-socials">
-              {socialLinks.map((link) => (
-                <a
-                  href={link.href}
-                  class="contact-social-link"
-                  aria-label={link.label}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {link.label}
-                </a>
-              ))}
+              <a
+                href={secondaryHref}
+                class="contact-social-link"
+                aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Instagram
+              </a>
             </div>
           )
         }
@@ -78,17 +60,19 @@ const socialLinks = [
                   class="text-sm uppercase tracking-widest"
                   style="color: var(--text-secondary); font-family: var(--font-mono);"
                 >
-                  Ready to connect?
+                  {isSpanish
+                    ? "Escribime por WhatsApp"
+                    : "Reach out on WhatsApp"}
                 </p>
                 <Button
                   href={primaryHref}
                   variant="primary"
                   size="lg"
                   class="contact-email-button w-full justify-center"
-                  target={social.whatsapp ? "_blank" : undefined}
-                  rel={social.whatsapp ? "noopener noreferrer" : undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  {primaryLabel}
+                  WhatsApp
                 </Button>
               </div>
             </Card>
@@ -98,38 +82,6 @@ const socialLinks = [
     </div>
   </div>
 </section>
-
-<style>
-  .contact-split-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-
-  @media (min-width: 768px) {
-    .contact-split-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: center;
-    }
-  }
-
-  .contact-split-socials {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .contact-social-link {
-    color: var(--text-secondary);
-    transition: color var(--transition);
-    text-decoration: none;
-  }
-
-  .contact-social-link:hover {
-    color: var(--accent);
-  }
-</style>
 
 <style>
   .contact-split-grid {

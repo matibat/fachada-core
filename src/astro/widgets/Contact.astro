@@ -35,8 +35,12 @@ const {
 } = Astro.props;
 ---
 
-{layout === "centered" && <ContactCentered message={message} />}
-{layout === "split" && <ContactSplit message={message} />}
+{
+  layout === "centered" && (
+    <ContactCentered message={message} heading={heading} />
+  )
+}
+{layout === "split" && <ContactSplit message={message} heading={heading} />}
 {
   layout === "form-only" && (
     <section id="contacto" class="contact-form-only section-wrapper">

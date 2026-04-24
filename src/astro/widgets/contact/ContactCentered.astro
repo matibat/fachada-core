@@ -7,41 +7,24 @@ import { resolveContactMessage } from "@fachada/core";
 
 export interface Props {
   message?: string;
-  /** Section heading. Defaults to "Contact" when not provided. */
+  /** Section heading. Defaults to a language-aware label when not provided. */
   heading?: string;
 }
 
-const { message: messageProp, heading = "Contact" } = Astro.props;
+const isSpanish = siteConfig.lang === "es";
+const { message: messageProp, heading = isSpanish ? "Contacto" : "Contact" } =
+  Astro.props;
 const contactMessage = resolveContactMessage(
   messageProp,
   profileConfig.contactMessage,
 );
 
 const { social } = siteConfig;
-
-// Primary CTA: prefer WhatsApp, then email
-const primaryHref =
-  social.whatsapp ?? (social.email ? `mailto:${social.email}` : undefined);
-const primaryLabel = social.whatsapp ? "WhatsApp" : "Send Email";
-
-// Secondary social links (all optional)
-const socialLinks = [
-  social.instagram && { href: social.instagram, label: "Instagram" },
-  social.github && { href: social.github, label: "GitHub" },
-  social.linkedin && { href: social.linkedin, label: "LinkedIn" },
-  social.twitter && { href: social.twitter, label: "Twitter" },
-  // Show email as a social link if WhatsApp is the primary CTA
-  social.whatsapp &&
-    social.email && { href: `mailto:${social.email}`, label: "Email" },
-].filter(Boolean) as { href: string; label: string }[];
+const primaryHref = social.whatsapp;
+const secondaryHref = social.instagram;
 ---
 
-<section
-  id="contact"
-  class="section-wrapper"
-  data-testid="contact-section"
-  style="background-color: var(--bg-secondary);"
->
+<section id="contact" class="section-wrapper" data-testid="contact-section">
   <div class="section-inner-md">
     <h2 class="text-4xl font-bold mb-8 text-center" data-index="04">
       {heading}
@@ -52,36 +35,30 @@ const socialLinks = [
           {contactMessage}
         </p>
         {
-          primaryHref && (
-            <div class="flex-col-sm-row-centered">
-              <Button
-                href={primaryHref}
-                variant="primary"
-                size="lg"
-                class="contact-primary-button"
-                target={social.whatsapp ? "_blank" : undefined}
-                rel={social.whatsapp ? "noopener noreferrer" : undefined}
-              >
-                {primaryLabel}
-              </Button>
-            </div>
-          )
-        }
-        {
-          socialLinks.length > 0 && (
-            <div class="flex-row-center gap-6 pt-4">
-              {socialLinks.map((link) => (
-                <a
-                  href={link.href}
-                  class="contact-social-link transition-colors"
-                  style="color: var(--text-secondary);"
-                  aria-label={link.label}
+          (primaryHref || secondaryHref) && (
+            <div class="contact-cta-row">
+              {primaryHref && (
+                <Button
+                  href={primaryHref}
+                  variant="primary"
+                  size="lg"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {link.label}
-                </a>
-              ))}
+                  WhatsApp
+                </Button>
+              )}
+              {secondaryHref && (
+                <Button
+                  href={secondaryHref}
+                  variant="outline"
+                  size="lg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Instagram
+                </Button>
+              )}
             </div>
           )
         }
@@ -103,5 +80,13 @@ const socialLinks = [
 
   .contact-social-link:hover {
     color: var(--accent) !important;
+  }
+
+  .contact-cta-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 </style>

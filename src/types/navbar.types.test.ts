@@ -109,3 +109,27 @@ describe("B2: NavbarConfig without anchorLinks is still valid (backward compatib
     expect(config.anchorLinks).toBeUndefined();
   });
 });
+
+describe("B5: NavbarConfig accepts appearance as optional per-app style config", () => {
+  it("Given a NavbarConfig with appearance options, When TypeScript compiles, Then appearance fields are accessible", () => {
+    const config = acceptsNavbarConfig({
+      appearance: {
+        transparent: true,
+        alpha: 0.01,
+        removeBorder: true,
+        centerDesktopNav: true,
+        brandTextColor: "#000000",
+        gradientOverlay: {
+          light: "linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(255,255,255,0.01))",
+        },
+      },
+    });
+
+    expect(config.appearance?.transparent).toBe(true);
+    expect(config.appearance?.alpha).toBe(0.01);
+    expect(config.appearance?.removeBorder).toBe(true);
+    expect(config.appearance?.centerDesktopNav).toBe(true);
+    expect(config.appearance?.brandTextColor).toBe("#000000");
+    expect(config.appearance?.gradientOverlay?.light).toContain("linear-gradient");
+  });
+});

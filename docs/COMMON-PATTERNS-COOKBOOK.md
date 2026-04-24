@@ -42,6 +42,7 @@ export { appConfig, profileConfig };
 ```
 
 **What defineApp() Validates:**
+
 - ✓ `site.name`, `site.title`, `site.url` required
 - ✓ `presentation.theme.style` is one of: minimalist, modern-tech, professional, vaporwave
 - ✓ At least one role config has skills array
@@ -91,6 +92,7 @@ export { appConfig };
 ```
 
 **What defineApp() Validates:**
+
 - ✓ `theming.themeVariants[].primary` is a valid hex color
 - ✓ `presentation.theme.enableModeToggle === false` requires `defaultMode` to be set
 
@@ -163,6 +165,7 @@ export { appConfig };
 ```
 
 **What defineApp() Validates:**
+
 - ✓ Widget `type` is registered in the framework
 - ✓ `props` match the widget schema (enforced per widget type)
 - ✓ All `links[].url` are valid URLs
@@ -208,6 +211,7 @@ export { appConfig };
 ```
 
 **What defineApp() Validates:**
+
 - ✓ `identity.site.social` values are valid URLs (except `email` which is checked as email format)
 - ✓ At least one social link is provided (optional but recommended)
 
@@ -251,6 +255,7 @@ export { appConfig };
 ```
 
 **What defineApp() Validates:**
+
 - ✓ `identity.site.url` is a valid URL
 - ✓ Theme colors are valid hex
 
@@ -282,7 +287,10 @@ const { appConfig } = defineApp({
       "My focus is making complex topics accessible.",
     ],
     skills: [
-      { name: "Writing", skills: ["Technical Articles", "Documentation", "Tutorials"] },
+      {
+        name: "Writing",
+        skills: ["Technical Articles", "Documentation", "Tutorials"],
+      },
       { name: "Topics", skills: ["Web Perf", "TypeScript", "DevOps", "CI/CD"] },
     ],
     sections: [
@@ -319,6 +327,7 @@ export { appConfig };
 ```
 
 **What defineApp() Validates:**
+
 - ✓ `presentation.sections` has at least one section enabled
 - ✓ Section IDs exist in registered section types
 

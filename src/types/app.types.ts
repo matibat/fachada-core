@@ -239,12 +239,14 @@ export interface AppConfig {
    * Optional footer configuration.
    * - `layout: "minimal"` renders brand + handle only (no full nav).
    * - `handle`: social handle string, e.g. "@unbati".
+   * - `borderless: true` removes the top separators from the footer wrapper.
    */
   footer?: {
     layout?: "default" | "minimal";
     handle?: string;
     sectionsLabel?: string;
     socialsLabel?: string;
+    borderless?: boolean;
   };
   /** Page composition hierarchy */
   page: PageConfig;

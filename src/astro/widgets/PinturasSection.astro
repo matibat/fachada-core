@@ -1,0 +1,148 @@
+---
+/**
+ * PinturasSection — displays paintings with on-demand / ready-to-hang categories.
+ */
+import type { GalleryImage } from "@fachada/core";
+import { appConfig } from "virtual:fachada/active-app";
+
+export interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
+
+// Use gallery images as placeholder; apps can extend appConfig with a pinturas gallery
+const images: GalleryImage[] = appConfig.gallery?.images ?? [];
+
+const categories = [
+  {
+    label: "A pedido",
+    description:
+      "Diseñamos algo único para vos. Desde el boceto hasta el lienzo.",
+  },
+  {
+    label: "Listas para colgar",
+    description:
+      "Piezas originales disponibles. Llegaron a tu pared directo del estudio.",
+  },
+];
+---
+
+<section id="pinturas" class="pinturas-section section-wrapper">
+  <div class="section-inner-md">
+    <h2 class="pinturas-heading">{title || "Pinturas"}</h2>
+
+    <!-- Category cards -->
+    <div class="pinturas-categories">
+      {
+        categories.map((cat) => (
+          <div class="pinturas-category-card">
+            <h3 class="pinturas-category-title">{cat.label}</h3>
+            <p class="pinturas-category-desc">{cat.description}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- Gallery -->
+    {
+      images.length > 0 && (
+        <div class="pinturas-gallery">
+          {images.map((image) => (
+            <figure class="pinturas-gallery-item">
+              <img src={image.src} alt={image.alt} loading="lazy" />
+              {image.caption && (
+                <figcaption class="pinturas-caption">
+                  {image.caption}
+                </figcaption>
+              )}
+            </figure>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .pinturas-section {
+    padding: 4rem 1rem;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+  }
+
+  .pinturas-heading {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+    text-align: center;
+  }
+
+  .pinturas-categories {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (min-width: 640px) {
+    .pinturas-categories {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .pinturas-category-card {
+    padding: 1.5rem 2rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    background-color: var(--bg-primary);
+  }
+
+  .pinturas-category-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .pinturas-category-desc {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .pinturas-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .pinturas-gallery-item {
+    overflow: hidden;
+    border-radius: 0.5rem;
+    margin: 0;
+    background: var(--surface-secondary, #1a1a1a);
+  }
+
+  .pinturas-gallery-item img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .pinturas-gallery-item img:hover {
+    transform: scale(1.03);
+  }
+
+  .pinturas-caption {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    padding: 0.5rem 0.75rem;
+    margin: 0;
+  }
+</style>

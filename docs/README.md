@@ -55,6 +55,7 @@ Generic widget system for Astro, React, Vue components. 5-step registration patt
 ## 📚 Reference Documentation
 
 ### [Widget Registration Guide](./widget-registration.md)
+
 Generic widget system — bring your own imports, register in `widgetComponents`.
 
 - **5-step guide** to add a new widget without touching WidgetRenderer
