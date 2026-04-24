@@ -78,9 +78,9 @@ describe("Scenario 2: Environment variable is second priority", () => {
   });
 });
 
-// ─── Scenario 3: Default ./application.yaml is lowest priority ───────────────
+// ─── Scenario 3: Default ./app/app.config.ts is lowest priority ─────────────────
 
-describe("Scenario 3: Default ./application.yaml is lowest priority", () => {
+describe("Scenario 3: Default ./app/app.config.ts is lowest priority", () => {
   beforeEach(() => {
     vi.unstubAllEnvs();
   });
@@ -202,6 +202,6 @@ describe("Scenario 7: Error messages are helpful", () => {
       resolveConfigPath({
         validateExists: true,
       });
-    }).toThrow(/--config-path|environment variable|application.yaml/);
+    }).toThrow(/--config-path|environment variable|app.config.ts/);
   });
 });

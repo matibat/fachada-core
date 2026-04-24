@@ -3,12 +3,12 @@
  * Config Path Resolver — CLI utility for resolving application config paths
  *
  * Provides sensible defaults and environment variable support for CLI commands
- * that need to load application.yaml configuration files.
+ * that need to load application config files.
  *
  * Resolution order (highest to lowest priority):
  *   1. Explicit --config-path flag
  *   2. FACHADA_CONFIG environment variable
- *   3. Default: ./application.yaml in current directory
+ *   3. Default: ./app/app.config.ts in current directory
  */
 
 import * as fs from "fs";
@@ -41,7 +41,7 @@ export interface ResolvedConfigPath {
 /**
  * Default config file name
  */
-export const DEFAULT_CONFIG_FILENAME = "application.yaml";
+export const DEFAULT_CONFIG_FILENAME = "app/app.config.ts";
 
 /**
  * Environment variable name for config path
@@ -57,7 +57,7 @@ export const CONFIG_ENV_VAR = "FACHADA_CONFIG";
  *
  * @example
  * // Use explicit path
- * const resolved = resolveConfigPath({ configPath: './my-config.yaml' });
+ * const resolved = resolveConfigPath({ configPath: './app/app.config.ts' });
  *
  * @example
  * // Use environment variable or default
@@ -113,16 +113,16 @@ export function resolveConfigPath(
     };
   }
 
-  // Priority 3: Default ./application.yaml
+  // Priority 3: Default ./app/app.config.ts
   const defaultPath = path.join(cwd, DEFAULT_CONFIG_FILENAME);
 
   if (validateExists && !fs.existsSync(defaultPath)) {
     throw new Error(
       `Config file not found at: ${defaultPath}\n\n` +
         `No config path provided. To specify a config file:\n` +
-        `  1. Use --config-path flag: --config-path ./path/to/config.yaml\n` +
-        `  2. Set environment variable: export ${CONFIG_ENV_VAR}=./path/to/config.yaml\n` +
-        `  3. Place config file at default location: ./application.yaml\n`,
+        `  1. Use --config-path flag: --config-path ./app/app.config.ts\n` +
+        `  2. Set environment variable: export ${CONFIG_ENV_VAR}=./app/app.config.ts\n` +
+        `  3. Place config file at default location: ./app/app.config.ts\n`,
     );
   }
 
