@@ -9,7 +9,6 @@
  * - Factory method with validation
  */
 
-import type { ContainerConfig } from "../.generated/application.types";
 import type { Widget } from "./Widget";
 
 /**
@@ -20,9 +19,11 @@ export type ContainerChild = Widget | Container;
 /**
  * Configuration for creating a Container
  */
-export interface ContainerCreateConfig extends Omit<ContainerConfig, "type" | "children"> {
-  layout: string; // Required for creation
-  children: ContainerChild[] | readonly ContainerChild[]; // Required for creation
+export interface ContainerCreateConfig {
+  layout: string;
+  children: ContainerChild[] | readonly ContainerChild[];
+  props?: Record<string, unknown>;
+  skin?: string | Record<string, unknown>;
 }
 
 /**

@@ -73,6 +73,13 @@ export interface PageSectionConfig {
    * component-defined background.
    */
   background?: string;
+  /**
+   * When true, the section wrapper breaks out of the `main` max-width container and
+   * spans the full viewport width via the `.section-fullbleed` CSS utility class.
+   * Defaults to false. Sections with a `background` also get this class automatically
+   * unless explicitly set to false.
+   */
+  fullWidth?: boolean;
 }
 
 // ─── Multi-Role Display ───────────────────────────────────────────────────────

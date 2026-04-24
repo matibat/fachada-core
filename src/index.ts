@@ -16,6 +16,18 @@ export {
   getActiveAppName,
 } from "./app/AppLoader";
 
+// Declarative config API
+export {
+  defineApp,
+  validateAppDefinition,
+  type AppIdentity,
+  type AppPresentation,
+  type AppComposition,
+  type AppTheming,
+  type AppDefinition,
+  type AppDefinitionResult,
+} from "./config";
+
 // Asset resolver
 export { resolveAsset } from "./assets/AssetResolver";
 

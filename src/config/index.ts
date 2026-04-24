@@ -1,13 +1,13 @@
 /**
- * Configuration module exports
+ * TS declarative configuration API exports
  */
-export { parseApplicationYaml, ConfigValidationError } from "./parser";
-export type {
-  ApplicationConfig,
-  PageConfig,
-  WidgetConfig,
-  ContainerConfig,
-  SEOConfig,
-  ThemesConfig,
-  CustomThemeDefinition,
-} from "./parser";
+export {
+  defineApp,
+  validateAppDefinition,
+  type AppIdentity,
+  type AppPresentation,
+  type AppComposition,
+  type AppTheming,
+  type AppDefinition,
+  type AppDefinitionResult,
+} from "./defineApp";
