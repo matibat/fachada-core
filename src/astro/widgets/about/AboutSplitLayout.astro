@@ -26,6 +26,7 @@ const {
           <img src={image} alt={imageAlt} class="about-image" loading="lazy" />
         </div>
         <div class="about-text">
+          {heading && <h2 class="about-split-heading">{heading}</h2>}
           {paragraphs.map((paragraph) => (
             <p
               class="about-split-paragraph"
@@ -45,12 +46,16 @@ const {
 <style>
   .about-split-section {
     padding: var(--spacing-section) 1.5rem;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
   }
 
   .about-split-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-element);
+    width: 100%;
   }
 
   @media (min-width: 768px) {
@@ -76,6 +81,13 @@ const {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-element);
+  }
+
+  .about-split-heading {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-family: var(--font-heading);
+    color: var(--text-primary);
+    margin: 0;
   }
 
   .about-split-paragraph {

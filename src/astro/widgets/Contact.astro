@@ -7,11 +7,77 @@ export interface Props {
   layout?: string;
   /** Page-level message override. Takes priority over profileConfig.contactMessage. */
   message?: string;
+  heading?: string;
+  namePlaceholder?: string;
+  emailPlaceholder?: string;
+  messagePlaceholder?: string;
+  submitLabel?: string;
+  whatsappNote?: string;
+  whatsappHref?: string;
+  serviceOptions?: { value: string; label: string }[];
+  servicePlaceholder?: string;
+  formAction?: string;
 }
 
-const { layout = "centered", message } = Astro.props;
+const {
+  layout = "centered",
+  message,
+  heading = "Contacto",
+  namePlaceholder,
+  emailPlaceholder,
+  messagePlaceholder,
+  submitLabel,
+  whatsappNote,
+  whatsappHref,
+  serviceOptions,
+  servicePlaceholder,
+  formAction,
+} = Astro.props;
 ---
 
 {layout === "centered" && <ContactCentered message={message} />}
 {layout === "split" && <ContactSplit message={message} />}
-{layout === "form-only" && <ContactForm />}
+{
+  layout === "form-only" && (
+    <section id="contacto" class="contact-form-only section-wrapper">
+      <div class="section-inner-md contact-form-only-inner">
+        <h2 class="contact-form-only-heading">{heading}</h2>
+        <ContactForm
+          namePlaceholder={namePlaceholder}
+          emailPlaceholder={emailPlaceholder}
+          messagePlaceholder={messagePlaceholder}
+          submitLabel={submitLabel}
+          whatsappNote={whatsappNote}
+          whatsappHref={whatsappHref}
+          serviceOptions={serviceOptions}
+          servicePlaceholder={servicePlaceholder}
+          formAction={formAction}
+        />
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .contact-form-only {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+  }
+
+  .contact-form-only-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 1.5rem;
+  }
+
+  .contact-form-only-heading {
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.1;
+    color: var(--text-primary);
+    text-align: center;
+    margin: 0;
+  }
+</style>
