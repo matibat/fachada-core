@@ -36,6 +36,12 @@ export interface NavbarAppearanceConfig {
   gradientOverlay?: NavbarGradientConfig;
   /** Optional brand text color override for the navbar title. */
   brandTextColor?: string;
+  /** Optional explicit navbar height used for layout alignment (for example "5.5rem"). */
+  height?: string;
+  /** Optional top offset used by sections that align below the navbar. Falls back to `height`. */
+  offsetTop?: string;
+  /** Optional box-shadow value applied to the navbar container. */
+  boxShadow?: string;
   /** Center desktop navigation links inside available horizontal space. */
   centerDesktopNav?: boolean;
 }

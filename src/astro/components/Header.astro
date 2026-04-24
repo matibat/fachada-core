@@ -44,17 +44,28 @@ const alphaValue =
   typeof appearance?.alpha === "number" ? appearance.alpha : 0.01;
 const gradientLight = appearance?.gradientOverlay?.light ?? "none";
 const gradientDark =
-  appearance?.gradientOverlay?.dark ?? appearance?.gradientOverlay?.light ?? "none";
+  appearance?.gradientOverlay?.dark ??
+  appearance?.gradientOverlay?.light ??
+  "none";
+const navbarHeight = appearance?.height ?? "5.5rem";
+const navbarOffsetTop = appearance?.offsetTop ?? navbarHeight;
+const navbarShadow = appearance?.boxShadow ?? "none";
 const headerAppearanceStyle = [
   `--navbar-transparent-alpha: ${alphaValue}`,
   `--navbar-gradient-light: ${gradientLight}`,
   `--navbar-gradient-dark: ${gradientDark}`,
+  `--navbar-height: ${navbarHeight}`,
+  `--navbar-offset-top: ${navbarOffsetTop}`,
+  `--navbar-shadow: ${navbarShadow}`,
 ]
   .filter(Boolean)
   .join("; ");
+const globalNavbarVars = `:root { --navbar-height: ${navbarHeight}; --navbar-offset-top: ${navbarOffsetTop}; }`;
 
 const brandStyle = [
-  appearance?.brandTextColor ? `color: ${appearance.brandTextColor}` : undefined,
+  appearance?.brandTextColor
+    ? `color: ${appearance.brandTextColor}`
+    : undefined,
   "white-space: nowrap",
   "overflow: visible",
   "text-overflow: clip",
@@ -83,6 +94,8 @@ const anchorItems = (navbarConfig.anchorLinks ?? []).map((link) => ({
 const isLanding = currentPath === "/";
 ---
 
+<style is:global set:html={globalNavbarVars}></style>
+
 <header
   class="navbar backdrop-blur"
   style={headerAppearanceStyle}
@@ -92,6 +105,7 @@ const isLanding = currentPath === "/";
       "navbar-transparent-bg": appearance?.transparent === true,
       "navbar-no-border": appearance?.removeBorder === true,
       "navbar-has-gradient": Boolean(appearance?.gradientOverlay?.light),
+      "navbar-has-shadow": Boolean(appearance?.boxShadow),
     },
   ]}
 >
@@ -109,7 +123,9 @@ const isLanding = currentPath === "/";
     <!-- Center: Desktop Navigation (hidden on mobile, shown via .navbar-desktop-nav CSS) -->
     <nav
       class="navbar-desktop-nav"
-      style={appearance?.centerDesktopNav ? "flex: 1; justify-content: center;" : undefined}
+      style={appearance?.centerDesktopNav
+        ? "flex: 1; justify-content: center;"
+        : undefined}
     >
       {
         !isLanding && (
@@ -247,13 +263,31 @@ const isLanding = currentPath === "/";
 </header>
 
 <style>
+  header.navbar {
+    box-sizing: border-box;
+    height: var(--navbar-height, 5.5rem);
+    min-height: var(--navbar-height, 5.5rem);
+    padding: 0;
+  }
+
+  header.navbar .navbar-inner {
+    box-sizing: border-box;
+    height: 100%;
+    padding-top: 0;
+    padding-bottom: 0;
+    align-items: center;
+  }
+
   header.navbar.navbar-transparent-bg {
     background-color: rgba(255, 255, 255, var(--navbar-transparent-alpha));
   }
 
   header.navbar.navbar-no-border {
     border-bottom: none !important;
-    box-shadow: none;
+  }
+
+  header.navbar.navbar-has-shadow {
+    box-shadow: var(--navbar-shadow);
   }
 
   header.navbar.navbar-has-gradient {

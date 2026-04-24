@@ -80,12 +80,30 @@ export interface PageSectionConfig {
    */
   backgroundColor?: string;
   /**
+   * CSS `background-position` value to adjust the position of background images.
+   * Useful for fine-tuning image alignment when using the `background` property.
+   *
+   * Examples:
+   *   "center top"        — align to top center
+   *   "center 80px"       — center horizontally, 80px from top
+   *   "center -50px"      — center horizontally, offset up by 50px
+   *   "left 20px"         — align left, 20px from top
+   *
+   * When absent, browser default background-position (usually "0 0") applies.
+   */
+  imageOffset?: string;
+  /**
    * When true, the section wrapper breaks out of the `main` max-width container and
    * spans the full viewport width via the `.section-fullbleed` CSS utility class.
    * Defaults to false. Sections with a `background` also get this class automatically
    * unless explicitly set to false. `backgroundColor` follows the same rule.
    */
   fullWidth?: boolean;
+  /**
+   * When true, adds a top margin equal to the configured navbar height.
+   * Useful for first sections (for example hero) when the navbar is fixed.
+   */
+  offsetTopByNavbar?: boolean;
 }
 
 // ─── Multi-Role Display ───────────────────────────────────────────────────────

@@ -120,7 +120,8 @@ describe("B5: NavbarConfig accepts appearance as optional per-app style config",
         centerDesktopNav: true,
         brandTextColor: "#000000",
         gradientOverlay: {
-          light: "linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(255,255,255,0.01))",
+          light:
+            "linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(255,255,255,0.01))",
         },
       },
     });
@@ -130,6 +131,8 @@ describe("B5: NavbarConfig accepts appearance as optional per-app style config",
     expect(config.appearance?.removeBorder).toBe(true);
     expect(config.appearance?.centerDesktopNav).toBe(true);
     expect(config.appearance?.brandTextColor).toBe("#000000");
-    expect(config.appearance?.gradientOverlay?.light).toContain("linear-gradient");
+    expect(config.appearance?.gradientOverlay?.light).toContain(
+      "linear-gradient",
+    );
   });
 });
