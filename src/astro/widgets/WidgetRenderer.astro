@@ -127,8 +127,11 @@ const foucCss = generateFoucCss(sectionVariantsMap);
         ? `background-position: ${section.imageOffset}`
         : undefined,
     ].filter(Boolean);
+    const maxHeightValue = section?.offsetTopByNavbar
+      ? "calc(100dvh - var(--navbar-offset-top, var(--navbar-height, 0px)))"
+      : "100dvh";
     const layoutStyles = [
-      "min-height: 100dvh",
+      `max-height: ${maxHeightValue}`,
       section?.offsetTopByNavbar
         ? "margin-top: var(--navbar-offset-top, var(--navbar-height, 0px))"
         : undefined,
