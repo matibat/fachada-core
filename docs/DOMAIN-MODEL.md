@@ -1,6 +1,6 @@
-# Fachada Core Domain Model Guide v1.x
+# Fachada Core Domain Model Guide v2.0
 
-Comprehensive explanation of domain-driven design concepts, class hierarchy, and architectural decisions.
+Comprehensive explanation of domain-driven design concepts, class hierarchy, and architectural decisions in AppDefinition.
 
 ---
 

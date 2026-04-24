@@ -2,10 +2,59 @@
 
 Complete guides for using and configuring the Fachada framework (TS declarative API).
 
-## Configuration Guides
+---
+
+## 🚀 For End-Developers (Get Started Here)
+
+### I'm new to Fachada. Where do I begin?
+
+**→ [Getting Started in 5 Minutes](./GETTING-STARTED.md)** — Install, configure, deploy  
+Your first portfolio with a minimal `defineApp()` example. No prior knowledge needed.
+
+### I want to know what Fachada can do.
+
+**→ [Common Patterns Cookbook](./COMMON-PATTERNS-COOKBOOK.md)** — 6 Real-world recipes  
+Multi-role profiles, custom themes, social links, projects section, environment-specific config, blog layout.
+
+### I want to understand Fachada's design philosophy.
+
+**→ [API Design Principles](./API-DESIGN-PRINCIPLES.md)** — Why TypeScript-first? Why no YAML?  
+Stability, type safety, composition, validation. Read this to understand the "why" behind architectural choices.
+
+### I need complete API documentation.
+
+**→ [API Reference](./API-REFERENCE.md)** — All types, exports, and functions (v2.0)  
+Full technical reference for `defineApp()`, AppDefinition interface, and framework exports.
+
+### I want to understand the domain model.
+
+**→ [Domain Model Guide](./DOMAIN-MODEL.md)** — Domain-Driven Design in Fachada (v2.0)  
+Site aggregate root, subdomains (identity, presentation, composition, theming, gallery). Read this for architectural deep-dive.
+
+---
+
+## 🛠️ For Customizers & Contributors
+
+### I want to customize the navbar.
+
+**→ [Navbar Configuration Guide](./navbar-configuration.md)** — 7 properties, 5 scenarios  
+Customize layout, positioning, mobile behavior without touching components.
+
+### I want to add a custom widget.
+
+**→ [Widget Registration Guide](./widget-registration.md)** — Bring your own components  
+Generic widget system for Astro, React, Vue components. 5-step registration pattern.
+
+### I want to create or customize a theme.
+
+**→ [Skin & Theme System](./skin-system.md)** — Token-driven theming  
+28 CSS custom properties. Built-in skins (minimalist, modern-tech, professional, vaporwave). Define custom skins in TypeScript.
+
+---
+
+## 📚 Reference Documentation
 
 ### [Widget Registration Guide](./widget-registration.md)
-
 Generic widget system — bring your own imports, register in `widgetComponents`.
 
 - **5-step guide** to add a new widget without touching WidgetRenderer

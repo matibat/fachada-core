@@ -1,6 +1,6 @@
-# Fachada Core API Reference v1.x
+# Fachada Core API Reference v2.0
 
-Complete technical API documentation for framework consumers and contributors.
+Complete technical API documentation for the AppDefinition API, defineApp() factory, and framework types.
 
 ---
 
