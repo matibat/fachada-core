@@ -1,6 +1,6 @@
 # @fachada/core Documentation
 
-Complete guides for using and configuring the Fachada framework.
+Complete guides for using and configuring the Fachada framework (TS declarative API).
 
 ## Configuration Guides
 
@@ -39,7 +39,7 @@ Token-driven theming that works for any skin — built-in or custom.
 - **28 CSS custom properties** drive all layout and component styles
 - **4 built-in skins**: minimalist, modern-tech, professional, vaporwave (light + dark each)
 - **Zero extra CSS** for custom skins — define tokens in `app.config.ts` only
-- **YAML → TypeScript generation** for adding new built-in skins in 4 steps
+- **TypeScript-first skin configuration** for app-level customization
 - **Component classes**: `.theme-card`, `.theme-btn-primary`, `.theme-btn-outline`, `.theme-badge`
 
 **Read this if you want to:**
@@ -47,7 +47,7 @@ Token-driven theming that works for any skin — built-in or custom.
 - Add or customize a skin
 - Understand why all apps receive consistent structural styles
 - Define a fully custom skin inline in your app config
-- Add a new built-in YAML skin to the framework
+- Add or customize skins in TS-driven app configuration
 
 ### [Navbar Configuration Guide](./navbar-configuration.md)
 
@@ -69,16 +69,14 @@ Learn how to customize navbar behavior and appearance per-app without modifying 
 
 Adopt the navbar configuration system safely. No breaking changes; migration is opt-in.
 
-- **Zero breaking changes**: All changes are backward compatible
-- **Optional adoption**: Existing apps work unchanged; customize only what you need
-- **Incremental migration**: Adopt properties one at a time
-- **Complete checklist**: Step-by-step migration process
+- **Breaking-change migration notes**: TS-only config flow
+- **Incremental migration checklist** for app teams
 
 **Read this if you:**
 
 - Have an existing Fachada app
 - Want to customize your navbar
-- Need to understand backward compatibility
+- Need migration guidance for TS-only config
 - Are migrating from implicit to explicit configuration
 
 ## Type Definitions
@@ -87,7 +85,8 @@ Detailed type definitions are available in the source code:
 
 - [AppConfig Interface](../src/types/app.types.ts) — Aggregate root configuration
 - [NavbarConfig Interface](../src/types/navbar.types.ts) — Navbar-specific configuration with property docs
-- [Profile Types](../src/types/profile.types.ts) — Theme and site configuration types
+- [Profile Types](../src/types/profile.types.ts) — Presentation profile types
+- [TS Config Migration](./YAML-CONFIG-GUIDE.md) — YAML removal and TS-only migration guide
 
 ## Quick Links
 

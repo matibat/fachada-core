@@ -1,6 +1,6 @@
 # @fachada/core
 
-The core of the Fachada framework — utilities, integrations and CLI to bootstrap Fachada apps.
+The core of the Fachada framework — utilities, integrations and a TS-first declarative config API for Fachada apps.
 
 ## Installation
 
@@ -104,11 +104,13 @@ Then restart the consumer app's dev server so Astro picks up the new files.
 - **[Widget Registration Guide](./docs/widget-registration.md)** — Add new widgets using the generic `WidgetComponentMap` pattern. Static imports, zero core changes.
 - **[Widget Layout Migration Guide](./docs/widget-layout-migration.md)** — Migrate from the v1 typed `WidgetLayoutConfig` to the v2 generic `Record<string, string>`. Covers removed named layout union types.
 - **[Navbar Configuration Guide](./docs/navbar-configuration.md)** — Customize navbar layout, positioning, mobile behavior, and styling per-app. Complete property reference with 5 practical examples.
-- **[Navbar Migration Guide](./docs/navbar-migration-guide.md)** — Adopt the navbar configuration system. Zero breaking changes; migration is opt-in. Backward compatibility guaranteed.
+- **[Navbar Migration Guide](./docs/navbar-migration-guide.md)** — Adopt the navbar configuration system for TS declarative app configs.
 
 ### Configuration References
 
-- **[AppConfig Interface](./src/types/app.types.ts)** — Aggregate root for application configuration (types only)
+- **[TS Config Guide](./docs/YAML-CONFIG-GUIDE.md)** — Breaking-change guide for TS-only declarative config
+- **[AppConfig Interface](./src/types/app.types.ts)** — Aggregate root for application runtime config
+- **[defineApp API](./src/config/defineApp.ts)** — Declarative domain-first authoring API
 - **[NavbarConfig Interface](./src/types/navbar.types.ts)** — Full navbar configuration type definitions with JSDoc
 
 ## Exports
