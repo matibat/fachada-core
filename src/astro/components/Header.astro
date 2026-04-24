@@ -45,6 +45,13 @@ const alphaValue =
 const gradientLight = appearance?.gradientOverlay?.light ?? "none";
 const gradientDark =
   appearance?.gradientOverlay?.dark ?? appearance?.gradientOverlay?.light ?? "none";
+const headerAppearanceStyle = [
+  `--navbar-transparent-alpha: ${alphaValue}`,
+  `--navbar-gradient-light: ${gradientLight}`,
+  `--navbar-gradient-dark: ${gradientDark}`,
+]
+  .filter(Boolean)
+  .join("; ");
 
 const brandStyle = [
   appearance?.brandTextColor ? `color: ${appearance.brandTextColor}` : undefined,
@@ -78,6 +85,7 @@ const isLanding = currentPath === "/";
 
 <header
   class="navbar backdrop-blur"
+  style={headerAppearanceStyle}
   class:list={[
     navbarClasses,
     {
@@ -238,14 +246,7 @@ const isLanding = currentPath === "/";
   }
 </header>
 
-<style
-  define:vars={{
-    "--navbar-mobile-breakpoint": `${navbarConfig.mobileBreakpoint === "md" ? "768px" : navbarConfig.mobileBreakpoint === "sm" ? "640px" : navbarConfig.mobileBreakpoint === "lg" ? "1024px" : navbarConfig.mobileBreakpoint === "xl" ? "1280px" : `${navbarConfig.mobileBreakpoint}px`}`,
-    "--navbar-transparent-alpha": `${alphaValue}`,
-    "--navbar-gradient-light": gradientLight,
-    "--navbar-gradient-dark": gradientDark,
-  }}
->
+<style>
   header.navbar.navbar-transparent-bg {
     background-color: rgba(255, 255, 255, var(--navbar-transparent-alpha));
   }
