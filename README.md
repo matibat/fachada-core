@@ -2,6 +2,16 @@
 
 The core of the Fachada framework — utilities, integrations and a TS-first declarative config API for Fachada apps.
 
+**New to Fachada?** → **[Getting Started Guide](./docs/GETTING-STARTED.md)** (5 minutes)
+
+**Want to learn the design philosophy?** → **[API Design Principles](./docs/API-DESIGN-PRINCIPLES.md)**
+
+**Looking for patterns?** → **[Common Patterns Cookbook](./docs/COMMON-PATTERNS-COOKBOOK.md)**
+
+**Full documentation** → **[Docs Index](./docs/README.md)**
+
+---
+
 ## Installation
 
 ```bash
