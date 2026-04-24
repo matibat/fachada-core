@@ -543,8 +543,8 @@
    */
   .font-pinyon-script {
     font-family: 'Pinyon Script', serif;
-    font-weight: 400;
-    font-size: clamp(18px, 5vw, 32px);
+    font-weight: 600;
+    font-size: clamp(24px, 5vw, 36px);
     font-variation-settings: 'slnt' 0;
     letter-spacing: 0.02em;
   }

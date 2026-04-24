@@ -7,7 +7,7 @@ export interface Props {
 const { paragraphs = [], heading = "About Me" } = Astro.props;
 ---
 
-<section id="about" class="section-wrapper">
+<section id="about" class="section-wrapper about-plain-section">
   <div class="section-inner-sm">
     <h2 class="text-4xl font-bold mb-10" data-index="01">{heading}</h2>
     <div class="about-plain-body">
@@ -26,6 +26,16 @@ const { paragraphs = [], heading = "About Me" } = Astro.props;
 </section>
 
 <style>
+  .about-plain-section {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+  }
+
+  .about-plain-section .section-inner-sm {
+    width: 100%;
+  }
+
   .about-plain-body {
     display: flex;
     flex-direction: column;

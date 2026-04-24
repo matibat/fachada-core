@@ -121,7 +121,11 @@ const foucCss = generateFoucCss(sectionVariantsMap);
     const bgStyle = section?.background
       ? `background: ${section.background}`
       : undefined;
-    const fullBleedClass = section?.background ? "section-fullbleed" : undefined;
+    const sectionStyle = `${bgStyle ? `${bgStyle}; ` : ""}min-height: 100dvh;`;
+    const isFullWidth =
+      section?.fullWidth === true ||
+      (section?.fullWidth !== false && Boolean(section?.background));
+    const fullBleedClass = isFullWidth ? "section-fullbleed" : undefined;
 
     if (variants.length > 0) {
       return (
@@ -130,7 +134,7 @@ const foucCss = generateFoucCss(sectionVariantsMap);
             <div
               data-layout-section={sectionId}
               data-layout-variant={variant}
-              style={bgStyle}
+              style={sectionStyle}
               aria-hidden="true"
             >
               <Component layout={variant} />
@@ -141,7 +145,7 @@ const foucCss = generateFoucCss(sectionVariantsMap);
     }
 
     return (
-      <div id={sectionId} class={fullBleedClass} style={bgStyle}>
+      <div id={sectionId} class={fullBleedClass} style={sectionStyle}>
         <Component layout={resolvedLayout} />
       </div>
     );

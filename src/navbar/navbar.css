@@ -251,7 +251,8 @@
 /* ─────────────────────────────────────────────────────────────────── */
 
 .navbar-brand {
-  font-size: 1.125rem;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  line-height: 1.1;
   font-weight: 600;
   color: var(--text-primary, #000000);
   white-space: nowrap;

@@ -69,8 +69,8 @@ const isLanding = currentPath === "/";
     <!-- Left: Logo / Name -->
     <a
       href={getBaseUrl("/")}
-      class="navbar-brand font-pinyon-script"
-      style="color: var(--text-primary);"
+      class="navbar-brand font-pinyon-script navbar-brand-glass"
+      style="color: #f5f1ed; background-color: #111d2e; padding: 0.2rem 0.6rem; border-radius: 999px;"
       data-shared-navbar-brand={hasHeroTransition ? "" : undefined}
     >
       {siteConfig.name}
@@ -219,12 +219,12 @@ const isLanding = currentPath === "/";
   }}
 >
   header {
-    background-color: rgba(253, 251, 248, 0.8);
+    background-color: rgba(253, 251, 248, 0.92);
   }
 
   @media (prefers-color-scheme: dark) {
     header {
-      background-color: rgba(10, 22, 40, 0.8);
+      background-color: rgba(10, 22, 40, 0.9);
     }
   }
 
@@ -233,5 +233,15 @@ const isLanding = currentPath === "/";
       position: relative;
       backdrop-filter: blur(4px);
     }
+  }
+
+  .navbar-brand-glass {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background-color: #111d2e;
+    color: #f5f1ed !important;
+    box-shadow: 0 2px 6px rgba(26, 20, 16, 0.12);
   }
 </style>
