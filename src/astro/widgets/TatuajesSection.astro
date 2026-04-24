@@ -23,9 +23,7 @@ const images: GalleryImage[] = appConfig.gallery?.images ?? [];
         images.map((image) => (
           <div class="tatuajes-gallery-item">
             <img src={image.src} alt={image.alt} loading="lazy" />
-            {image.caption && (
-              <p class="tatuajes-caption">{image.caption}</p>
-            )}
+            {image.caption && <p class="tatuajes-caption">{image.caption}</p>}
           </div>
         ))
       }

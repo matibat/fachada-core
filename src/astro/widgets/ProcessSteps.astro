@@ -5,9 +5,11 @@
  * Renders a numbered list of steps with a title, optional description,
  * and an optional CTA that can accompany the section.
  *
- * Each step has: number, title, description.
- * Steps are rendered in a flexible row that wraps on mobile.
+ * Each step has: number/icon, title, description.
+ * When no props are provided, reads from appConfig.processSteps configuration.
  */
+
+import { appConfig } from "virtual:fachada/active-app";
 
 export interface Step {
   title: string;
@@ -18,21 +20,35 @@ export interface Step {
 export interface Props {
   heading?: string;
   subheading?: string;
-  steps: Step[];
+  steps?: Step[];
   ctaLabel?: string;
   ctaHref?: string;
 }
 
+// Read from config when props absent — allows config-driven content from YAML
+const configSteps = (appConfig as Record<string, unknown>).processSteps as
+  | {
+      heading?: string;
+      subheading?: string;
+      steps?: Step[];
+      ctaLabel?: string;
+      ctaHref?: string;
+    }
+  | undefined;
+
 const {
-  heading,
-  subheading,
-  steps = [],
-  ctaLabel,
-  ctaHref,
+  heading = configSteps?.heading,
+  subheading = configSteps?.subheading,
+  steps = configSteps?.steps ?? [],
+  ctaLabel = configSteps?.ctaLabel,
+  ctaHref = configSteps?.ctaHref,
 } = Astro.props;
 ---
 
-<section class="process-steps-section section-wrapper" data-testid="process-steps">
+<section
+  class="process-steps-section section-wrapper"
+  data-testid="process-steps"
+>
   <div class="section-inner-md">
     {heading && <h2 class="process-steps-heading">{heading}</h2>}
     {subheading && <p class="process-steps-subheading">{subheading}</p>}
