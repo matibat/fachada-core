@@ -621,7 +621,7 @@ const menuAttrs = getMobileMenuAttrs(navbarConfig);
 - Default values match the existing navbar behavior
 - Existing CSS and HTML remain compatible
 
-**Migration is opt-in:** Add a `navbar` property to `app.config.ts` only when you want to customize the default behavior. See [Navbar Migration Guide](navbar-migration-guide.md) for details.
+**Migration is opt-in:** Add a `navbar` property to `app.config.ts` only when you want to customize the default behavior.
 
 ---
 
@@ -664,5 +664,4 @@ const appConfig: AppConfig = {
 ## Related Documentation
 
 - [Theme Configuration Guide](../THEME-CONFIGURATION.md) — Learn how to customize colors and visual themes
-- [Navbar Migration Guide](navbar-migration-guide.md) — Adopt the new navbar system without breaking changes
 - [App Configuration Reference](./app-config-reference.md) — Full AppConfig interface documentation

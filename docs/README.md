@@ -19,19 +19,6 @@ Generic widget system — bring your own imports, register in `widgetComponents`
 - Understand the bring-your-own-imports pattern
 - Set a per-section background image or color from config
 
-### [Widget Layout Migration Guide](./widget-layout-migration.md)
-
-Migrate from the v1 typed `WidgetLayoutConfig` interface to the v2 generic record.
-
-- **Before/after** TypeScript snippets for `WidgetLayoutConfig`
-- **Removed exports**: the 6 named layout union types
-- **themeLayouts config**: no structural change required
-
-**Read this if you:**
-
-- Are upgrading from fachada-core v1 to v2
-- See TypeScript errors after updating `WidgetLayoutConfig` imports
-
 ### [Skin & Theme System](./skin-system.md)
 
 Token-driven theming that works for any skin — built-in or custom.
@@ -65,20 +52,6 @@ Learn how to customize navbar behavior and appearance per-app without modifying 
 - Add custom navbar styling
 - Understand navbar configuration options
 
-### [Navbar Migration Guide](./navbar-migration-guide.md)
-
-Adopt the navbar configuration system safely. No breaking changes; migration is opt-in.
-
-- **Breaking-change migration notes**: TS-only config flow
-- **Incremental migration checklist** for app teams
-
-**Read this if you:**
-
-- Have an existing Fachada app
-- Want to customize your navbar
-- Need migration guidance for TS-only config
-- Are migrating from implicit to explicit configuration
-
 ## Type Definitions
 
 Detailed type definitions are available in the source code:
@@ -86,7 +59,6 @@ Detailed type definitions are available in the source code:
 - [AppConfig Interface](../src/types/app.types.ts) — Aggregate root configuration
 - [NavbarConfig Interface](../src/types/navbar.types.ts) — Navbar-specific configuration with property docs
 - [Profile Types](../src/types/profile.types.ts) — Presentation profile types
-- [TS Config Migration](./YAML-CONFIG-GUIDE.md) — YAML removal and TS-only migration guide
 
 ## Quick Links
 

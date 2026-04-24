@@ -36,7 +36,15 @@ const minimalDefinition: AppDefinition = {
       ogImage: "/og-image.png",
       social: {},
       location: { city: "Montevideo", country: "Uruguay" },
-      roles: [{ id: "dev", title: "Developer", specialties: [], featured: true, description: "Full-stack developer." }],
+      roles: [
+        {
+          id: "dev",
+          title: "Developer",
+          specialties: [],
+          featured: true,
+          description: "Full-stack developer.",
+        },
+      ],
       primaryRole: "dev",
     },
   },

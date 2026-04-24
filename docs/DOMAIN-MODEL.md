@@ -771,4 +771,3 @@ export class Page {
 ## See Also
 
 - [API-REFERENCE.md](./API-REFERENCE.md) — Complete API documentation
-- [YAML-CONFIG-GUIDE.md](./YAML-CONFIG-GUIDE.md) — Configuration format reference

@@ -1291,4 +1291,3 @@ if (skin) {
 ## See Also
 
 - [DOMAIN-MODEL.md](./DOMAIN-MODEL.md) — Detailed domain model explanation
-- [YAML-CONFIG-GUIDE.md](./YAML-CONFIG-GUIDE.md) — YAML configuration reference
