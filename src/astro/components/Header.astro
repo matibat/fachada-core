@@ -219,7 +219,13 @@ const isLanding = currentPath === "/";
   }}
 >
   header {
-    background-color: var(--bg-primary);
+    background-color: rgba(253, 251, 248, 0.8);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    header {
+      background-color: rgba(10, 22, 40, 0.8);
+    }
   }
 
   @media (max-width: 767px) {

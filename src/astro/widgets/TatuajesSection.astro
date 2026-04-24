@@ -1,0 +1,112 @@
+---
+import type { GalleryImage } from "@fachada/core";
+import { appConfig } from "virtual:fachada/active-app";
+
+export interface Props {
+  title?: string;
+  intro?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+const { title, intro, ctaLabel, ctaHref } = Astro.props;
+
+const images: GalleryImage[] = appConfig.gallery?.images ?? [];
+---
+
+<section id="tatuajes" class="tatuajes-section section-wrapper">
+  <div class="section-inner-md text-center">
+    <h2>{title || "Tatuajes"}</h2>
+    {intro && <p class="tatuajes-intro">{intro}</p>}
+    <div class="tatuajes-gallery">
+      {
+        images.map((image) => (
+          <div class="tatuajes-gallery-item">
+            <img src={image.src} alt={image.alt} loading="lazy" />
+            {image.caption && (
+              <p class="tatuajes-caption">{image.caption}</p>
+            )}
+          </div>
+        ))
+      }
+    </div>
+    {
+      ctaLabel && ctaHref && (
+        <a href={ctaHref} class="tatuajes-cta">
+          {ctaLabel}
+        </a>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .tatuajes-section {
+    padding: 4rem 1rem;
+  }
+
+  .tatuajes-section h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    text-align: center;
+  }
+
+  .tatuajes-intro {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .tatuajes-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+    text-align: left;
+  }
+
+  .tatuajes-gallery-item {
+    overflow: hidden;
+    border-radius: 0.5rem;
+  }
+
+  .tatuajes-gallery-item img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .tatuajes-gallery-item img:hover {
+    transform: scale(1.03);
+  }
+
+  .tatuajes-caption {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    padding: 0.5rem;
+    margin: 0;
+  }
+
+  .tatuajes-cta {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.75rem 2rem;
+    background: var(--accent);
+    color: var(--bg-primary);
+    border-radius: 0.25rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.2s ease;
+  }
+
+  .tatuajes-cta:hover {
+    opacity: 0.85;
+  }
+</style>
